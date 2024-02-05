@@ -1,0 +1,311 @@
+{
+    "pages": {
+      "login": {
+        "title": "Prijavite se u svoj profil",
+        "signin": "Prijava",
+        "signup": "Registracija",
+        "divider": "ili",
+        "fields": {
+          "email": "E-mail",
+          "password": "Lozinka"
+        },
+        "errors": {
+          "validEmail": "Nevažeća adresa e-pošte"
+        },
+        "buttons": {
+          "submit": "Prijava",
+          "forgotPassword": "Zaboravili ste lozinku?",
+          "noAccount": "Nemate račun?",
+          "rememberMe": "Zapamti me"
+        }
+      },
+      "forgotPassword": {
+        "title": "Zaboravili ste lozinku?",
+        "fields": {
+          "email": "E-mail"
+        },
+        "errors": {
+          "validEmail": "Nevažeća adresa e-pošte"
+        },
+        "buttons": {
+          "submit": "Pošalji upute za resetiranje"
+        }
+      },
+      "register": {
+        "buttons": {
+          "haveAccount": "Imate račun?"
+        }
+      },
+      "error": {
+        "404": "Nažalost, stranica koju ste posjetili ne postoji.",
+        "info": "Možda ste zaboravili dodati {{action}} komponenta za {{resource}} resurs.",
+        "resource404": "Jeste li sigurni da ste stvorili {{resource}} resurs.",
+        "backHome": "Povratak kući"
+      }
+    },
+    "employees": {
+      "employees": "Zaposlenici",
+      "titles": {
+        "create": "Kreiraj zaposlenika",
+        "list": "Zaposlenici",
+        "edit": "Uredi zaposlenika"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Ime",
+        "email": "E-mail",
+        "contact_number": "Kontakt broj",
+        "birthday": "Rođendan",
+        "role": "Uloga",
+        "sawmills": "Pilane",
+        "employed_at": "Zaposlen u",
+        "images": {
+          "label": "Fotografija",
+          "description": "Dodaj fotografiju"
+        }
+      },
+      "steps": {
+        "content": "Sadržaj",
+        "relations": "Odnosi"
+      },
+      "password_change": "Promjena lozinke",
+      "password_warning": "Zaposleniku će biti poslana e-pošta za postavljanje lozinke. "
+    },
+    "roles": {
+      "executive": "Direktor",
+      "manager": "Menadžer",
+      "worker": "Radnik"
+    },
+    "customers": {
+      "customers": "Kupci",
+      "customer": "Kupac",
+      "titles": {
+        "create": "Stvorite kupca",
+        "list": "Kupci",
+        "edit": "Uredi kupca"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Ime",
+        "contact_number": "Kontakt broj",
+        "no_contact_number": "Broj nedostaje",
+        "address": "Adresa",
+        "no_address": "Adresa nedostaje"
+      },
+      "steps": {
+        "content": "Sadržaj",
+        "relations": "Odnosi"
+      },
+      "filter": {
+        "title": "Filteri",
+        "search": {
+          "label": "traži",
+          "placeholder": "Ime, kontakt broj ili adresa"
+        },
+        "submit": "filtar"
+      }
+    },
+    "orders": {
+      "orders": "Narudžbe",
+      "titles": {
+        "list": "Narudžbe",
+        "show": "Broj narudžbe"
+      },
+      "fields": {
+        "orderID": "ID narudžbe",
+        "status": "Status",
+        "notes": "Bilješke",
+        "sawmill": "Pilana",
+        "customer": "Kupac",
+        "products": "Proizvodi",
+        "deadline": "Rok",
+        "amount": "Iznos",
+        "itemsAmount": "{{amount}} stavke",
+        "ordered_at": "Naručeno u"
+      },
+      "filter": {
+        "title": "Filteri",
+        "search": {
+          "label": "traži",
+          "placeholder": "Broj narudžbe, korisnik itd."
+        },
+        "status": {
+          "label": "Status",
+          "placeholder": "Stanje narudžbe"
+        },
+        "customer": {
+          "label": "Kupci",
+          "placeholder": "Pretražite kupce"
+        },
+        "sawmill": {
+          "label": "Pilana",
+          "placeholder": "Traži pilane"
+        },
+        "createdAt": {
+          "label": "Stvoreno u"
+        },
+        "submit": "filtar"
+      },
+      "courier": {
+        "deliveryTime": "Vrijeme isporuke",
+        "phone": "Telefon"
+      },
+      "products": {
+        "products": "Proizvodi",
+        "fields": {
+          "items": "Predmeti",
+          "quantity": "Količina",
+          "price": "Cijena",
+          "unit_of_measure": "Jedinica mjere",
+          "total": "Ukupno"
+        },
+        "mainTotal": "UKUPNO"
+      }
+    },
+    "enum": {
+      "orderStatuses": {
+        "Pending": "U tijeku",
+        "Ready": "Spreman",
+        "Dispatched": "Poslano",
+        "Cancelled": "Otkazano"
+      }
+    },
+    "sawmills": {
+      "sawmills": "Pilane",
+      "sawmill": "Pilana",
+      "titles": {
+        "create": "Stvorite pilanu",
+        "list": "Pilane",
+        "edit": "Uredi Pilanu"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Ime",
+        "address": "Adresa",
+        "no_address": "Nedostaje adresa",
+        "open_hours": "Radno vrijeme",
+        "no_open_hours": "Nije definirano"
+      },
+      "steps": {
+        "content": "Sadržaj",
+        "relations": "Odnosi"
+      },
+      "filter": {
+        "title": "Filteri",
+        "search": {
+          "label": "traži",
+          "placeholder": "Ime, kontakt broj ili adresa"
+        },
+        "submit": "filtar"
+      }
+    },
+    "equipment": {
+      "equipment": "Oprema",
+      "titles": {
+        "create": "Stvorite opremu",
+        "list": "Oprema",
+        "edit": "Uredi opremu"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Ime",
+        "type": "Tip",
+        "description": "Opis",
+        "notes": "Bilješke",
+        "production_year": "Godina proizvodnje",
+        "last_service_working_hours": "Servis - radni sati",
+        "last_service_date": "Datum usluge",
+        "no_last_service_date": "Nema datuma servisa",
+        "sawmill": "Pilana"
+      },
+      "steps": {
+        "content": "Sadržaj",
+        "relations": "Odnosi"
+      },
+      "filter": {
+        "title": "Filteri",
+        "search": {
+          "label": "traži",
+          "placeholder": "Ime ili kontakt broj"
+        },
+        "submit": "filtar"
+      }
+    },
+    "products": {
+      "products": "Proizvodi",
+      "product": "Proizvod",
+      "noProducts": "Nema proizvoda",
+      "productSearch": "Potražite proizvod",
+      "titles": {
+        "list": "Proizvodi",
+        "create": "Stvorite proizvod",
+        "edit": "Uredi proizvod"
+      },
+      "fields": {
+        "id": "iskaznica",
+        "name": "Ime",
+        "description": "Opis",
+        "isActive": "Aktivan",
+        "price": "Cijena",
+        "unit_of_measure": "Jedinica mjere",
+        "images": {
+          "label": "Slika proizvoda",
+          "description": "Dodajte sliku proizvoda"
+        }
+      }
+    },
+    "images": {
+      "crop": "Izreži sliku",
+      "add": "Dodaj sliku"
+    },
+    "table": {
+      "actions": "Radnje"
+    },
+    "buttons": {
+      "add": "Dodati",
+      "create": "Stvoriti",
+      "save": "Uštedjeti",
+      "logout": "Odjavite se",
+      "delete": "Izbrisati",
+      "edit": "Uredi",
+      "cancel": "Otkazati",
+      "confirm": "Jesi li siguran?",
+      "filter": "filtar",
+      "clear": "Čisto",
+      "refresh": "Osvježiti",
+      "show": "Pokazati",
+      "undo": "Poništi",
+      "import": "Uvoz",
+      "ready": "Spreman",
+      "dispatched": "Poslano",
+      "export": "Izvoz",
+      "clone": "Klon",
+      "accept": "Prihvatiti",
+      "acceptAll": "Prihvatiti sve",
+      "reject": "Odbiti",
+      "rejectAll": "Odbaci sve",
+      "nextStep": "Sljedeći",
+      "previousStep": "Prethodno"
+    },
+    "notifications": {
+      "success": "Uspješno",
+      "error": "Greška (kod stanja: {{statusCode}})",
+      "undoable": "Imaš {{seconds}} sekundi za poništavanje",
+      "createSuccess": "Uspješno kreirano {{resource}}",
+      "createError": "Došlo je do pogreške pri stvaranju {{resource}} (kod stanja: {{statusCode}})",
+      "deleteSuccess": "Uspješno izbrisano {{resource}}",
+      "deleteError": "Pogreška prilikom brisanja {{resource}} (kod stanja: {{statusCode}})",
+      "editSuccess": "Uspješno uređeno {{resource}}",
+      "editError": "Pogreška prilikom uređivanja {{resource}} (kod stanja: {{statusCode}})",
+      "importProgress": "Uvoz: {{processed}}/{{total}}"
+    },
+    "errors": {
+      "required": {
+        "field": "'{{ field }}' je potrebno",
+        "common": "ovo polje je obavezno",
+        "min": "Ovo polje mora biti najmanje {{ min }} znakova",
+        "max": "Ovo polje mora biti najviše {{ max }} znakova",
+        "invalidMail": "Ovo polje mora biti važeća adresa e-pošte"
+      }
+    }
+  }

@@ -1,0 +1,311 @@
+{
+    "pages": {
+        "login": {
+            "title": "Sign in to your account",
+            "signin": "Sign in",
+            "signup": "Sign up",
+            "divider": "or",
+            "fields": {
+                "email": "Email",
+                "password": "Password"
+            },
+            "errors": {
+                "validEmail": "Invalid email address"
+            },
+            "buttons": {
+                "submit": "Login",
+                "forgotPassword": "Forgot password?",
+                "noAccount": "Don’t have an account?",
+                "rememberMe": "Remember me"
+            }
+        },
+        "forgotPassword": {
+            "title": "Forgot your password?",
+            "fields": {
+                "email": "Email"
+            },
+            "errors": {
+                "validEmail": "Invalid email address"
+            },
+            "buttons": {
+                "submit": "Send reset instructions"
+            }
+        },
+        "register": {
+            "buttons": {
+                "haveAccount": "Have an account?"
+            }
+        },
+        "error": {
+            "info": "You may have forgotten to add the {{action}} component to {{resource}} resource.",
+            "404": "Sorry, the page you visited does not exist.",
+            "resource404": "Are you sure you have created the {{resource}} resource.",
+            "backHome": "Back Home"
+        }
+    },
+    "employees": {
+        "employees": "Employees",
+        "titles": {
+            "create": "Create Employee",
+            "list": "Employees",
+            "edit": "Edit Employee"
+        },
+        "fields": {
+            "id": "ID",
+            "name": "Name",
+            "email": "Email",
+            "contact_number": "Contact number",
+            "birthday": "Birthday",
+            "role": "Role",
+            "sawmills": "Sawmills",
+            "employed_at": "Employed at",
+            "images": {
+                "label": "Images",
+                "description": "Add user picture"
+            }
+        },
+        "steps": {
+            "content": "Content",
+            "relations": "Relations"
+        },
+        "password_change": "Password change",
+        "password_warning": "An email will be sent to the employee to set up their password. Please ensure the spelling is correct."
+    },
+    "roles": {
+        "executive": "Executive",
+        "manager": "Manager",
+        "worker": "Worker"
+    },
+    "customers": {
+        "customers": "Customers",
+        "customer": "Customer",
+        "titles": {
+            "create": "Create Customer",
+            "list": "Customers",
+            "edit": "Edit Customer"
+        },
+        "fields": {
+            "id": "ID",
+            "name": "Name",
+            "contact_number": "Contact number",
+            "no_contact_number": "Number missing",
+            "address": "Address",
+            "no_address": "Address missing"
+        },
+        "steps": {
+            "content": "Content",
+            "relations": "Relations"
+        },
+        "filter": {
+            "title": "Filters",
+            "search": {
+                "label": "Search",
+                "placeholder": "Name, contact number or address"
+            },
+            "submit": "Filter"
+        }
+    },
+    "orders": {
+        "orders": "Orders",
+        "titles": {
+            "list": "Orders",
+            "show": "Show Order"
+        },
+        "fields": {
+            "orderID": "Order ID",
+            "status": "Status",
+            "notes": "Notes",
+            "sawmill": "Sawmill",
+            "customer": "Customer",
+            "products": "Products",
+            "deadline": "Deadline",
+            "amount": "Amount",
+            "itemsAmount": "{{amount}} items",
+            "ordered_at": "Ordered at"
+        },
+        "filter": {
+            "title": "Filters",
+            "search": {
+                "label": "Search",
+                "placeholder": "Order Number, User, etc."
+            },
+            "status": {
+                "label": "Status",
+                "placeholder": "Order status"
+            },
+            "customer": {
+                "label": "Customers",
+                "placeholder": "Search Customers"
+            },
+            "sawmill": {
+                "label": "Sawmill",
+                "placeholder": "Search Sawmills"
+            },
+            "createdAt": {
+                "label": "Created At"
+            },
+            "submit": "Filter"
+        },
+        "courier": {
+            "deliveryTime": "Delivery Time",
+            "phone": "Phone"
+        },
+        "products": {
+            "products": "Products",
+            "fields": {
+                "items": "Items",
+                "quantity": "Quantity",
+                "price": "Price",
+                "unit_of_measure": "Unit of measure",
+                "total": "Total"
+            },
+            "mainTotal": "TOTAL"
+        }
+    },
+    "enum": {
+        "orderStatuses": {
+            "Pending": "Pending",
+            "Ready": "Ready",
+            "Dispatched": "Dispatched",
+            "Cancelled": "Cancelled"
+        }
+    },
+    "sawmills": {
+        "sawmills": "Sawmills",
+        "sawmill": "Sawmill",
+        "titles": {
+            "create": "Create Sawmill",
+            "list": "Sawmills",
+            "edit": "Edit Sawmill"
+        },
+        "fields": {
+            "id": "ID",
+            "name": "Name",
+            "address": "Address",
+            "no_address": "Address missing",
+            "open_hours": "Open hours",
+            "no_open_hours": "Not provided"
+        },
+        "steps": {
+            "content": "Content",
+            "relations": "Relations"
+        },
+        "filter": {
+            "title": "Filters",
+            "search": {
+                "label": "Search",
+                "placeholder": "Name, contact number or address"
+            },
+            "submit": "Filter"
+        }
+    },
+    "equipment": {
+        "equipment": "Equipment",
+        "titles": {
+            "create": "Create Equipment",
+            "list": "Equipment",
+            "edit": "Edit Equipment"
+        },
+        "fields": {
+            "id": "ID",
+            "name": "Name",
+            "type": "Type",
+            "description": "Description",
+            "notes": "Notes",
+            "production_year": "Production year",
+            "last_service_working_hours": "Service working hours",
+            "last_service_date": "Service date",
+            "no_last_service_date": "No service date",
+            "sawmill": "Sawmill"
+        },
+        "steps": {
+            "content": "Content",
+            "relations": "Relations"
+        },
+        "filter": {
+            "title": "Filters",
+            "search": {
+                "label": "Search",
+                "placeholder": "Name or contact number"
+            },
+            "submit": "Filter"
+        }
+    },
+    "products": {
+        "products": "Products",
+        "product": "Product",
+        "noProducts": "No Products",
+        "productSearch": "Search for product",
+        "titles": {
+            "list": "Products",
+            "create": "Create Product",
+            "edit": "Edit Product"
+        },
+        "fields": {
+            "id": "ID",
+            "name": "Name",
+            "description": "Description",
+            "isActive": "Active",
+            "price": "Price",
+            "unit_of_measure": "Unit of measure",
+            "images": {
+                "label": "Product image",
+                "description": "Add product image"
+            }
+        }
+    },
+    "images": {
+        "crop": "Crop image",
+        "add": "Add image"
+    },
+    "table": {
+        "actions": "Actions"
+    },
+    "buttons": {
+        "add": "Add",
+        "create": "Create",
+        "save": "Save",
+        "logout": "Logout",
+        "delete": "Delete",
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "confirm": "Are you sure?",
+        "filter": "Filter",
+        "clear": "Clear",
+        "refresh": "Refresh",
+        "show": "Show",
+        "undo": "Undo",
+        "import": "Import",
+        "ready": "Ready",
+        "dispatched": "Dispatched",
+        "export": "Export",
+        "clone": "Clone",
+        "accept": "Accept",
+        "acceptAll": "Accept All",
+        "reject": "Reject",
+        "rejectAll": "Reject All",
+        "nextStep": "Next",
+        "previousStep": "Previous"
+    },
+    "notifications": {
+        "success": "Successful",
+        "error": "Error (status code: {{statusCode}})",
+        "undoable": "You have {{seconds}} seconds to undo",
+        "createSuccess": "Successfully created {{resource}}",
+        "createError": "There was an error creating {{resource}} (status code: {{statusCode}})",
+        "deleteSuccess": "Successfully deleted {{resource}}",
+        "deleteError": "Error when deleting {{resource}} (status code: {{statusCode}})",
+        "editSuccess": "Successfully edited {{resource}}",
+        "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
+        "importProgress": "Importing: {{processed}}/{{total}}"
+    },
+    "errors": {
+        "required": {
+            "field": "'{{ field }}' is required",
+            "common": "This field is required",
+            "min": "This field must be at least {{ min }} characters",
+            "max": "This field must be at most {{ max }} characters",
+            "invalidMail": "This field must be a valid email address"
+        }
+    }
+}

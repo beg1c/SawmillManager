@@ -1,0 +1,311 @@
+{
+    "pages": {
+      "login": {
+        "title": "Melden Sie sich bei Ihrem Konto an",
+        "signin": "Einloggen",
+        "signup": "Anmelden",
+        "divider": "oder",
+        "fields": {
+          "email": "Email",
+          "password": "Passwort"
+        },
+        "errors": {
+          "validEmail": "Ungültige E-Mail-Adresse"
+        },
+        "buttons": {
+          "submit": "Anmeldung",
+          "forgotPassword": "Passwort vergessen?",
+          "noAccount": "Sie haben noch kein Konto?",
+          "rememberMe": "Erinnere dich an mich"
+        }
+      },
+      "forgotPassword": {
+        "title": "Haben Sie Ihr Passwort vergessen?",
+        "fields": {
+          "email": "Email"
+        },
+        "errors": {
+          "validEmail": "Ungültige E-Mail-Adresse"
+        },
+        "buttons": {
+          "submit": "Anweisungen zum Zurücksetzen senden"
+        }
+      },
+      "register": {
+        "buttons": {
+          "haveAccount": "Ein Konto haben?"
+        }
+      },
+      "error": {
+        "info": "Sie haben vergessen, {{action}} component zu {{resource}} hinzufügen.",
+        "404": "Leider existiert diese Seite nicht.",
+        "resource404": "Haben Sie die {{resource}} resource erstellt?",
+        "backHome": "Zurück"
+      }
+    },
+    "employees": {
+      "employees": "Mitarbeiter",
+      "titles": {
+        "create": "Mitarbeiter anlegen",
+        "list": "Mitarbeiter",
+        "edit": "Mitarbeiter bearbeiten"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Name",
+        "email": "Email",
+        "contact_number": "Kontakt Nummer",
+        "birthday": "Geburtstag",
+        "role": "Rolle",
+        "sawmills": "Sägewerke",
+        "employed_at": "Angestellt bei",
+        "images": {
+          "label": "Bilder",
+          "description": "Benutzerbild hinzufügen"
+        }
+      },
+      "steps": {
+        "content": "Inhalt",
+        "relations": "Beziehungen"
+      },
+      "password_change": "Passwortänderung",
+      "password_warning": "Dem Mitarbeiter wird eine E-Mail zur Einrichtung seines Passworts zugesandt."
+    },
+    "roles": {
+      "executive": "Exekutive",
+      "manager": "Manager",
+      "worker": "Arbeiter"
+    },
+    "customers": {
+      "customers": "Kunden",
+      "customer": "Kunde",
+      "titles": {
+        "create": "Kunde anlegen",
+        "list": "Kunden",
+        "edit": "Kunde bearbeiten"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Name",
+        "contact_number": "Kontakt Nummer",
+        "no_contact_number": "Nummer fehlt",
+        "address": "Adresse",
+        "no_address": "Adresse fehlt"
+      },
+      "steps": {
+        "content": "Inhalt",
+        "relations": "Beziehungen"
+      },
+      "filter": {
+        "title": "Filter",
+        "search": {
+          "label": "Suchen",
+          "placeholder": "Name, Kontaktnummer oder Adresse"
+        },
+        "submit": "Filter"
+      }
+    },
+    "orders": {
+      "orders": "Aufträge",
+      "titles": {
+        "list": "Aufträge",
+        "show": "Bestellung anzeigen"
+      },
+      "fields": {
+        "orderID": "Auftragsnummer",
+        "status": "Status",
+        "notes": "Anmerkungen",
+        "sawmill": "Sägewerk",
+        "customer": "Kunde",
+        "products": "Produkte",
+        "deadline": "Frist",
+        "amount": "Menge",
+        "itemsAmount": "{{amount}} Artikel",
+        "ordered_at": "Bestellt bei"
+      },
+      "filter": {
+        "title": "Filter",
+        "search": {
+          "label": "Suchen",
+          "placeholder": "Bestellnummer, Benutzer usw."
+        },
+        "status": {
+          "label": "Status",
+          "placeholder": "Bestellstatus"
+        },
+        "customer": {
+          "label": "Kunden",
+          "placeholder": "Kunden suchen"
+        },
+        "sawmill": {
+          "label": "Sägewerk",
+          "placeholder": "Suchen Sie nach Sägewerken"
+        },
+        "createdAt": {
+          "label": "Hergestellt in"
+        },
+        "submit": "Filter"
+      },
+      "courier": {
+        "deliveryTime": "Lieferzeit",
+        "phone": "Telefon"
+      },
+      "products": {
+        "products": "Produkte",
+        "fields": {
+          "items": "Artikel",
+          "quantity": "Menge",
+          "price": "Preis",
+          "unit_of_measure": "Maßeinheit",
+          "total": "Gesamt"
+        },
+        "mainTotal": "GESAMT"
+      }
+    },
+    "enum": {
+      "orderStatuses": {
+        "Pending": "Ausstehend",
+        "Ready": "Bereit",
+        "Dispatched": "Versendet",
+        "Cancelled": "Abgesagt"
+      }
+    },
+    "sawmills": {
+      "sawmills": "Sägewerke",
+      "sawmill": "Sägewerk",
+      "titles": {
+        "create": "Erstelle ein Sägewerk",
+        "list": "Sägewerke",
+        "edit": "Sägewerk bearbeiten"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Name",
+        "address": "Adresse",
+        "no_address": "Adresse fehlt",
+        "open_hours": "Öffnungszeiten",
+        "no_open_hours": "Nicht bereitgestellt"
+      },
+      "steps": {
+        "content": "Inhalt",
+        "relations": "Beziehungen"
+      },
+      "filter": {
+        "title": "Filter",
+        "search": {
+          "label": "Suchen",
+          "placeholder": "Name, Kontaktnummer oder Adresse"
+        },
+        "submit": "Filter"
+      }
+    },
+    "equipment": {
+      "equipment": "Inventar",
+      "titles": {
+        "create": "Inventar erstellen",
+        "list": "Inventar",
+        "edit": "Inventar bearbeiten"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Name",
+        "type": "Typ",
+        "description": "Beschreibung",
+        "notes": "Anmerkungen",
+        "production_year": "Produktionsjahr",
+        "last_service_working_hours": "Service-Arbeitszeiten",
+        "last_service_date": "Servicedatum",
+        "no_last_service_date": "Kein Servicetermin",
+        "sawmill": "Sägewerk"
+      },
+      "steps": {
+        "content": "Inhalt",
+        "relations": "Beziehungen"
+      },
+      "filter": {
+        "title": "Filter",
+        "search": {
+          "label": "Suchen",
+          "placeholder": "Name oder Kontaktnummer"
+        },
+        "submit": "Filter"
+      }
+    },
+    "products": {
+      "products": "Produkte",
+      "product": "Produkt",
+      "noProducts": "Keine Produkte",
+      "productSearch": "Nach Produkt suchen",
+      "titles": {
+        "list": "Produkte",
+        "create": "Produkt erstellen",
+        "edit": "Produkt bearbeiten"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Name",
+        "description": "Beschreibung",
+        "isActive": "Aktiv",
+        "price": "Preis",
+        "unit_of_measure": "Maßeinheit",
+        "images": {
+          "label": "Produktbild",
+          "description": "Produktbild hinzufügen"
+        }
+      }
+    },
+    "images": {
+      "crop": "Bild zuschneiden",
+      "add": "Bild hinzufügen"
+    },
+    "table": {
+      "actions": "Aktionen"
+    },
+    "buttons": {
+      "add": "Hinzufügen",
+      "create": "Erstellen",
+      "save": "Speichern",
+      "logout": "Ausloggen",
+      "delete": "Löschen",
+      "edit": "Bearbeiten",
+      "cancel": "Stornieren",
+      "confirm": "Bist du sicher?",
+      "filter": "Filter",
+      "clear": "Klar",
+      "refresh": "Aktualisierung",
+      "show": "Zeigen",
+      "undo": "Rückgängig machen",
+      "import": "Importieren",
+      "ready": "Bereit",
+      "dispatched": "Versendet",
+      "export": "Export",
+      "clone": "Klon",
+      "accept": "Akzeptieren",
+      "acceptAll": "Akzeptiere alle",
+      "reject": "Ablehnen",
+      "rejectAll": "Alles ablehnen",
+      "nextStep": "Nächste",
+      "previousStep": "Vorherige"
+    },
+    "notifications": {
+      "success": "Erfolgreich",
+      "error": "Fehler (Statuscode: {{statusCode}})",
+      "undoable": "Du hast {{seconds}} Sekunden zum Rückgängigmachen",
+      "createSuccess": "Erfolgreich erstellt {{resource}}",
+      "createError": "Beim Erstellen ist ein Fehler aufgetreten {{resource}} (Statuscode: {{statusCode}})",
+      "deleteSuccess": "Erfolgreich gelöscht {{resource}}",
+      "deleteError": "Fehler beim Löschen {{resource}} (Statuscode: {{statusCode}})",
+      "editSuccess": "Erfolgreich bearbeitet {{resource}}",
+      "editError": "Fehler beim Bearbeiten {{resource}} (Statuscode: {{statusCode}})",
+      "importProgress": "Importieren: {{processed}}/{{total}}"
+    },
+    "errors": {
+      "required": {
+        "field": "'{{ field }}' ist erforderlich",
+        "common": "Dieses Feld ist erforderlich",
+        "min": "Dieses Feld muss mindestens sein {{ min }} Figuren",
+        "max": "Dieses Feld darf höchstens sein {{ max }} Figuren",
+        "invalidMail": "Dieses Feld muss eine gültige E-Mail-Adresse sein"
+      }
+    }
+  }
