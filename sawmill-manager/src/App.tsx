@@ -59,10 +59,10 @@ function App() {
           <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
           <RefineSnackbarProvider>
             <Refine
-              accessControlProvider={accessControlProvider}
               dataProvider={dataProvider(apiUrl)}
               notificationProvider={useNotificationProvider}
               authProvider={authProvider}
+              accessControlProvider={accessControlProvider}
               routerProvider={routerBindings}
               i18nProvider={i18nProvider}
               resources={[

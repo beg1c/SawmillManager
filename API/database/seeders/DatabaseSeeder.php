@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\Sawmill;
 use App\Models\Order;
 use App\Models\Role;
+use App\Models\Material;
 
 
 class DatabaseSeeder extends Seeder
@@ -33,6 +34,8 @@ class DatabaseSeeder extends Seeder
         Customer::factory()->count(30)->create();
 
         Product::factory()->count(15)->create();
+
+        Material::factory()->count(15)->create();
 
         Equipment::factory()->count(15)->create()->each(function ($equipment) {
             $equipment->sawmill()->associate(Sawmill::all()->random())->save();

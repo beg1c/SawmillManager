@@ -27,6 +27,11 @@ class Sawmill extends Model
         return $this->hasMany(Order::class);
     }
 
+    public function inventories(): HasMany
+    {
+        return $this->hasMany(Inventory::class);
+    }
+
     protected $fillable = [
         'name',
         'address',
