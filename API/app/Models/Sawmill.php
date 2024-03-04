@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 
 class Sawmill extends Model
@@ -27,9 +28,9 @@ class Sawmill extends Model
         return $this->hasMany(Order::class);
     }
 
-    public function inventories(): HasMany
+    public function inventory(): HasOne
     {
-        return $this->hasMany(Inventory::class);
+        return $this->hasOne(Inventory::class);
     }
 
     protected $fillable = [
