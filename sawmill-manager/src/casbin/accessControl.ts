@@ -24,6 +24,8 @@ export const adapter = new StringAdapter(`
   p, executive, orders, (list)|(show)|(create)|(delete)|(edit)
   p, executive, products, (list)|(show)|(create)|(delete)|(edit)
   p, executive, sawmills, (list)|(show)|(create)|(delete)|(edit)
+  p, executive, materials, (list)|(show)|(create)|(delete)|(edit)
+  p, executive, wastes, (list)|(show)|(create)|(delete)|(edit)
 
   p, manager, employees, (list)|(show)
   p, manager, equipment, (list)|(show)|(create)|(delete)|(edit)
@@ -31,6 +33,8 @@ export const adapter = new StringAdapter(`
   p, manager, orders, (list)|(show)|(create)|(delete)|(edit)
   p, manager, products, (list)|(show)|(create)|(delete)|(edit)
   p, manager, sawmills, (list)|(show)
+  p, executive, materials, (list)|(show)|(create)|(delete)|(edit)
+  p, executive, wastes, (list)|(show)|(create)|(delete)|(edit)
 
   p, worker, employees, (list)|(show)
   p, worker, equipment, (list)|(show)
@@ -38,4 +42,6 @@ export const adapter = new StringAdapter(`
   p, worker, orders, (list)|(show)
   p, worker, products, (list)|(show)
   p, worker, sawmills, (list)|(show)
+  p, executive, materials, (list)|(show)
+  p, executive, wastes, (list)|(show)
 `);

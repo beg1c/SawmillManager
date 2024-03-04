@@ -38,7 +38,9 @@ import { SawmillList } from "./pages/sawmills/list";
 import { useTranslation } from "react-i18next";
 import { CustomerList } from "./pages/customers";
 import { OrderShow } from "./pages/orders";
-import { BadgeOutlined, BusinessOutlined, HomeRepairServiceOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined } from "@mui/icons-material";
+import { BadgeOutlined, BusinessOutlined, ForestOutlined, HomeRepairServiceOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined, RecyclingOutlined } from "@mui/icons-material";
+import { MaterialList } from "./pages/materials";
+import { WasteList } from "./pages/waste";
 const apiUrl = "http://127.0.0.1:8000/api";
 
 function App() {
@@ -117,6 +119,22 @@ function App() {
                   },
                 },
                 {
+                  name: "materials",
+                  list: "/materials",
+                  meta: {
+                    icon: <ForestOutlined />,
+                    canDelete: true,
+                  },
+                },
+                {
+                  name: "wastes",
+                  list: "/wastes",
+                  meta: {
+                    icon: <RecyclingOutlined />,
+                    canDelete: true,
+                  },
+                },
+                {
                   name: "sawmills",
                   list: "/sawmills",
                   meta: {
@@ -172,6 +190,12 @@ function App() {
                   </Route>
                   <Route path="/products">
                     <Route index element={<ProductList />} />
+                  </Route>
+                  <Route path="/materials">
+                    <Route index element={<MaterialList />} />
+                  </Route>
+                  <Route path="/wastes">
+                    <Route index element={<WasteList />} />
                   </Route>
                   <Route path="/sawmills">
                     <Route index element={<SawmillList />} />

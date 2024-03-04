@@ -30,6 +30,24 @@ export interface IProduct {
     photo?: string;
 }
 
+export interface IMaterial {
+    id: number;
+    name: string;
+    description?: string;
+    unit_of_measure: string;
+    price?: number;
+    photo?: string;
+}
+
+export interface IWaste {
+    id: number;
+    name: string;
+    description?: string;
+    unit_of_measure: string;
+    price?: number;
+    photo?: string;
+}
+
 export interface IProductWQuantity extends IProduct {
     quantity: number;
 }
