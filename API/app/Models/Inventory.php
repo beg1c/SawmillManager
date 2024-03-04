@@ -17,16 +17,16 @@ class Inventory extends Model
 
     public function materials()
     {
-        return $this->belongsToMany(Material::class);
+        return $this->belongsToMany(Material::class)->withPivot(['quantity']);
     }
 
     public function products()
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class)->withPivot(['quantity']);
     }
 
     public function wastes()
     {
-        return $this->belongsToMany(Waste::class);
+        return $this->belongsToMany(Waste::class)->withPivot(['quantity']);
     }
 }

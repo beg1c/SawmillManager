@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('unit_of_measure');
             $table->integer('price')->nullable();
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }

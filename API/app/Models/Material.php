@@ -20,5 +20,6 @@ class Material extends Model
         'description',
         'unit_of_measure',
         'price',
+        'photo'
     ];
 }

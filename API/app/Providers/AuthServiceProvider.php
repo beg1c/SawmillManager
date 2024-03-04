@@ -64,6 +64,21 @@ class AuthServiceProvider extends ServiceProvider
             return $user->role->role_name === 'executive';
         });
 
+        // Materials
+        Gate::define('manage-materials', function ($user) {
+            return in_array($user->role->role_name, ['executive', 'manager']);
+        });
+
+        // Wastes
+        Gate::define('manage-wastes', function ($user) {
+            return in_array($user->role->role_name, ['executive', 'manager']);
+        });
+
+        // Orders
+        Gate::define('view-all-inventories', function ($user) {
+            return $user->role->role_name === 'executive';
+        });
+
 
     }
 }

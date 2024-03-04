@@ -10,6 +10,9 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\WasteController;
+use App\Http\Controllers\InventoryController;
 
 
 
@@ -48,6 +51,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('orders', OrderController::class);
     Route::apiResource('employees', UserController::class);
     Route::apiResource('roles', RoleController::class);
+    Route::apiResource('materials', MaterialController::class);
+    Route::apiResource('wastes', WasteController::class);
+    Route::apiResource('inventory', InventoryController::class);
 });
 
 
