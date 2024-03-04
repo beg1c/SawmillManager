@@ -14,6 +14,7 @@ use App\Models\Order;
 use App\Models\Role;
 use App\Models\Material;
 use App\Models\Waste;
+use App\Models\Inventory;
 
 
 class DatabaseSeeder extends Seeder
@@ -51,6 +52,31 @@ class DatabaseSeeder extends Seeder
             $products = Product::inRandomOrder()->take(rand(1, 5))->get();
             foreach ($products as $product) {
                 $order->products()->attach($product, ['quantity' => rand(1, 10)]);
+            }
+        });
+
+        $sawmills = Sawmill::all();
+
+        $sawmills->each(function ($sawmill) {
+            if (!$sawmill->inventory) {
+                $inventory = Inventory::create();
+
+                $products = Product::inRandomOrder()->take(rand(3, 6))->get();
+                foreach ($products as $product) {
+                    $inventory->products()->attach($product, ['quantity' => rand(10, 100)]);
+                }
+
+                $materials = Material::inRandomOrder()->take(rand(3, 6))->get();
+                foreach ($materials as $material) {
+                    $inventory->materials()->attach($material, ['quantity' => rand(10, 100)]);
+                }
+
+                $wastes = Waste::inRandomOrder()->take(rand(3, 6))->get();
+                foreach ($wastes as $waste) {
+                    $inventory->wastes()->attach($waste, ['quantity' => rand(10, 100)]);
+                }
+
+                $inventory->sawmill()->associate($sawmill)->save();
             }
         });
     }

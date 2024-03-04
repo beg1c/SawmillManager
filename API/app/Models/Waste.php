@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Waste extends Model
 {
     use HasFactory;
 
-    public function inventory()
+    public function inventories()
     {
-        return $this->belongsTo(Inventory::class);
+        return $this->belongsToMany(Inventory::class);
     }
 
     protected $fillable = [

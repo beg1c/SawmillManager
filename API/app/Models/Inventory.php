@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Inventory extends Model
 {
@@ -16,16 +17,16 @@ class Inventory extends Model
 
     public function materials()
     {
-        return $this->hasMany(InventoryMaterial::class);
+        return $this->belongsToMany(Material::class);
     }
 
     public function products()
     {
-        return $this->hasMany(InventoryProduct::class);
+        return $this->belongsToMany(Product::class);
     }
 
     public function wastes()
     {
-        return $this->hasMany(InventoryWaste::class);
+        return $this->belongsToMany(Waste::class);
     }
 }
