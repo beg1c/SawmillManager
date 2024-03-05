@@ -38,9 +38,10 @@ import { SawmillList } from "./pages/sawmills/list";
 import { useTranslation } from "react-i18next";
 import { CustomerList } from "./pages/customers";
 import { OrderShow } from "./pages/orders";
-import { BadgeOutlined, BusinessOutlined, ForestOutlined, HomeRepairServiceOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined, RecyclingOutlined } from "@mui/icons-material";
+import { BadgeOutlined, BusinessOutlined, ForestOutlined, HomeRepairServiceOutlined, Inventory2Outlined, InventoryOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined, RecyclingOutlined } from "@mui/icons-material";
 import { MaterialList } from "./pages/materials";
 import { WasteList } from "./pages/waste";
+import { InventoryMaterialList } from "./pages/inventory/materials";
 const apiUrl = "http://127.0.0.1:8000/api";
 
 function App() {
@@ -111,27 +112,58 @@ function App() {
                   },
                 },
                 {
+                  name: "inventory",
+                  meta: { 
+                    icon: <Inventory2Outlined />,
+                    label: "Inventory" 
+                  }
+                },
+                {
                   name: "products",
-                  list: "/products",
-                  meta: {
+                  meta: { 
                     icon: <LocalGroceryStoreOutlined />,
-                    canDelete: true,
+                    parent: "inventory", 
+                    label: "Products"
                   },
+                  list: "/inventory/products",
                 },
                 {
                   name: "materials",
-                  list: "/materials",
-                  meta: {
+                  meta: { 
                     icon: <ForestOutlined />,
-                    canDelete: true,
+                    parent: "inventory",
+                    label: "Materials"
                   },
+                  list: "/inventory/materials",
                 },
                 {
                   name: "wastes",
-                  list: "/wastes",
-                  meta: {
+                  meta: { 
                     icon: <RecyclingOutlined />,
-                    canDelete: true,
+                    parent: "inventory", 
+                    label: "Waste" 
+                  },
+                  list: "/inventory/wastes",
+                },
+                {
+                  name: "manage-products",
+                  list: "/products",
+                  meta: { 
+                    hide: true,
+                  },
+                },
+                {
+                  name: "manage-materials",
+                  list: "/materials",
+                  meta: { 
+                    hide: true,
+                  },
+                },
+                {
+                  name: "manage-wastes",
+                  list: "/wastes",
+                  meta: { 
+                    hide: true,
                   },
                 },
                 {
@@ -187,6 +219,9 @@ function App() {
                   <Route path="/orders">
                     <Route index element={<OrderList />} />
                     <Route path="show/:id" element={<OrderShow />} />
+                  </Route>
+                  <Route path="/inventory/materials">
+                    <Route index element={<InventoryMaterialList />} />
                   </Route>
                   <Route path="/products">
                     <Route index element={<ProductList />} />

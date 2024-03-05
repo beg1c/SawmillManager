@@ -30,6 +30,10 @@ export interface IProduct {
     photo?: string;
 }
 
+export interface IProductWQuantity extends IProduct {
+    quantity: number;
+}
+
 export interface IMaterial {
     id: number;
     name: string;
@@ -37,6 +41,10 @@ export interface IMaterial {
     unit_of_measure: string;
     price?: number;
     photo?: string;
+}
+
+export interface IMaterialWQuantity extends IMaterial {
+    quantity: number;
 }
 
 export interface IWaste {
@@ -48,7 +56,7 @@ export interface IWaste {
     photo?: string;
 }
 
-export interface IProductWQuantity extends IProduct {
+export interface IWasteWQuantity extends IWaste {
     quantity: number;
 }
 
@@ -93,6 +101,10 @@ export interface IOrder {
 export interface IOrderFilterVariables {
     status?: string[];
     customer?: ICustomer;
+    sawmill?: ISawmill;
+}
+
+export interface IInventoryFilterVariables {
     sawmill?: ISawmill;
 }
 
