@@ -12,7 +12,7 @@ class Material extends Model
 
     public function inventories()
     {
-        return $this->belongsToMany(Inventory::class);
+        return $this->belongsToMany(Inventory::class)->withPivot(['quantity']);
     }
 
     protected $fillable = [

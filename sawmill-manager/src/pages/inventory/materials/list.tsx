@@ -2,10 +2,12 @@
 import React from "react";
 import {
     BaseRecord,
+    CrudFilter,
     CrudFilters,
     getDefaultFilter,
     HttpError,
     IResourceComponentsProps,
+    LogicalFilter,
     useCan,
     useDelete, useModal, useTranslate
 } from "@refinedev/core";
@@ -20,7 +22,7 @@ import CardHeader from "@mui/material/CardHeader";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import { ForestSharp } from "@mui/icons-material";
-import { IInventoryFilterVariables, IMaterialWQuantity, ISawmill } from "../../../interfaces/interfaces";
+import { IInventory, IInventoryFilterVariables, IMaterialWQuantity, ISawmill } from "../../../interfaces/interfaces";
 import { Autocomplete, Avatar } from "@mui/material";
 import { Controller } from "react-hook-form";
 
@@ -47,7 +49,6 @@ export const InventoryMaterialList: React.FC<IResourceComponentsProps> = () => {
             return filters;
         },
     });
-
     
     const { handleSubmit, control } = useForm<
         BaseRecord,
@@ -74,7 +75,7 @@ export const InventoryMaterialList: React.FC<IResourceComponentsProps> = () => {
                 renderCell: function render(params) {
                     return (
                       <Avatar 
-                        src={params?.row?.photo}
+                        // src={params?.row?.materials[params.id]}
                         >
                             <ForestSharp />
                         </Avatar>
@@ -92,19 +93,16 @@ export const InventoryMaterialList: React.FC<IResourceComponentsProps> = () => {
                 headerName: t("materials.fields.quantity"),
                 minWidth: 100,
                 flex: 1,
+                valueGetter: (params) => {
+                    return params?.row?.quantity + ' ' + params?.row?.unit_of_measure
+                }
             },
             {
                 field: "price",
                 headerName: t("materials.fields.price"),
                 minWidth: 100,
                 flex: 1,
-            },
-            {
-                field: "unit_of_measure",
-                headerName: t("materials.fields.unit_of_measure"),
-                minWidth: 100,
-                flex: 1,
-            },
+            }
         ],
         [t]
     );
@@ -127,6 +125,8 @@ export const InventoryMaterialList: React.FC<IResourceComponentsProps> = () => {
                                     name="sawmill"
                                     render={({ field }) => (
                                         <Autocomplete
+                                            disableClearable
+                                            defaultValue={sawmillAutocompleteProps.options[0]}
                                             {...sawmillAutocompleteProps}
                                             {...field}
                                             onChange={(_, value) => {
@@ -184,7 +184,8 @@ export const InventoryMaterialList: React.FC<IResourceComponentsProps> = () => {
                             columns={columns}
                             filterModel={undefined}
                             autoHeight
-                            pageSizeOptions={[10, 20, 50, 100]} />
+                            pageSizeOptions={[10, 20, 50, 100]} 
+                        />
                     </List>
                 </Grid>
             </Grid>

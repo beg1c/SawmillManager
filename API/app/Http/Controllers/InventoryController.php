@@ -4,7 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Inventory;
+use App\Models\Sawmill;
+use App\Models\Product;
+use App\Models\Material;
+use App\Models\Waste;
 use App\Http\Resources\InventoryResource;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\WasteResource;
+use App\Http\Resources\MaterialResource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,39 +19,51 @@ class InventoryController extends Controller
 {
     public function index()
     {
-        if (Gate::allows('view-all-inventories')) {
-            $inventories = Inventory::with('wastes', 'materials', 'products')->get();
-        }
-        else {
-            $user = Auth::user();
-            $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+        $pageSize = request()->query('pageSize', 10);
+        $querySawmill = request()->query('sawmill');
+        $requestUri = request()->getRequestUri();
+        $sawmills = Sawmill::pluck('id')->toArray();
 
-            $inventories = Inventory::with('wastes', 'materials', 'products')
-                ->whereIn('sawmill_id', $user_sawmill_ids)
-                ->get();
-        }
-
-        return InventoryResource::collection($inventories);
-    }
-
-    public function show(Inventory $inventory)
-    {
-        if (Gate::allows('view-all-inventories')) {
-            $inventory->load('wastes', 'materials', 'products');
-        }
-        else {
-            $user = Auth::user();
-            $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
-            $inventory->load('wastes', 'materials', 'products');
-
-            if (!in_array($inventory->sawmill->id, $user_sawmill_ids)) {
-                return response()->json([
-                    "message" => "You are not authorized to view inventory from that sawmill."
-                ], 403);
-            }
+        if ($querySawmill === null || !in_array($querySawmill, $sawmills)) {
+            return response()->json([
+                'message' => 'Invalid sawmill'
+            ], 404);
         }
 
-        return new InventoryResource($inventory);
+        if (strpos($requestUri, '/inventory/products') !== false) {
+            $inventoryType = 'products';
+        } elseif (strpos($requestUri, '/inventory/wastes') !== false) {
+            $inventoryType = 'wastes';
+        } elseif (strpos($requestUri, '/inventory/materials') !== false) {
+            $inventoryType = 'materials';
+        } else {
+            return response()->json([
+                'message' => 'Inventory not found'
+            ], 404);
+        }
+
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+
+        if (!Gate::allows('view-all-inventories') && !in_array($querySawmill, $user_sawmill_ids)) {
+            return response()->json([
+                "message" => "You are not authorized to view that inventory."
+            ], 403);
+        }
+
+        $inventory = Inventory::findorfail($querySawmill);
+
+        switch ($inventoryType) {
+            case 'products':
+                $products = $inventory->products()->paginate($pageSize);
+                return ProductResource::collection($products);
+            case 'materials':
+                $materials = $inventory->materials()->paginate($pageSize);
+                return MaterialResource::collection($materials);
+            case 'wastes':
+                $wastes = $inventory->wastes()->paginate($pageSize);
+                return WasteResource::collection($wastes);
+        }
     }
 
     /* For simplicity sake we will handle available quantities (adding, subtracting) on front-end
@@ -71,7 +90,7 @@ class InventoryController extends Controller
         $inventory = Inventory::findOrFail($request['inventory_id']);
         $quantity = $request['quantity'];
 
-        if ($quantity = 0) {
+        if ($quantity < 1) {
             $inventory->$relation()->detach($model->id);
             return response()->json(['message' => ucfirst($request['type']) . ' deleted from inventory'], 200);
         } else {
