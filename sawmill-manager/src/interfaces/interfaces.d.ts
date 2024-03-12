@@ -68,6 +68,19 @@ export interface IInventory<T extends IProductWQuantity | IWasteWQuantity | IMat
     wastes?: T extends IWasteWQuantity ? T[] : never;
 }
 
+export interface IDailyLog {
+    id: number;
+    date: Date;
+    sawmill: ISawmill;
+    materials: IMaterialWQuantity[];
+    products: IProductWQuantity[];
+    wastes: IWasteWQuantity[];
+}
+
+export interface IDailyLogFilterVariables {
+    sawmill?: ISawmill;
+}
+
 export interface IEquipment {
     id: number;
     name: string;

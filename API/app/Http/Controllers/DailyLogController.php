@@ -13,7 +13,7 @@ class DailyLogController extends Controller
     public function index()
     {
         $sortField = request()->query('sort', 'date');
-        $sortDirection = request()->query('order', 'asc');
+        $sortDirection = request()->query('order', 'desc');
         $pageSize = request()->query('pageSize', 10);
         $querySawmill = request()->query('sawmill');
 
