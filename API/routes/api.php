@@ -13,7 +13,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\WasteController;
 use App\Http\Controllers\InventoryController;
-
+use App\Http\Controllers\DailyLogController;
 
 
 /*
@@ -55,6 +55,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('materials', MaterialController::class);
     Route::apiResource('wastes', WasteController::class);
+    Route::apiResource('dailylogs', DailyLogController::class);
 });
 
 
