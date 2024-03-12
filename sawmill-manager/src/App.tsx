@@ -42,6 +42,8 @@ import { BadgeOutlined, BusinessOutlined, ForestOutlined, HomeRepairServiceOutli
 import { MaterialList } from "./pages/materials";
 import { WasteList } from "./pages/waste";
 import { InventoryMaterialList } from "./pages/inventory/materials";
+import { InventoryProductList } from "./pages/inventory/products";
+import { InventoryWasteList } from "./pages/inventory/wastes";
 const apiUrl = "http://127.0.0.1:8000/api";
 
 function App() {
@@ -220,8 +222,14 @@ function App() {
                     <Route index element={<OrderList />} />
                     <Route path="show/:id" element={<OrderShow />} />
                   </Route>
+                  <Route path="/inventory/products">
+                    <Route index element={<InventoryProductList />} />
+                  </Route>
                   <Route path="/inventory/materials">
                     <Route index element={<InventoryMaterialList />} />
+                  </Route>
+                  <Route path="/inventory/wastes">
+                    <Route index element={<InventoryWasteList />} />
                   </Route>
                   <Route path="/products">
                     <Route index element={<ProductList />} />

@@ -2,18 +2,15 @@
 import React from "react";
 import {
     BaseRecord,
-    CrudFilter,
     CrudFilters,
     getDefaultFilter,
     HttpError,
     IResourceComponentsProps,
-    LogicalFilter,
-    useCan,
-    useDelete, useModal, useTranslate
+    useTranslate
 } from "@refinedev/core";
-import { List, ListButton, useAutocomplete, useDataGrid, useThemedLayoutContext } from "@refinedev/mui";
-import { useForm, useModalForm } from "@refinedev/react-hook-form";
-import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
+import { List, ListButton, useAutocomplete, useDataGrid } from "@refinedev/mui";
+import { useForm } from "@refinedev/react-hook-form";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
@@ -22,7 +19,7 @@ import CardHeader from "@mui/material/CardHeader";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import { ForestSharp } from "@mui/icons-material";
-import { IInventory, IInventoryFilterVariables, IMaterialWQuantity, ISawmill } from "../../../interfaces/interfaces";
+import { IInventoryFilterVariables, IMaterialWQuantity, ISawmill } from "../../../interfaces/interfaces";
 import { Autocomplete, Avatar } from "@mui/material";
 import { Controller } from "react-hook-form";
 
@@ -54,15 +51,10 @@ export const InventoryMaterialList: React.FC<IResourceComponentsProps> = () => {
         BaseRecord,
         HttpError,
         IInventoryFilterVariables
-    >({
-        defaultValues: {
-            sawmill: getDefaultFilter("sawmill", filters, "eq"),
-        },
-    });
+    >();
 
     const { autocompleteProps: sawmillAutocompleteProps } = useAutocomplete<ISawmill>({
         resource: "sawmills",
-        defaultValue: getDefaultFilter("sawmill", filters, "eq"),
     });
 
     const columns = React.useMemo<GridColDef<IMaterialWQuantity>[]>(
@@ -75,7 +67,7 @@ export const InventoryMaterialList: React.FC<IResourceComponentsProps> = () => {
                 renderCell: function render(params) {
                     return (
                       <Avatar 
-                        // src={params?.row?.materials[params.id]}
+                        src={params?.row?.photo}
                         >
                             <ForestSharp />
                         </Avatar>
@@ -94,7 +86,7 @@ export const InventoryMaterialList: React.FC<IResourceComponentsProps> = () => {
                 minWidth: 100,
                 flex: 1,
                 valueGetter: (params) => {
-                    return params?.row?.quantity + ' ' + params?.row?.unit_of_measure
+                    return (params?.row?.quantity + ' ' + params?.row?.unit_of_measure)
                 }
             },
             {
@@ -102,6 +94,20 @@ export const InventoryMaterialList: React.FC<IResourceComponentsProps> = () => {
                 headerName: t("materials.fields.price"),
                 minWidth: 100,
                 flex: 1,
+                valueGetter: (params) => {
+                    return params?.row?.price?.toFixed(2) + ' €'
+                }
+            },
+            {
+                field: "value",
+                headerName: t("materials.fields.value"),
+                minWidth: 100,
+                flex: 1,
+                valueGetter: (params) => {
+                    if (params?.row?.price) {
+                        return (params?.row?.price * params?.row?.quantity).toFixed(2) + ' €'
+                    }
+                }
             }
         ],
         [t]
@@ -124,9 +130,7 @@ export const InventoryMaterialList: React.FC<IResourceComponentsProps> = () => {
                                     control={control}
                                     name="sawmill"
                                     render={({ field }) => (
-                                        <Autocomplete
-                                            disableClearable
-                                            defaultValue={sawmillAutocompleteProps.options[0]}
+                                        <Autocomplete   
                                             {...sawmillAutocompleteProps}
                                             {...field}
                                             onChange={(_, value) => {
