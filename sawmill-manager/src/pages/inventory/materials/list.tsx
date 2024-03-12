@@ -156,9 +156,6 @@ export const InventoryMaterialList: React.FC<IResourceComponentsProps> = () => {
                                                     label={t(
                                                         "materials.filter.sawmill.label",
                                                     )}
-                                                    placeholder={t(
-                                                        "materials.filter.sawmill.placeholder",
-                                                    )}
                                                     margin="normal"
                                                     variant="outlined"
                                                     size="small"
@@ -179,7 +176,7 @@ export const InventoryMaterialList: React.FC<IResourceComponentsProps> = () => {
                     <List
                         wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
                         headerButtons={
-                            <ListButton resource="manage-materials">MANAGE MATERIALS</ListButton>
+                            <ListButton resource="manage-materials">{t("materials.manage").toUpperCase()}</ListButton>
                         }
                     >
                         <DataGrid

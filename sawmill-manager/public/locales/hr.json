@@ -233,6 +233,7 @@
     },
     "products": {
       "products": "Proizvodi",
+      "manage": "Uredi proizvode",
       "product": "Proizvod",
       "noProducts": "Nema proizvoda",
       "productSearch": "Potražite proizvod",
@@ -242,15 +243,84 @@
         "edit": "Uredi proizvod"
       },
       "fields": {
-        "id": "iskaznica",
+        "id": "ID",
         "name": "Ime",
         "description": "Opis",
         "isActive": "Aktivan",
         "price": "Cijena",
         "unit_of_measure": "Jedinica mjere",
+        "quantity": "Količina",
+        "value": "Vrijednost",
         "images": {
           "label": "Slika proizvoda",
           "description": "Dodajte sliku proizvoda"
+        }
+      },
+      "filter": {
+        "sawmill": {
+          "label": "Pilana"
+       } 
+      }
+    },
+      "materials": {
+        "materials": "Materijali",
+        "manage": "Uredi materijale",
+        "material": "Materijal",
+        "noMaterials": "Nema materijala",
+        "materialSearch": "Potražite materijal",
+        "titles": {
+          "list": "Materijal",
+          "create": "Stvorite materijal",
+          "edit": "Uredi materijal"
+        },
+        "fields": {
+          "id": "ID",
+          "name": "Ime",
+          "description": "Opis",
+          "isActive": "Aktivan",
+          "price": "Cijena",
+          "unit_of_measure": "Jedinica mjere",
+          "quantity": "Količina",
+          "value": "Vrijednost",
+          "images": {
+            "label": "Slika materijala",
+            "description": "Dodajte sliku materijala"
+          }
+        },
+        "filter": {
+          "sawmill": {
+            "label": "Pilana"
+          }
+      }
+    },
+      "wastes": {
+        "wastes": "Otpad",
+        "manage": "Uredi otpad",
+        "waste": "Otpad",
+        "noWastes": "Nema otpada",
+        "wasteSearch": "Potražite otpad",
+        "titles": {
+          "list": "Otpadi",
+          "create": "Stvorite otpad",
+          "edit": "Uredi otpad"
+        },
+        "fields": {
+          "id": "ID",
+          "name": "Ime",
+          "description": "Opis",
+          "isActive": "Aktivan",
+          "price": "Cijena",
+          "unit_of_measure": "Jedinica mjere",
+          "quantity": "Količina",
+          "value": "Vrijednost",
+          "images": {
+            "label": "Slika otpada",
+            "description": "Dodajte sliku otpada"
+          }
+        },
+        "filter": {
+          "sawmill": {
+            "label": "Pilana"
         }
       }
     },
