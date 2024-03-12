@@ -14,6 +14,7 @@ use App\Http\Resources\WasteResource;
 use App\Http\Resources\MaterialResource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class InventoryController extends Controller
 {
@@ -23,12 +24,8 @@ class InventoryController extends Controller
         $querySawmill = request()->query('sawmill');
         $requestUri = request()->getRequestUri();
         $sawmills = Sawmill::pluck('id')->toArray();
-
-        if ($querySawmill === null || !in_array($querySawmill, $sawmills)) {
-            return response()->json([
-                'message' => 'Invalid sawmill'
-            ], 404);
-        }
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
 
         if (strpos($requestUri, '/inventory/products') !== false) {
             $inventoryType = 'products';
@@ -42,27 +39,28 @@ class InventoryController extends Controller
             ], 404);
         }
 
-        $user = Auth::user();
-        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
-
-        if (!Gate::allows('view-all-inventories') && !in_array($querySawmill, $user_sawmill_ids)) {
-            return response()->json([
-                "message" => "You are not authorized to view that inventory."
-            ], 403);
+        if ($querySawmill === null) {
+            $inventories = Inventory::whereIn('sawmill_id', $user_sawmill_ids)
+                ->with($inventoryType)->get();
+            $items = $this->retrieveInventoriesItems($inventories, $inventoryType, $pageSize);
         }
-
-        $inventory = Inventory::findorfail($querySawmill);
+        else {
+            if (!Gate::allows('view-all-inventories') && !in_array($querySawmill, $user_sawmill_ids)) {
+                return response()->json([
+                    "message" => "You are not authorized to view that inventory."
+                ], 403);
+            }
+            $inventory = Inventory::findorfail($querySawmill);
+            $items = $inventory->{$inventoryType}()->paginate($pageSize);
+        }
 
         switch ($inventoryType) {
             case 'products':
-                $products = $inventory->products()->paginate($pageSize);
-                return ProductResource::collection($products);
+                return ProductResource::collection($items);
             case 'materials':
-                $materials = $inventory->materials()->paginate($pageSize);
-                return MaterialResource::collection($materials);
+                return MaterialResource::collection($items);
             case 'wastes':
-                $wastes = $inventory->wastes()->paginate($pageSize);
-                return WasteResource::collection($wastes);
+                return WasteResource::collection($items);
         }
     }
 
@@ -102,5 +100,33 @@ class InventoryController extends Controller
                 return response()->json(['message' => ucfirst($request['type']) . ' added to inventory'], 200);
             }
         }
+    }
+
+    private function retrieveInventoriesItems($inventories, $inventoryType, $pageSize)
+    {
+        $allItems = [];
+
+        foreach ($inventories as $inventory) {
+            foreach ($inventory[$inventoryType] as $item) {
+                $itemId = $item['id'];
+                $quantity = $item['pivot']['quantity'];
+
+                if (array_key_exists($itemId, $allItems)) {
+                    $allItems[$itemId]['quantity'] += $quantity;
+                } else {
+                    $allItems[$itemId] = $item;
+                    $allItems[$itemId]['pivot']['quantity'] = $quantity;
+                }
+            }
+        }
+
+        $allItems = array_values($allItems);
+
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $pagedData = array_slice($allItems, ($currentPage - 1) * $pageSize, $pageSize);
+        $paginator = new LengthAwarePaginator($pagedData, count($allItems), $pageSize);
+        $paginator->setPath(request()->url());
+
+        return $paginator;
     }
 }
