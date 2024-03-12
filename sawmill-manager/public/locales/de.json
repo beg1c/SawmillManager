@@ -233,6 +233,7 @@
     },
     "products": {
       "products": "Produkte",
+      "manage": "Produkte bearbeiten",
       "product": "Produkt",
       "noProducts": "Keine Produkte",
       "productSearch": "Nach Produkt suchen",
@@ -248,9 +249,78 @@
         "isActive": "Aktiv",
         "price": "Preis",
         "unit_of_measure": "Maßeinheit",
+        "quantity": "Menge",
+        "value": "Wert",
         "images": {
           "label": "Produktbild",
           "description": "Produktbild hinzufügen"
+        }
+      },
+      "filter": {
+        "sawmill": {
+          "label": "Sägewerk"
+        }
+      }
+    },
+    "materials": {
+      "materials": "Materialen",
+      "manage": "Materialen bearbeiten",
+      "material": "Material",
+      "noMaterial": "Keine Materialen",
+      "materialSearch": "Nach Material suchen",
+      "titles": {
+        "list": "Materialen",
+        "create": "Material erstellen",
+        "edit": "Material bearbeiten"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Name",
+        "description": "Beschreibung",
+        "isActive": "Aktiv",
+        "price": "Preis",
+        "unit_of_measure": "Maßeinheit",
+        "quantity": "Menge",
+        "value": "Wert",
+        "images": {
+          "label": "Material  bild",
+          "description": "Material  bild hinzufügen"
+        }
+      },
+      "filter": {
+        "sawmill": {
+          "label": "Sägewerk"
+        }
+      }
+    },
+    "wastes": {
+      "wastes": "Abfälle",
+      "manage": "Abfälle bearbeiten",
+      "waste": "Abfall",
+      "noWastes": "Keine Abfälle",
+      "wasteSearch": "Nach Abfall suchen",
+      "titles": {
+        "list": "Abfälle",
+        "create": "Abfall erstellen",
+        "edit": "Abfall bearbeiten"
+      },
+      "fields": {
+        "id": "ID",
+        "name": "Name",
+        "description": "Beschreibung",
+        "isActive": "Aktiv",
+        "price": "Preis",
+        "unit_of_measure": "Maßeinheit",
+        "quantity": "Menge",
+        "value": "Wert",
+        "images": {
+          "label": "Abfallbild",
+          "description": "Abfallbild hinzufügen"
+        }
+      },
+      "filter": {
+        "sawmill": {
+          "label": "Sägewerk"
         }
       }
     },

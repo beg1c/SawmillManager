@@ -38,7 +38,12 @@ import { SawmillList } from "./pages/sawmills/list";
 import { useTranslation } from "react-i18next";
 import { CustomerList } from "./pages/customers";
 import { OrderShow } from "./pages/orders";
-import { BadgeOutlined, BusinessOutlined, HomeRepairServiceOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined } from "@mui/icons-material";
+import { BadgeOutlined, BusinessOutlined, ForestOutlined, HomeRepairServiceOutlined, Inventory2Outlined, InventoryOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined, RecyclingOutlined } from "@mui/icons-material";
+import { MaterialList } from "./pages/materials";
+import { WasteList } from "./pages/waste";
+import { InventoryMaterialList } from "./pages/inventory/materials";
+import { InventoryProductList } from "./pages/inventory/products";
+import { InventoryWasteList } from "./pages/inventory/wastes";
 const apiUrl = "http://127.0.0.1:8000/api";
 
 function App() {
@@ -59,10 +64,10 @@ function App() {
           <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
           <RefineSnackbarProvider>
             <Refine
-              accessControlProvider={accessControlProvider}
               dataProvider={dataProvider(apiUrl)}
               notificationProvider={useNotificationProvider}
               authProvider={authProvider}
+              accessControlProvider={accessControlProvider}
               routerProvider={routerBindings}
               i18nProvider={i18nProvider}
               resources={[
@@ -109,11 +114,58 @@ function App() {
                   },
                 },
                 {
+                  name: "inventory",
+                  meta: { 
+                    icon: <Inventory2Outlined />,
+                    label: "Inventory" 
+                  }
+                },
+                {
                   name: "products",
-                  list: "/products",
-                  meta: {
+                  meta: { 
                     icon: <LocalGroceryStoreOutlined />,
-                    canDelete: true,
+                    parent: "inventory", 
+                    label: "Products"
+                  },
+                  list: "/inventory/products",
+                },
+                {
+                  name: "materials",
+                  meta: { 
+                    icon: <ForestOutlined />,
+                    parent: "inventory",
+                    label: "Materials"
+                  },
+                  list: "/inventory/materials",
+                },
+                {
+                  name: "wastes",
+                  meta: { 
+                    icon: <RecyclingOutlined />,
+                    parent: "inventory", 
+                    label: "Waste" 
+                  },
+                  list: "/inventory/wastes",
+                },
+                {
+                  name: "manage-products",
+                  list: "/products",
+                  meta: { 
+                    hide: true,
+                  },
+                },
+                {
+                  name: "manage-materials",
+                  list: "/materials",
+                  meta: { 
+                    hide: true,
+                  },
+                },
+                {
+                  name: "manage-wastes",
+                  list: "/wastes",
+                  meta: { 
+                    hide: true,
                   },
                 },
                 {
@@ -170,8 +222,23 @@ function App() {
                     <Route index element={<OrderList />} />
                     <Route path="show/:id" element={<OrderShow />} />
                   </Route>
+                  <Route path="/inventory/products">
+                    <Route index element={<InventoryProductList />} />
+                  </Route>
+                  <Route path="/inventory/materials">
+                    <Route index element={<InventoryMaterialList />} />
+                  </Route>
+                  <Route path="/inventory/wastes">
+                    <Route index element={<InventoryWasteList />} />
+                  </Route>
                   <Route path="/products">
                     <Route index element={<ProductList />} />
+                  </Route>
+                  <Route path="/materials">
+                    <Route index element={<MaterialList />} />
+                  </Route>
+                  <Route path="/wastes">
+                    <Route index element={<WasteList />} />
                   </Route>
                   <Route path="/sawmills">
                     <Route index element={<SawmillList />} />

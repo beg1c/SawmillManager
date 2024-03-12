@@ -10,6 +10,9 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\WasteController;
+use App\Http\Controllers\InventoryController;
 
 
 
@@ -38,6 +41,8 @@ Route::get('users/me', [UserController::class, 'me'])
 Route::post('forgot-password', [AuthController::class,'forgotPassword']);
 Route::patch('change-password/{id}', [AuthController::class,'changePassword'])
     ->middleware('auth:sanctum');
+Route::get('inventory/{type}', [InventoryController::class, 'index'])
+    ->middleware('auth:sanctum');;
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -48,6 +53,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('orders', OrderController::class);
     Route::apiResource('employees', UserController::class);
     Route::apiResource('roles', RoleController::class);
+    Route::apiResource('materials', MaterialController::class);
+    Route::apiResource('wastes', WasteController::class);
 });
 
 

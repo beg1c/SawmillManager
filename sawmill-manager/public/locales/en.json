@@ -233,6 +233,7 @@
     },
     "products": {
         "products": "Products",
+        "manage": "Manage products",
         "product": "Product",
         "noProducts": "No Products",
         "productSearch": "Search for product",
@@ -248,9 +249,78 @@
             "isActive": "Active",
             "price": "Price",
             "unit_of_measure": "Unit of measure",
+            "quantity": "Quantity",
+            "value": "Value",
             "images": {
                 "label": "Product image",
                 "description": "Add product image"
+            }
+        },
+        "filter": {
+            "sawmill": {
+              "label": "Sawmill"
+            }
+        }
+    },
+    "materials": {
+        "materials": "Materials",
+        "manage": "Manage materials",
+        "product": "Material",
+        "noMaterials": "No Materials",
+        "materialSearch": "Search for material",
+        "titles": {
+            "list": "Materials",
+            "create": "Create Material",
+            "edit": "Edit Material"
+        },
+        "fields": {
+            "id": "ID",
+            "name": "Name",
+            "description": "Description",
+            "isActive": "Active",
+            "price": "Price",
+            "unit_of_measure": "Unit of measure",
+            "quantity": "Quantity",
+            "value": "Value",
+            "images": {
+                "label": "Material image",
+                "description": "Add material image"
+            }
+        },
+        "filter": {
+            "sawmill": {
+              "label": "Sawmill"
+            }
+        }
+    },
+    "wastes": {
+        "wastes": "Wastes",
+        "manage": "Manage wastes",
+        "waste": "Waste",
+        "noWastes": "No Wastes",
+        "wasteSearch": "Search for waste",
+        "titles": {
+            "list": "Wastes",
+            "create": "Create Waste",
+            "edit": "Edit Waste"
+        },
+        "fields": {
+            "id": "ID",
+            "name": "Name",
+            "description": "Description",
+            "isActive": "Active",
+            "price": "Price",
+            "unit_of_measure": "Unit of measure",
+            "quantity": "Quantity",
+            "value": "Value",
+            "images": {
+                "label": "Waste image",
+                "description": "Add waste image"
+            }
+        },
+        "filter": {
+            "sawmill": {
+              "label": "Sawmill"
             }
         }
     },

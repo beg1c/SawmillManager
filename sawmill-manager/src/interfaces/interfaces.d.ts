@@ -34,6 +34,40 @@ export interface IProductWQuantity extends IProduct {
     quantity: number;
 }
 
+export interface IMaterial {
+    id: number;
+    name: string;
+    description?: string;
+    unit_of_measure: string;
+    price?: number;
+    photo?: string;
+}
+
+export interface IMaterialWQuantity extends IMaterial {
+    quantity: number;
+}
+
+export interface IWaste {
+    id: number;
+    name: string;
+    description?: string;
+    unit_of_measure: string;
+    price?: number;
+    photo?: string;
+}
+
+export interface IWasteWQuantity extends IWaste {
+    quantity: number;
+}
+
+export interface IInventory<T extends IProductWQuantity | IWasteWQuantity | IMaterialWQuantity> {
+    id: number;
+    sawmill: ISawmill;
+    materials?: T extends IMaterialWQuantity ? T[] : never;
+    products?: T extends IProductWQuantity ? T[] : never;
+    wastes?: T extends IWasteWQuantity ? T[] : never;
+}
+
 export interface IEquipment {
     id: number;
     name: string;
@@ -75,6 +109,10 @@ export interface IOrder {
 export interface IOrderFilterVariables {
     status?: string[];
     customer?: ICustomer;
+    sawmill?: ISawmill;
+}
+
+export interface IInventoryFilterVariables {
     sawmill?: ISawmill;
 }
 
