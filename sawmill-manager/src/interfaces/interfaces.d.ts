@@ -72,9 +72,9 @@ export interface IDailyLog {
     id: number;
     date: Date;
     sawmill: ISawmill;
-    materials: IMaterialWQuantity[];
-    products: IProductWQuantity[];
-    wastes: IWasteWQuantity[];
+    materials?: IMaterialWQuantity[];
+    products?: IProductWQuantity[];
+    wastes?: IWasteWQuantity[];
 }
 
 export interface IDailyLogFilterVariables {

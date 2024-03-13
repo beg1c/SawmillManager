@@ -5,10 +5,11 @@ import {
     CrudFilters,
     HttpError,
     IResourceComponentsProps,
+    useCan,
     useTranslate
 } from "@refinedev/core";
 import { List, ShowButton, useAutocomplete, useDataGrid } from "@refinedev/mui";
-import { useForm } from "@refinedev/react-hook-form";
+import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -21,9 +22,14 @@ import { Autocomplete, Stack, Typography } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { IDailyLog, IDailyLogFilterVariables, ISawmill } from "../../interfaces/interfaces";
 import { CustomTooltip } from "../../components/customTooltip";
+import { CreateDailyLogModal } from "../../components/dailyLog/createDailyLog";
 
 export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
+    const { data } = useCan({
+        resource: 'dailylogs',
+        action: 'create'
+    })
 
     const { dataGridProps, search } = useDataGrid<
         IDailyLog,
@@ -56,6 +62,18 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
         resource: "sawmills",
     });
 
+    const createModalFormProps = useModalForm<
+        IDailyLog,
+        HttpError
+    >({
+        refineCoreProps: { action: "create" },
+        syncWithLocation: true,
+    });
+
+    const {
+        modal: { show: showCreateModal },
+    } = createModalFormProps;
+
     const columns = React.useMemo<GridColDef<IDailyLog>[]>(
         () => [
             {
@@ -86,7 +104,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             placement="top"
                             title={
                                 <Stack sx={{ padding: "2px" }}>
-                                    {row.materials.map((material) => (
+                                    {row.materials?.map((material) => (
                                         <li key={material.id}>{material.quantity + 'x ' + material.name}</li>
                                     ))}
                                 </Stack>
@@ -94,7 +112,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                         >
                             <Typography sx={{ fontSize: "14px" }}>
                                 {t("logs.fields.itemsAmount", {
-                                    amount: row.materials.length,
+                                    amount: row.materials?.length,
                                 })}
                             </Typography> 
                         </CustomTooltip>
@@ -116,7 +134,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             placement="top"
                             title={
                                 <Stack sx={{ padding: "2px" }}>
-                                    {row.products.map((product) => (
+                                    {row.products?.map((product) => (
                                         <li key={product.id}>{product.quantity + 'x ' + product.name}</li>
                                     ))}
                                 </Stack>
@@ -124,7 +142,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                         >
                             <Typography sx={{ fontSize: "14px" }}>
                                 {t("logs.fields.itemsAmount", {
-                                    amount: row.products.length,
+                                    amount: row.products?.length,
                                 })}
                             </Typography> 
                         </CustomTooltip>
@@ -146,7 +164,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             placement="top"
                             title={
                                 <Stack sx={{ padding: "2px" }}>
-                                    {row.wastes.map((waste) => (
+                                    {row.wastes?.map((waste) => (
                                         <li key={waste.id}>{waste.quantity + 'x ' + waste.name}</li>
                                     ))}
                                 </Stack>
@@ -154,7 +172,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                         >
                             <Typography sx={{ fontSize: "14px" }}>
                                 {t("logs.fields.itemsAmount", {
-                                    amount: row.wastes.length,
+                                    amount: row.wastes?.length,
                                 })}
                             </Typography> 
                         </CustomTooltip>
@@ -183,6 +201,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
 
     return (
         <>
+            <CreateDailyLogModal {...createModalFormProps} />
             <Grid container spacing={2}>
                 <Grid item xs={12} lg={3}>
                 <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
@@ -243,6 +262,10 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                 <Grid item xs={12} lg={9}>
                     <List
                         wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
+                        canCreate={data?.can}
+                        createButtonProps={{
+                            onClick: () => showCreateModal()
+                        }}
                     >
                         <DataGrid
                             disableColumnFilter
