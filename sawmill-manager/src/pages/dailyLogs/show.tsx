@@ -61,7 +61,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
             () => [
                 {
                     field: "name",
-                    headerName: t("logs.products.fields.items"),
+                    headerName: t("logs.fields.products"),
                     width: 300,
                     renderCell: function render({ row }) {
                         return (
@@ -86,14 +86,14 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                 },
                 {
                     field: "quantity",
-                    headerName: t("logs.products.fields.quantity"),
+                    headerName: t("logs.fields.quantity"),
                     width: 150,
                     sortable: false,
                     valueGetter: (params) => {return params?.row?.quantity},
                 },
                 {
                     field: "value",
-                    headerName: t("logs.products.fields.value"),
+                    headerName: t("logs.fields.value"),
                     width: 150,
                     sortable: false,
                     valueGetter: (params) => {
@@ -108,7 +108,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
             () => [
                 {
                     field: "name",
-                    headerName: t("logs.materials.fields.items"),
+                    headerName: t("logs.fields.materials"),
                     width: 300,
                     renderCell: function render({ row }) {
                         return (
@@ -133,14 +133,14 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                 },
                 {
                     field: "quantity",
-                    headerName: t("logs.materials.fields.quantity"),
+                    headerName: t("logs.fields.quantity"),
                     width: 150,
                     sortable: false,
                     valueGetter: (params) => {return params?.row?.quantity},
                 },
                 {
                     field: "value",
-                    headerName: t("logs.materials.fields.value"),
+                    headerName: t("logs.fields.value"),
                     width: 150,
                     sortable: false,
                     valueGetter: (params) => {
@@ -157,7 +157,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
             () => [
                 {
                     field: "name",
-                    headerName: t("logs.wastes.fields.items"),
+                    headerName: t("logs.fields.wastes"),
                     width: 300,
                     renderCell: function render({ row }) {
                         return (
@@ -182,14 +182,14 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                 },
                 {
                     field: "quantity",
-                    headerName: t("logs.wastes.fields.quantity"),
+                    headerName: t("logs.fields.quantity"),
                     width: 150,
                     sortable: false,
                     valueGetter: (params) => {return params?.row?.quantity},
                 },
                 {
                     field: "value",
-                    headerName: t("logs.wastes.fields.value"),
+                    headerName: t("logs.fields.value"),
                     width: 150,
                     sortable: false,
                     valueGetter: (params) => {
@@ -233,7 +233,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     </Grid>
                     <Grid item xs={12} lg={4}>
                         <List
-                            title={t("logs.fields.materials.materials")}
+                            title={t("logs.input.materials")}
                             headerButtons={
                                 <EditButton />
                             }
@@ -253,7 +253,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     </Grid>
                     <Grid item xs={12} lg={4}>
                         <List
-                            title={t("logs.fields.products.products")}
+                            title={t("logs.output.products")}
                             headerButtons={
                                 <EditButton />
                             }
@@ -273,7 +273,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     </Grid>
                     <Grid item xs={12} lg={4}>
                         <List
-                            title={t("logs.fields.wastes.wastes")}
+                            title={t("logs.output.wastes")}
                             headerButtons={
                                 <EditButton />
                             }

@@ -37,7 +37,7 @@ export const CreateDailyLogModal: React.FC<
             onClose={close}
             PaperProps={{ sx: { minWidth: 500 } }}
         >
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle>{t("logs.title.create")}</DialogTitle>
             <DialogContent>
                 <Box
                     component="form"

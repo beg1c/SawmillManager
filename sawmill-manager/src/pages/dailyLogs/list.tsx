@@ -111,7 +111,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             }
                         >
                             <Typography sx={{ fontSize: "14px" }}>
-                                {t("logs.fields.itemsAmount", {
+                                {t("logs.fields.materialsAmount", {
                                     amount: row.materials?.length,
                                 })}
                             </Typography> 
@@ -141,7 +141,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             }
                         >
                             <Typography sx={{ fontSize: "14px" }}>
-                                {t("logs.fields.itemsAmount", {
+                                {t("logs.fields.productsAmount", {
                                     amount: row.products?.length,
                                 })}
                             </Typography> 
@@ -171,7 +171,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             }
                         >
                             <Typography sx={{ fontSize: "14px" }}>
-                                {t("logs.fields.itemsAmount", {
+                                {t("logs.fields.wastesAmount", {
                                     amount: row.wastes?.length,
                                 })}
                             </Typography> 

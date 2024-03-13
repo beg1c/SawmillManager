@@ -324,6 +324,37 @@
             }
         }
     },
+    "logs": {
+        "title": {
+            "create": "Create daily log "
+        },
+        "filter": {
+            "title": "Filter",
+            "sawmill": {
+                "label": "Sawmill"
+            },
+            "submit": "Submit"
+        },
+        "fields": {
+            "productsAmount": "{{amount}} products",
+            "materialsAmount": "{{amount}} materials",
+            "wastesAmount": "{{amount}} wastes",
+            "date": "Date",
+            "sawmill": "Sawmill",
+            "materials": "Materials",
+            "products": "Products",
+            "wastes": "Wastes",
+            "quantity": "Quantity",
+            "value": "Value"
+        },
+        "input": {
+            "materials": "Input materials"
+        },
+        "output": {
+            "products": "Output products",
+            "wastes": "Output wastes"
+        }
+    },
     "images": {
         "crop": "Crop image",
         "add": "Add image"
