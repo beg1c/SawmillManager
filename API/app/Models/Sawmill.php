@@ -33,6 +33,11 @@ class Sawmill extends Model
         return $this->hasOne(Inventory::class);
     }
 
+    public function dailylogs(): HasMany
+    {
+        return $this->hasMany(DailyLog::class);
+    }
+
     protected $fillable = [
         'name',
         'address',

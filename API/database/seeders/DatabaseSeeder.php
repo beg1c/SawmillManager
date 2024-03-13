@@ -15,7 +15,7 @@ use App\Models\Role;
 use App\Models\Material;
 use App\Models\Waste;
 use App\Models\Inventory;
-
+use App\Models\DailyLog;
 
 class DatabaseSeeder extends Seeder
 {
@@ -77,6 +77,22 @@ class DatabaseSeeder extends Seeder
                 }
 
                 $inventory->sawmill()->associate($sawmill)->save();
+            }
+        });
+
+        $sawmills->each(function ($sawmill) {
+            for ($i = 0; $i < 10; $i++) {
+                $date = now()->subDays(rand(1, 30));
+
+                $dailyLog = DailyLog::create([
+                    'date' => $date,
+                ]);
+
+                $dailyLog->sawmill()->associate($sawmill)->save();
+
+                $dailyLog->products()->attach(Product::inRandomOrder()->take(rand(1, 5))->pluck('id'), ['quantity' => rand(1, 100)]);
+                $dailyLog->materials()->attach(Material::inRandomOrder()->take(rand(1, 5))->pluck('id'), ['quantity' => rand(1, 100)]);
+                $dailyLog->wastes()->attach(Waste::inRandomOrder()->take(rand(1, 5))->pluck('id'), ['quantity' => rand(1, 100)]);
             }
         });
     }

@@ -30,6 +30,7 @@ export const adapter = new StringAdapter(`
   p, executive, manage-materials, (list)|(show)|(create)|(delete)|(edit)
   p, executive, manage-wastes, (list)|(show)|(create)|(delete)|(edit)
   p, executive, manage-products, (list)|(show)|(create)|(delete)|(edit)
+  p, executive, dailylogs, (list)|(show)|(create)|(delete)|(edit)
 
   p, manager, employees, (list)|(show)
   p, manager, equipment, (list)|(show)|(create)|(delete)|(edit)
@@ -43,6 +44,7 @@ export const adapter = new StringAdapter(`
   p, manager, manage-materials, (list)|(show)|(create)|(delete)|(edit)
   p, manager, manage-wastes, (list)|(show)|(create)|(delete)|(edit)
   p, manager, manage-products, (list)|(show)|(create)|(delete)|(edit)
+  p, manager, dailylogs, (list)|(show)|(create)|(delete)|(edit)
 
   p, worker, employees, (list)|(show)
   p, worker, equipment, (list)|(show)
@@ -56,4 +58,5 @@ export const adapter = new StringAdapter(`
   p, worker, manage-materials, (list)|(show)
   p, worker, manage-wastes, (list)|(show)
   p, worker, manage-products, (list)|(show)
+  p, worker, dailylogs, (list)|(show)
 `);

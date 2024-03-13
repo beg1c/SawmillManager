@@ -38,12 +38,13 @@ import { SawmillList } from "./pages/sawmills/list";
 import { useTranslation } from "react-i18next";
 import { CustomerList } from "./pages/customers";
 import { OrderShow } from "./pages/orders";
-import { BadgeOutlined, BusinessOutlined, ForestOutlined, HomeRepairServiceOutlined, Inventory2Outlined, InventoryOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined, RecyclingOutlined } from "@mui/icons-material";
+import { BadgeOutlined, BusinessOutlined, ForestOutlined, HomeRepairServiceOutlined, Inventory2Outlined, InventoryOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined, RecyclingOutlined, TextSnippet } from "@mui/icons-material";
 import { MaterialList } from "./pages/materials";
 import { WasteList } from "./pages/waste";
 import { InventoryMaterialList } from "./pages/inventory/materials";
 import { InventoryProductList } from "./pages/inventory/products";
 import { InventoryWasteList } from "./pages/inventory/wastes";
+import { DailyLogList, DailyLogShow } from "./pages/dailyLogs";
 const apiUrl = "http://127.0.0.1:8000/api";
 
 function App() {
@@ -76,6 +77,16 @@ function App() {
                   list: "/customers",
                   meta: {
                     icon: <PeopleAltOutlined />,
+                    canDelete: true,
+                  },
+                },
+                {
+                  name: "dailylogs",
+                  list: "/dailylogs",
+                  show: "/dailylogs/show/:id",
+                  meta: {
+                    label: 'Daily logs',
+                    icon: <TextSnippet />,
                     canDelete: true,
                   },
                 },
@@ -206,6 +217,10 @@ function App() {
                   />
                   <Route path="/customers">
                     <Route index element={<CustomerList />} />
+                  </Route>
+                  <Route path="/dailylogs">
+                    <Route index element={<DailyLogList />} />
+                    <Route path="show/:id" element={<DailyLogShow />} />
                   </Route>
                   <Route path="/equipment">
                     <Route index element={<EquipmentList />} />
