@@ -62,5 +62,23 @@ class DashboardController extends Controller
         return CustomerResource::collection($customers);
     }
 
+    public function getMostSoldProducts()
+    {
+        $querySawmill = request()->query('sawmill');
 
+        $products = Product::select('products.*')
+                ->join('order_product', 'products.id', '=', 'order_product.product_id');
+
+        if ($querySawmill) {
+            $products = $products->join('orders', 'order_product.order_id', '=', 'orders.id')
+                    ->where('orders.sawmill_id', $querySawmill);
+        }
+
+        $products = $products->selectRaw('products.*, SUM(order_product.quantity) AS total_sold')
+                ->groupBy('products.id')
+                ->orderByDesc('total_sold')
+                ->get();
+
+        return ProductResource::collection($products);
+    }
 }

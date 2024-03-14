@@ -38,20 +38,22 @@ Route::post('logout', [AuthController::class,'logout'])
 Route::patch('orders/update-status/{id}', [OrderController::class,'updateStatus'])
     ->middleware('auth:sanctum');
 Route::get('users/me', [UserController::class, 'me'])
-    ->middleware('auth:sanctum');;
+    ->middleware('auth:sanctum');
 Route::post('forgot-password', [AuthController::class,'forgotPassword']);
 Route::patch('change-password/{id}', [AuthController::class,'changePassword'])
     ->middleware('auth:sanctum');
 Route::get('inventory/{type}', [InventoryController::class, 'index'])
-    ->middleware('auth:sanctum');;
+    ->middleware('auth:sanctum');
 Route::get('dashboard/recent-daily-logs', [DashboardController::class, 'getRecentDailyLogs'])
-    ->middleware('auth:sanctum');;
+    ->middleware('auth:sanctum');
 Route::get('dashboard/get-pending-orders', [DashboardController::class, 'getPendingOrders'])
-    ->middleware('auth:sanctum');;
+    ->middleware('auth:sanctum');
 Route::get('dashboard/get-biggest-customers', [DashboardController::class, 'getBiggestCustomers'])
-    ->middleware('auth:sanctum');;
+    ->middleware('auth:sanctum');
 Route::get('dashboard/get-recent-daily-logs', [DashboardController::class, 'getRecentDailyLogs'])
-    ->middleware('auth:sanctum');;
+    ->middleware('auth:sanctum');
+Route::get('dashboard/get-most-sold-products', [DashboardController::class, 'getMostSoldProducts'])
+    ->middleware('auth:sanctum');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('sawmills', SawmillController::class);
