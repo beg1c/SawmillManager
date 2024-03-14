@@ -41,7 +41,8 @@ class Sawmill extends Model
     protected $fillable = [
         'name',
         'address',
-        'open_hours',
+        'open_from',
+        'open_until',
     ];
 
 }

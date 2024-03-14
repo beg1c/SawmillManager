@@ -10,11 +10,16 @@ import TextField from "@mui/material/TextField";
 
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { ISawmill } from "../../interfaces/interfaces";
+import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { Controller } from "react-hook-form";
+import { format, parse } from "date-fns";
 
 
 export const EditSawmillModal: React.FC<
     UseModalFormReturnType<ISawmill, HttpError>
 > = ({
+    control,
     saveButtonProps,
     refineCore: { formLoading },
     modal: { visible, close, title },
@@ -23,7 +28,7 @@ export const EditSawmillModal: React.FC<
 }) => {
 
     const t = useTranslate();
-
+ 
     return (
         <Dialog
             open={visible}
@@ -40,7 +45,7 @@ export const EditSawmillModal: React.FC<
                     <TextField
                         id="name"
                         {...register("name", {
-                            required: "This field is required",
+                            required: "Sawmill name is required",
                         })}
                         InputLabelProps={{ shrink: true }}
                         error={!!errors.name}
@@ -48,7 +53,7 @@ export const EditSawmillModal: React.FC<
                         helperText={errors.name?.message}
                         margin="normal"
                         fullWidth
-                        label="Name"
+                        label="Sawmill name"
                         name="name"
                     />
                      <TextField
@@ -63,18 +68,44 @@ export const EditSawmillModal: React.FC<
                         label="Address"
                         name="address"
                     />
-                    <TextField
-                        id="open_hours"
-                        {...register("open_hours")}
-                        InputLabelProps={{ shrink: true }}
-                        error={!!errors.open_hours}
-                        // @ts-ignore
-                        helperText={errors.open_hours?.message}
-                        margin="normal"
-                        fullWidth
-                        label="Open hours"
-                        name="open_hours"
-                    />
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <Box marginTop={2}>
+                            <Controller
+                                control={control}
+                                {...register("open_from")}
+                                defaultValue={null}
+                                render={({field}) => (
+                                    <TimePicker
+                                        ampm={false}
+                                        views={['hours', 'minutes']}
+                                        label="Open from" 
+                                        value={field.value ? parse(field.value, 'HH:mm:ss', new Date()) : null}
+                                        onChange={(time: number | Date | null) => {
+                                            const selectedTime = time ? format(time, 'HH:mm:ss') : null;
+                                            field.onChange(selectedTime);
+                                        }}
+                                    />
+                                )}
+                            />                      
+                            <Controller
+                                control={control}
+                                {...register("open_until")}
+                                defaultValue={null}
+                                render={({field}) => (
+                                    <TimePicker
+                                        ampm={false}
+                                        views={['hours', 'minutes']}
+                                        label="Open until" 
+                                        value={field.value ? parse(field.value, 'HH:mm:ss', new Date()) : null}
+                                        onChange={(time: number | Date | null) => {
+                                            const selectedTime = time ? format(time, 'HH:mm:ss') : null;
+                                            field.onChange(selectedTime);
+                                        }}
+                                    />
+                                )}
+                            />  
+                        </Box>
+                    </LocalizationProvider>
                 </Box>
             </DialogContent>
             <DialogActions>

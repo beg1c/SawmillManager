@@ -18,7 +18,8 @@ export interface ISawmill {
     id: number;
     name: string;
     address?: string;
-    open_hours?: string;
+    open_from?: string;
+    open_until?: string;
 }
 
 export interface IProduct {

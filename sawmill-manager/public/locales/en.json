@@ -184,7 +184,9 @@
             "address": "Address",
             "no_address": "Address missing",
             "open_hours": "Open hours",
-            "no_open_hours": "Not provided"
+            "no_open_hours": "Not specified",
+            "open_from": "Open from",
+            "open_until": "Open until"
         },
         "steps": {
             "content": "Content",

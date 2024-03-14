@@ -11,11 +11,17 @@ import TextField from "@mui/material/TextField";
 
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { ISawmill } from "../../interfaces/interfaces";
+import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { Stack } from "@mui/material";
+import { Controller } from "react-hook-form";
+import { format } from "date-fns";
 
 
 export const CreateSawmillModal: React.FC<
     UseModalFormReturnType<ISawmill, HttpError>
 > = ({
+    control,
     saveButtonProps,
     modal: { visible, close, title },
     register,
@@ -40,14 +46,14 @@ export const CreateSawmillModal: React.FC<
                     <TextField
                         id="name"
                         {...register("name", {
-                            required: "This field is required",
+                            required: "Sawmill name is required",
                         })}
                         error={!!errors.name}
                         // @ts-ignore
                         helperText={errors.name?.message}
                         margin="normal"
                         fullWidth
-                        label="Name"
+                        label="Sawmill name"
                         name="name"
                     />
                      <TextField
@@ -61,17 +67,44 @@ export const CreateSawmillModal: React.FC<
                         label="Address"
                         name="address"
                     />
-                    <TextField
-                        id="open_hours"
-                        {...register("open_hours")}
-                        error={!!errors.open_hours}
-                        // @ts-ignore
-                        helperText={errors.open_hours?.message}
-                        margin="normal"
-                        fullWidth
-                        label="Open hours"
-                        name="open_hours"
-                    />
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <Box marginTop={2}>
+                            <Controller
+                                control={control}
+                                {...register("open_from")}
+                                defaultValue={null}
+                                render={({field}) => (
+                                    <TimePicker
+                                        ampm={false}
+                                        views={['hours', 'minutes']}
+                                        label="Open from" 
+                                        value={field.value}
+                                        onChange={(time: number | Date | null) => {
+                                            const selectedTime = time ? format(time, 'HH:mm:ss') : null;
+                                            field.onChange(selectedTime);
+                                        }}
+                                    />
+                                )}
+                            />                      
+                            <Controller
+                                control={control}
+                                {...register("open_until")}
+                                defaultValue={null}
+                                render={({field}) => (
+                                    <TimePicker
+                                        ampm={false}
+                                        views={['hours', 'minutes']}
+                                        label="Open until" 
+                                        value={field.value}
+                                        onChange={(time: number | Date | null) => {
+                                            const selectedTime = time ? format(time, 'HH:mm:ss') : null;
+                                            field.onChange(selectedTime);
+                                        }}
+                                    />
+                                )}
+                            />  
+                        </Box>
+                    </LocalizationProvider>
                 </Box>
             </DialogContent>
             <DialogActions>
