@@ -38,13 +38,14 @@ import { SawmillList } from "./pages/sawmills/list";
 import { useTranslation } from "react-i18next";
 import { CustomerList } from "./pages/customers";
 import { OrderShow } from "./pages/orders";
-import { BadgeOutlined, BusinessOutlined, ForestOutlined, HomeRepairServiceOutlined, Inventory2Outlined, InventoryOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined, RecyclingOutlined, TextSnippet } from "@mui/icons-material";
+import { BadgeOutlined, BusinessOutlined, Dashboard, ForestOutlined, HomeRepairServiceOutlined, Inventory2Outlined, InventoryOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined, RecyclingOutlined, TextSnippet } from "@mui/icons-material";
 import { MaterialList } from "./pages/materials";
 import { WasteList } from "./pages/waste";
 import { InventoryMaterialList } from "./pages/inventory/materials";
 import { InventoryProductList } from "./pages/inventory/products";
 import { InventoryWasteList } from "./pages/inventory/wastes";
 import { DailyLogList, DailyLogShow } from "./pages/dailyLogs";
+import { DashboardPage } from "./pages/dashboard";
 const apiUrl = "http://127.0.0.1:8000/api";
 
 function App() {
@@ -72,6 +73,15 @@ function App() {
               routerProvider={routerBindings}
               i18nProvider={i18nProvider}
               resources={[
+                {
+                  name: "dashboard",
+                  list: "/dashboard",
+                  meta: {
+                    label: 'Dashboard',
+                    icon: <Dashboard />,
+                    canDelete: true,
+                  },
+                },
                 {
                   name: "customers",
                   list: "/customers",
@@ -213,8 +223,11 @@ function App() {
                 >
                   <Route
                     index
-                    element={<NavigateToResource resource="customers"/>}
+                    element={<NavigateToResource resource="dashboard"/>}
                   />
+                  <Route path="/dashboard">
+                    <Route index element={<DashboardPage />} />
+                  </Route>
                   <Route path="/customers">
                     <Route index element={<CustomerList />} />
                   </Route>

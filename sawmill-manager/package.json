@@ -10,6 +10,7 @@
     "@mui/icons-material": "^5.8.3",
     "@mui/lab": "^5.0.0-alpha.85",
     "@mui/material": "^5.8.6",
+    "@mui/x-charts": "^6.19.5",
     "@mui/x-data-grid": "^6.6.0",
     "@mui/x-date-pickers": "^6.19.4",
     "@refinedev/cli": "^2.16.21",
@@ -35,7 +36,8 @@
     "react-image-crop": "^11.0.5",
     "react-input-mask": "^2.0.4",
     "react-router-dom": "^6.8.1",
-    "react-spinners": "^0.13.8"
+    "react-spinners": "^0.13.8",
+    "recharts": "^2.12.2"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",

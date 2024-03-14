@@ -102,6 +102,10 @@ export interface ICustomer {
     address?: string;
 }
 
+export interface ICustomerWTotalSpent extends ICustomer {
+    total_spent: number;
+}
+
 export interface ICustomerFilterVariables {
     q?: string;
 }

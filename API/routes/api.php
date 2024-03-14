@@ -14,6 +14,7 @@ use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\WasteController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\DailyLogController;
+use App\Http\Controllers\DashboardController;
 
 
 /*
@@ -43,7 +44,14 @@ Route::patch('change-password/{id}', [AuthController::class,'changePassword'])
     ->middleware('auth:sanctum');
 Route::get('inventory/{type}', [InventoryController::class, 'index'])
     ->middleware('auth:sanctum');;
-
+Route::get('dashboard/recent-daily-logs', [DashboardController::class, 'getRecentDailyLogs'])
+    ->middleware('auth:sanctum');;
+Route::get('dashboard/get-pending-orders', [DashboardController::class, 'getPendingOrders'])
+    ->middleware('auth:sanctum');;
+Route::get('dashboard/get-biggest-customers', [DashboardController::class, 'getBiggestCustomers'])
+    ->middleware('auth:sanctum');;
+Route::get('dashboard/get-recent-daily-logs', [DashboardController::class, 'getRecentDailyLogs'])
+    ->middleware('auth:sanctum');;
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('sawmills', SawmillController::class);
