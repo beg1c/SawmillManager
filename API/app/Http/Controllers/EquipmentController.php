@@ -166,6 +166,7 @@ class EquipmentController extends Controller
             'last_service_date' => $request['last_service_date'],
             'last_service_working_hours' => $request['last_service_working_hours'],
             'photo' => $photoName,
+            'next_service_date' => $request['next_service_date'],
         ]);
 
         $equipment->sawmill()->associate($request['sawmill.id']);
@@ -184,6 +185,7 @@ class EquipmentController extends Controller
             'production_year' => $request['production_year'],
             'last_service_date' => $request['last_service_date'],
             'last_service_working_hours' => $request['last_service_working_hours'],
+            'next_service_date' => $request['next_service_date'],
         ]);
 
         if ($photoName !== null) {

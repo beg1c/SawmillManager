@@ -81,4 +81,6 @@ class DashboardController extends Controller
 
         return ProductResource::collection($products);
     }
+
+
 }

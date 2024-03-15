@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->string('photo')->nullable();
+        Schema::table('equipment', function (Blueprint $table) {
+            $table->date('next_service_date')->nullable();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('photo');
+        Schema::table('equipment', function (Blueprint $table) {
+            $table->dropColumn('next_service_date');
         });
     }
 };
