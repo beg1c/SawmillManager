@@ -14,6 +14,7 @@ use App\Models\Product;
 use App\Http\Resources\ProductResource;
 use App\Models\Equipment;
 use App\Http\Resources\EquipmentResource;
+use App\Http\Resources\DailyProductivityResource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 
@@ -61,7 +62,7 @@ class DashboardController extends Controller
                 );
         }
 
-        return $dailyProductivity;
+        return DailyProductivityResource::collection($dailyProductivity);
     }
 
     public function getRecentDailyLogs()
@@ -125,6 +126,7 @@ class DashboardController extends Controller
         $products = $products->selectRaw('products.*, SUM(order_product.quantity) AS total_sold')
                 ->groupBy('products.id')
                 ->orderByDesc('total_sold')
+                ->take(5)
                 ->get();
 
         return ProductResource::collection($products);

@@ -357,6 +357,17 @@
             "wastes": "Output wastes"
         }
     },
+    "dashboard": {
+        "biggestCustomers": {
+            "title": "Biggest customers"
+        },
+        "mostSoldProducts": {
+            "title": "Most sold products"
+        },
+        "pendingOrders": {
+            "title": "Pending orders"
+        }
+    },
     "images": {
         "crop": "Crop image",
         "add": "Add image"

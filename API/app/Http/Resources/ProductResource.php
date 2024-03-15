@@ -34,7 +34,7 @@ class ProductResource extends JsonResource
         }
 
         if ($this->total_sold) {
-            $data['total_sold'] = $this->total_sold;
+            $data['quantity'] = $this->total_sold;
         }
 
         return $data;

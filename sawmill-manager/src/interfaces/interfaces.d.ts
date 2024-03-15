@@ -93,6 +93,7 @@ export interface IEquipment {
     last_service_working_hours?: string;
     sawmill?: ISawmill;
     photo: string;
+    next_service_date: Date;
 }
 
 export interface ICustomer {
@@ -142,4 +143,11 @@ export interface IIdentity {
     birthday?: string;
     role: string;
     sawmills: ISawmill[];
+}
+
+export interface IDailyProductivity {
+    date: Date;
+    product_quantity: number;
+    waste_quantity: number;
+    material_quantity: number;
 }
