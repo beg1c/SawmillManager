@@ -54,6 +54,8 @@ Route::get('dashboard/get-recent-daily-logs', [DashboardController::class, 'getR
     ->middleware('auth:sanctum');
 Route::get('dashboard/get-most-sold-products', [DashboardController::class, 'getMostSoldProducts'])
     ->middleware('auth:sanctum');
+Route::get('dashboard/get-daily-productivity', [DashboardController::class, 'getDailyProductivity'])
+    ->middleware('auth:sanctum');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('sawmills', SawmillController::class);
