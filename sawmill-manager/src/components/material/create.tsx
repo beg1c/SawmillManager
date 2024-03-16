@@ -13,14 +13,15 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormHelperText from "@mui/material/FormHelperText";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import { IMaterial } from "../../interfaces/interfaces";
-import { FieldValues, SubmitHandler } from "react-hook-form";
-import { Avatar, Input, Typography } from "@mui/material";
+import { Controller, FieldValues, SubmitHandler } from "react-hook-form";
+import { Autocomplete, Avatar, Input, TextField, Typography } from "@mui/material";
 import ImageCrop from "../imageCrop";
 import { ForestSharp } from "@mui/icons-material";
 
 export const CreateMaterial: React.FC<
     UseModalFormReturnType<IMaterial, HttpError>
 > = ({
+    control,
     register,
     formState: { errors },
     refineCore: { onFinish },
@@ -210,55 +211,74 @@ export const CreateMaterial: React.FC<
                                         </FormHelperText>
                                     )}
                                 </FormControl>
-                                <FormControl>
-                                    <FormLabel>
-                                        {t("materials.fields.price")}
-                                    </FormLabel>
-                                    <OutlinedInput
-                                        id="price"
-                                        {...register("price")}
-                                        type="number"
-                                        style={{
-                                            width: "150px",
-                                            height: "40px",
-                                        }}
-                                        startAdornment={
-                                            <InputAdornment position="start">
-                                                $
-                                            </InputAdornment>
-                                        }
-                                    />
-                                    {errors.price && (
-                                        <FormHelperText error>
-                                            {// @ts-ignore
-                                            }{errors.price.message}
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
-                                <FormControl>
-                                    <FormLabel required>
-                                        {t("materials.fields.unit_of_measure")}
-                                    </FormLabel>
-                                    <OutlinedInput
-                                        id="unit_of_measure"
-                                        {...register("unit_of_measure", {
-                                            required: t(
-                                                "errors.required.field",
-                                                { field: "Unit of measure" },
-                                            ),
-                                        })}
-                                        style={{
-                                            width: "150px",
-                                            height: "40px",
-                                        }}
-                                    />
-                                    {errors.unit_of_measure && (
-                                        <FormHelperText error>
-                                            {// @ts-ignore
-                                            }{errors.unit_of_measure.message}
-                                        </FormHelperText>
-                                    )}
-                                </FormControl>
+                                <Stack 
+                                    display="flex" 
+                                    flexDirection="row"
+                                >
+                                    <FormControl>
+                                        <FormLabel required>
+                                            {t("materials.fields.price")}
+                                        </FormLabel>
+                                        <OutlinedInput
+                                            id="price"
+                                            {...register("price", {
+                                                required: t(
+                                                    "errors.required.field",
+                                                    { field: "Price" },
+                                                ),
+                                            })}
+                                            type="number"
+                                            inputProps={{ 
+                                                min: 0 
+                                            }}
+                                            size="small"
+                                            sx={{
+                                                width: 120,
+                                                marginRight: 1
+                                            }}
+                                            startAdornment={
+                                                <InputAdornment position="start">
+                                                    €
+                                                </InputAdornment>
+                                            }
+                                        />
+                                        {errors.price && (
+                                            <FormHelperText error>
+                                                {// @ts-ignore
+                                                }{errors.price.message}
+                                            </FormHelperText>
+                                        )}
+                                    </FormControl>
+                                    <FormControl
+                                    >
+                                        <FormLabel required>
+                                            {t("materials.fields.unit_of_measure")}
+                                        </FormLabel>
+                                        <Controller
+                                            control={control}
+                                            name="unit_of_measure"
+                                            defaultValue='m3'
+                                            render={() => (
+                                                <Autocomplete
+                                                disabled     
+                                                id="unit_of_measure"
+                                                {...register("unit_of_measure")}                                              
+                                                options={['m3']}
+                                                defaultValue='m3'
+                                                renderInput={(params) => 
+                                                    <TextField {...params} 
+                                                        size="small"
+                                                        sx={{
+                                                            marginleft: 1
+                                                        }}
+                                                    />
+                                                }
+                                            />
+                                            )}
+                                        >  
+                                        </Controller>
+                                    </FormControl>
+                                </Stack>
                             </Stack>
                         </form>
                     </Box>

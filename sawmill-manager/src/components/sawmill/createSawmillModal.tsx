@@ -75,6 +75,7 @@ export const CreateSawmillModal: React.FC<
                                 defaultValue={null}
                                 render={({field}) => (
                                     <TimePicker
+                                        sx={{ marginRight: 1 }}
                                         ampm={false}
                                         views={['hours', 'minutes']}
                                         label="Open from" 
@@ -92,6 +93,7 @@ export const CreateSawmillModal: React.FC<
                                 defaultValue={null}
                                 render={({field}) => (
                                     <TimePicker
+                                        sx={{ marginLeft: 1 }}
                                         ampm={false}
                                         views={['hours', 'minutes']}
                                         label="Open until" 

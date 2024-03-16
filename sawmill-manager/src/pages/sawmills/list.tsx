@@ -13,7 +13,7 @@ import Grid from "@mui/material/Grid";
 import { ISawmill } from "../../interfaces/interfaces";
 import { Edit } from "@mui/icons-material";
 import { CreateSawmillModal, EditSawmillModal } from "../../components/sawmill";
-import { format } from "date-fns";
+import LinearProgress from '@mui/material/LinearProgress';
 
 export const SawmillList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
@@ -127,7 +127,8 @@ export const SawmillList: React.FC<IResourceComponentsProps> = () => {
                         columns={columns}
                         filterModel={undefined}
                         autoHeight
-                        pageSizeOptions={[10, 20, 50, 100]} />
+                        pageSizeOptions={[10, 20, 50, 100]} 
+                    />
                 </List>
             </Grid>
             <CreateSawmillModal {...createModalFormProps} />

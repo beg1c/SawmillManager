@@ -19,10 +19,13 @@ import Pagination from "@mui/material/Pagination";
 import SearchIcon from "@mui/icons-material/Search";
 import { IWaste } from "../../interfaces/interfaces";
 import { CreateWaste, EditWaste, WasteItem } from "../../components/waste";
+import { RotateLoader } from "react-spinners";
+import { useTheme } from "@mui/material";
 
 
 export const WasteList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
+    const { palette } = useTheme();
 
     const { tableQueryResult, setFilters, setCurrent, filters, pageCount } =
         useTable<IWaste>({
@@ -34,7 +37,10 @@ export const WasteList: React.FC<IResourceComponentsProps> = () => {
         IWaste,
         HttpError
     >({
-        refineCoreProps: { action: "create" },
+        refineCoreProps: { 
+            resource: "wastes",
+            action: "create" 
+        },
     });
 
     const {
@@ -45,7 +51,10 @@ export const WasteList: React.FC<IResourceComponentsProps> = () => {
         IWaste,
         HttpError
     >({
-        refineCoreProps: { action: "edit" },
+        refineCoreProps: { 
+            resource: "wastes",
+            action: "edit" 
+        },
     });
 
     const {
@@ -53,6 +62,19 @@ export const WasteList: React.FC<IResourceComponentsProps> = () => {
     } = editDrawerFormProps;
 
     const wastes: IWaste[] = tableQueryResult.data?.data || [];
+
+    if (tableQueryResult?.isLoading) {
+        return (
+            <Grid container justifyContent="center" alignItems="center" style={{ height: '80vh' }}>
+              <Grid item>
+                  <RotateLoader 
+                    color={palette.primary.main}
+                    speedMultiplier={0.5}
+                  />
+              </Grid>
+            </Grid>
+          )
+    }
 
     return (
         <>

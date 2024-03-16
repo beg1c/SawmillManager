@@ -19,10 +19,13 @@ import Pagination from "@mui/material/Pagination";
 import SearchIcon from "@mui/icons-material/Search";
 import { IMaterial } from "../../interfaces/interfaces";
 import { CreateMaterial, EditMaterial, MaterialItem } from "../../components/material";
+import { RotateLoader } from "react-spinners";
+import { useTheme } from "@mui/material";
 
 
 export const MaterialList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
+    const { palette } = useTheme();
 
     const { tableQueryResult, setFilters, setCurrent, filters, pageCount } =
         useTable<IMaterial>({
@@ -34,7 +37,10 @@ export const MaterialList: React.FC<IResourceComponentsProps> = () => {
         IMaterial,
         HttpError
     >({
-        refineCoreProps: { action: "create" },
+        refineCoreProps: { 
+            resource: "materials",
+            action: "create" 
+        },
     });
 
     const {
@@ -45,7 +51,10 @@ export const MaterialList: React.FC<IResourceComponentsProps> = () => {
         IMaterial,
         HttpError
     >({
-        refineCoreProps: { action: "edit" },
+        refineCoreProps: { 
+            resource: "materials",
+            action: "edit" 
+        },
     });
 
     const {
@@ -53,6 +62,19 @@ export const MaterialList: React.FC<IResourceComponentsProps> = () => {
     } = editDrawerFormProps;
 
     const materials: IMaterial[] = tableQueryResult.data?.data || [];
+
+    if (tableQueryResult?.isLoading) {
+        return (
+            <Grid container justifyContent="center" alignItems="center" style={{ height: '80vh' }}>
+              <Grid item>
+                  <RotateLoader 
+                    color={palette.primary.main}
+                    speedMultiplier={0.5}
+                  />
+              </Grid>
+            </Grid>
+          )
+    }
 
     return (
         <>

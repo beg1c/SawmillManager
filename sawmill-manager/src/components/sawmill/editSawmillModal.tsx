@@ -14,6 +14,8 @@ import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Controller } from "react-hook-form";
 import { format, parse } from "date-fns";
+import { MoonLoader } from "react-spinners";
+import { Grid } from "@mui/material";
 
 
 export const EditSawmillModal: React.FC<
@@ -28,6 +30,10 @@ export const EditSawmillModal: React.FC<
 }) => {
 
     const t = useTranslate();
+
+    if (formLoading) {
+        return null;
+    }
  
     return (
         <Dialog
@@ -76,6 +82,7 @@ export const EditSawmillModal: React.FC<
                                 defaultValue={null}
                                 render={({field}) => (
                                     <TimePicker
+                                        sx={{ marginRight: 1 }}
                                         ampm={false}
                                         views={['hours', 'minutes']}
                                         label="Open from" 
@@ -93,6 +100,7 @@ export const EditSawmillModal: React.FC<
                                 defaultValue={null}
                                 render={({field}) => (
                                     <TimePicker
+                                        sx={{ marginLeft: 1 }}
                                         ampm={false}
                                         views={['hours', 'minutes']}
                                         label="Open until" 
