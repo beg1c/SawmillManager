@@ -169,22 +169,6 @@ export const DashboardPage: React.FC = () => {
                 <Card
                 title={t("dashboard.closestServices.title")}
                 >
-                </Card>
-            </Grid>
-            <Grid
-                item
-                xs={24}
-                sm={24}
-                md={24}
-                lg={9}
-                xl={9}
-                sx={{
-                height: "504px",
-                }}
-            >
-                <Card
-                title={t("dashboard.closestServices.title")}
-                >
                     <ClosestServices />
                 </Card>
             </Grid>
@@ -193,8 +177,24 @@ export const DashboardPage: React.FC = () => {
                 xs={24}
                 sm={24}
                 md={24}
-                lg={15}
-                xl={15}
+                lg={12}
+                xl={12}
+                sx={{
+                height: "504px",
+                }}
+            >
+                <Card
+                title={t("dashboard.map.title")}
+                >
+                </Card>
+            </Grid>
+            <Grid
+                item
+                xs={24}
+                sm={24}
+                md={24}
+                lg={12}
+                xl={12}
                 sx={{
                 height: "504px",
                 }}

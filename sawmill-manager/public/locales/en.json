@@ -358,6 +358,18 @@
         }
     },
     "dashboard": {
+        "recentDailyLogs": {
+            "title": "Recent daily logs"
+        },
+        "map": {
+            "title": "Map"
+        },
+        "closestServices": {
+            "title": "Closest services"
+        },
+        "dailyProductivity": {
+            "title": "Daily productivity"
+        },
         "biggestCustomers": {
             "title": "Biggest customers"
         },

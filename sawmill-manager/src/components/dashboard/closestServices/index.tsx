@@ -2,12 +2,14 @@ import { useDataGrid } from "@refinedev/mui"
 import { IEquipment } from "../../../interfaces/interfaces"
 import { useNavigation } from "@refinedev/core"
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Stack, Typography } from "@mui/material";
+import { Avatar, Stack, Typography } from "@mui/material";
 import { useMemo } from "react";
+import { HandymanRounded } from "@mui/icons-material";
+import { green } from "@mui/material/colors";
 
 
 export const ClosestServices = () => {
-    const { show } = useNavigation();
+    const { edit } = useNavigation();
 
     const { dataGridProps } = useDataGrid<IEquipment>({
         resource: "dashboard/get-closest-services",
@@ -17,27 +19,53 @@ export const ClosestServices = () => {
     const columns = useMemo<GridColDef<IEquipment>[]>(
         () => [
             {
-            field: "next_service_date",
-            width: 220,
-            renderCell: function render({ row }) {
-                return (
-                    <Stack spacing="4px">
-                        <Typography>{row.next_service_date.toString()}</Typography>
-                    </Stack>
+                field: "avatar",
+                headerName: "",
+                align: "center",
+                renderCell: function render(params) {
+                    return (
+                        <Avatar 
+                            sx={{ 
+                                bgcolor: green[500], 
+                                width: 70, 
+                                height: 70 
+                            }}
+                            src={params?.row?.photo}
+                        >
+                            <HandymanRounded />
+                        </Avatar>
                     );
                 },
             },
             {
                 field: "name",
-                width: 220,
+                width: 250,
                 renderCell: function render({ row }) {
                     return (
                         <Stack spacing="4px">
                             <Typography>{row.name}</Typography>
                         </Stack>
-                        );
-                    },
+                    );
                 },
+            },
+            {
+            field: "next_service_date",
+            flex: 1,
+            align: "right",
+            renderCell: function render({ row }) {
+                return (
+                    <Stack>
+                        <Typography
+                            variant="caption"
+                            color="text.secondary"
+                        >
+                            Next service
+                        </Typography>
+                        <Typography>{row.next_service_date.toString()}</Typography>
+                    </Stack>
+                );
+                },
+            },
         ],
         [],
     );
@@ -45,10 +73,16 @@ export const ClosestServices = () => {
     return (
         <DataGrid
             {...dataGridProps}
-            onRowClick={(row) => show("equipment", row.id)}
+            onRowClick={(row) => edit("equipment", row.id)}
             columns={columns}
             columnHeaderHeight={0}
             hideFooter={true}
+            rowHeight={85}
+            sx={{
+                '& .MuiDataGrid-row:hover': {
+                    cursor: 'pointer'
+                },
+            }}
         />
     );
 }

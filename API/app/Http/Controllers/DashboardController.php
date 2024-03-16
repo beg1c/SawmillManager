@@ -135,7 +135,7 @@ class DashboardController extends Controller
     public function getClosestServices()
     {
         $querySawmill = request()->query('sawmill');
-        $pageSize = request()->query('pageSize', 10);
+        $pageSize = request()->query('pageSize', 5);
 
         $equipment = Equipment::orderBy('next_service_date', 'asc');
 
