@@ -10,6 +10,7 @@ import { RecentDailyLogs } from "../../components/dashboard/recentDailyLogs";
 import { MostSoldProducts } from "../../components/dashboard/mostSoldProducts";
 import { ClosestServices } from "../../components/dashboard/closestServices";
 import { DailyProductivity } from "../../components/dashboard/dailyProductivity";
+import { DashboardMap } from "../../components/dashboard/map";
 
 
 export const DashboardPage: React.FC = () => {
@@ -184,8 +185,14 @@ export const DashboardPage: React.FC = () => {
                 }}
             >
                 <Card
-                title={t("dashboard.map.title")}
+                    title={t("dashboard.map.title")}
+                    cardContentProps={{
+                    sx: {
+                        height: "424px",
+                    },
+                    }}
                 >
+                    <DashboardMap />
                 </Card>
             </Grid>
             <Grid
