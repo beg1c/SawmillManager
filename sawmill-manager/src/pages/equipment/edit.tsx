@@ -13,22 +13,22 @@ import FormLabel from "@mui/material/FormLabel";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 import FormHelperText from "@mui/material/FormHelperText";
 import { IEquipment, ISawmill } from "../../interfaces/interfaces";
 import { green } from "@mui/material/colors";
 import { Controller, FieldValues, SubmitHandler } from "react-hook-form";
-import { Autocomplete, Input } from "@mui/material";
+import { Autocomplete, Input, Typography, useTheme } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { format, isValid, parseISO } from "date-fns";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { ScaleLoader } from "react-spinners";
+import { RotateLoader } from "react-spinners";
 import { useState } from "react";
 import ImageCrop from "../../components/imageCrop";
 
 
 export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
+    const { palette } = useTheme();
     const {
         register,
         refineCore: { formLoading, onFinish, queryResult },
@@ -85,16 +85,15 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
 
     if (formLoading) {
         return (
-        <Grid container justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
-            <Grid item>
-                <ScaleLoader 
-                color="#67be23"
-                width={5}
-                height={120}
-                />
+            <Grid container justifyContent="center" alignItems="center" style={{ height: '80vh' }}>
+              <Grid item>
+                  <RotateLoader 
+                    color={palette.primary.main}
+                    speedMultiplier={0.5}
+                  />
+              </Grid>
             </Grid>
-        </Grid>
-        )
+          )
     }
 
     return (
@@ -150,6 +149,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     src={croppedBase64 || equipment?.photo}
                                 >{t("images.add")}</Avatar>
                             </label>
+                            <Typography variant="h6">{t("equipment.images.change_image")}</Typography>
                         </Stack>
                     </Grid>
                     <Grid item xs={12} md={4}>
@@ -237,6 +237,48 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     </FormHelperText>
                                 )}
                             </FormControl>
+                            <FormControl>
+                                <FormLabel
+                                    sx={{
+                                        marginBottom: "8px",
+                                        fontWeight: "700",
+                                        fontSize: "14px",
+                                        color: "text.primary",
+                                    }}
+                                >
+                                    {t("equipment.fields.next_service_date")}
+                                </FormLabel>
+                                <Controller
+                                    control={control}
+                                    name="next_service_date"
+                                    defaultValue={null as any}
+                                    render={({field}) => (
+                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                        <DatePicker
+                                            value={field.value && isValid(parseISO(field.value)) ? 
+                                                parseISO(field.value) : null}
+                                            slotProps={{
+                                                textField: { 
+                                                    size: 'small',
+                                                } 
+                                            }}
+                                            onChange={(date) => {
+                                                const selectedDate = date ? format(date, 'yyyy-MM-dd') : null; 
+                                                field.onChange(selectedDate);
+                                            }}         
+                                        />
+                                    </LocalizationProvider>
+
+                                    )}
+                                >
+                                </Controller>
+                            {errors.last_service_date && (
+                                <FormHelperText error>
+                                    {// @ts-ignore 
+                                    } {errors.last_service_date.message}
+                                </FormHelperText>
+                            )}
+                        </FormControl>
                         </Stack>
                     </Grid>
                     <Grid

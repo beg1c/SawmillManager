@@ -93,7 +93,7 @@ export interface IEquipment {
     last_service_working_hours?: string;
     sawmill?: ISawmill;
     photo: string;
-    next_service_date: Date;
+    next_service_date: string;
 }
 
 export interface ICustomer {

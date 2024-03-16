@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid, Paper, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Grid, Paper, Stack, Typography, useTheme } from "@mui/material";
 import { green } from "@mui/material/colors";
 import { IResourceComponentsProps, useGo, useShow } from "@refinedev/core";
 import {
@@ -8,7 +8,7 @@ import {
 import { IEmployee } from "../../interfaces/interfaces";
 import { CalendarMonth, LocalPhoneOutlined, MailOutlined, PersonOutlined, WorkOutline } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-import { ScaleLoader } from "react-spinners";
+import { RotateLoader } from "react-spinners";
 
 type EmployeeInfoTextProps = {
   icon: React.ReactNode;
@@ -34,22 +34,22 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
   const { t } = useTranslation();
   const { queryResult } = useShow<IEmployee>({});
   const { data, isLoading } = queryResult;
+  const { palette } = useTheme();
   const employee = data?.data;
   const go = useGo();
 
   if (isLoading) {
     return (
-      <Grid container justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
-        <Grid item>
-            <ScaleLoader 
-              color="#67be23"
-              width={5}
-              height={120}
-            />
+        <Grid container justifyContent="center" alignItems="center" style={{ height: '80vh' }}>
+          <Grid item>
+              <RotateLoader 
+                color={palette.primary.main}
+                speedMultiplier={0.5}
+              />
+          </Grid>
         </Grid>
-      </Grid>
-    )
-  }
+      )
+}
 
   return (
     <Grid container spacing={2}>
