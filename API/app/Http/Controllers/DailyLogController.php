@@ -134,4 +134,30 @@ class DailyLogController extends Controller
 
         return new DailyLogResource($dailyLog);
     }
+
+    public function destroy($id)
+    {
+        if (!Gate::allows('manage-daily-logs')) {
+            return response()->json([
+                'message' => 'You are not allowed to manage logs.'
+            ], 403);
+        }
+
+        $dailyLog = DailyLog::findOrFail($id);
+
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+
+        if (!in_array($dailyLog->sawmill->id, $user_sawmill_ids)) {
+            return response()->json([
+                'message' => 'You are not allowed to delete daily logs for sawmills you do not manage.'
+            ], 403);
+        }
+
+        $dailyLog->delete();
+
+        return response()->json([
+            'message' => 'Daily log deleted.'
+        ]);
+    }
 }

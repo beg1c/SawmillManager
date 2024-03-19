@@ -13,6 +13,7 @@ import Grid from "@mui/material/Grid";
 import { ISawmill } from "../../interfaces/interfaces";
 import { Edit } from "@mui/icons-material";
 import { CreateSawmillModal, EditSawmillModal } from "../../components/sawmill";
+import LinearProgress from '@mui/material/LinearProgress';
 
 export const SawmillList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
@@ -80,9 +81,18 @@ export const SawmillList: React.FC<IResourceComponentsProps> = () => {
               flex: 1,
               sortable: false,
               valueGetter: (params) => {
-                  return params.row.open_hours !== null ? 
-                      params.row.open_hours : 
-                          t("sawmills.fields.no_open_hours")
+                    let open_from = params.row.open_from?.split(":").slice(0, 2).join(":");
+                    let open_until = params.row.open_until?.split(":").slice(0, 2).join(":");
+
+                    if (open_from && open_until) {
+                        return open_from + '-' + open_until;
+                    } else if (open_from) {
+                        return t("sawmills.fields.open_from") + ' ' + open_from;
+                    } else if (open_until) {
+                        return t("sawmills.fields.open_until") + ' ' + open_until;
+                    } else {
+                        return t("sawmills.fields.no_open_hours")
+                    }     
               }
           },
             {
@@ -117,7 +127,8 @@ export const SawmillList: React.FC<IResourceComponentsProps> = () => {
                         columns={columns}
                         filterModel={undefined}
                         autoHeight
-                        pageSizeOptions={[10, 20, 50, 100]} />
+                        pageSizeOptions={[10, 20, 50, 100]} 
+                    />
                 </List>
             </Grid>
             <CreateSawmillModal {...createModalFormProps} />

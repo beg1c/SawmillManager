@@ -18,7 +18,8 @@ class SawmillResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'address' => $this->address,
-            'open_hours' => $this->open_hours,
+            'open_from' => $this->open_from,
+            'open_until' => $this->open_until,
         ];
     }
 }

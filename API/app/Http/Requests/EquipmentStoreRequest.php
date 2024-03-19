@@ -31,7 +31,8 @@ class EquipmentStoreRequest extends FormRequest
             'last_service_date' => 'nullable|date',
             'last_service_working_hours' => 'nullable|numeric|max:50000',
             'sawmill.id' => 'nullable|exists:sawmills,id',
-            'photo' => ['nullable', new Base64Image]
+            'photo' => ['nullable', new Base64Image],
+            'next_service_date' => 'nullable|date',
         ];
     }
 }

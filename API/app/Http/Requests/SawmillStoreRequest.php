@@ -24,7 +24,8 @@ class SawmillStoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:30',
             'address' => 'nullable|string|max:50',
-            'open_hours' => 'nullable|string|max:30',
+            'open_from' => 'nullable|date_format:H:i:s',
+            'open_until' => 'nullable|date_format:H:i:s',
         ];
     }
 }

@@ -18,7 +18,8 @@ export interface ISawmill {
     id: number;
     name: string;
     address?: string;
-    open_hours?: string;
+    open_from?: string;
+    open_until?: string;
 }
 
 export interface IProduct {
@@ -92,6 +93,7 @@ export interface IEquipment {
     last_service_working_hours?: string;
     sawmill?: ISawmill;
     photo: string;
+    next_service_date: string;
 }
 
 export interface ICustomer {
@@ -99,6 +101,10 @@ export interface ICustomer {
     name: string;
     contact_number?: string;
     address?: string;
+}
+
+export interface ICustomerWTotalSpent extends ICustomer {
+    total_spent: number;
 }
 
 export interface ICustomerFilterVariables {
@@ -137,4 +143,11 @@ export interface IIdentity {
     birthday?: string;
     role: string;
     sawmills: ISawmill[];
+}
+
+export interface IDailyProductivity {
+    date: Date;
+    product_quantity: number;
+    waste_quantity: number;
+    material_quantity: number;
 }

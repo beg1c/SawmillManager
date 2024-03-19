@@ -26,6 +26,10 @@ export const EditCustomerModal: React.FC<
     
     const t = useTranslate();
 
+    if (formLoading) {
+        return null;
+    }
+
     return (
         <Dialog
             open={visible}

@@ -32,15 +32,15 @@ import { IEmployee, IRole, ISawmill } from "../../interfaces/interfaces";
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format, isValid, parseISO } from "date-fns";
-import { ScaleLoader } from "react-spinners";
+import { RotateLoader } from "react-spinners";
 import ImageCrop from "../../components/imageCrop";
 import { LockOutlined } from "@mui/icons-material";
 import { ChangePasswordModal } from "../../components/changePassword";
-import { useTheme } from "@mui/material";
+import { Typography, useTheme } from "@mui/material";
 
 export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
-    const theme = useTheme();
+    const { palette } = useTheme();
     const stepTitles = [
         t("employees.steps.content"),
         t("employees.steps.relations"),
@@ -143,18 +143,18 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
         resource: "sawmills",
     });
 
+
     if (formLoading) {
         return (
-          <Grid container justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
-            <Grid item>
-                <ScaleLoader 
-                  color="#67be23"
-                  width={5}
-                  height={120}
-                />
+            <Grid container justifyContent="center" alignItems="center" style={{ height: '80vh' }}>
+              <Grid item>
+                  <RotateLoader 
+                    color={palette.primary.main}
+                    speedMultiplier={0.5}
+                  />
+              </Grid>
             </Grid>
-          </Grid>
-        )
+          )
     }
 
     const renderFormByStep = (step: number) => {
@@ -203,6 +203,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                             src={croppedBase64 || employee?.avatar}
                                         >Add avatar</Avatar>
                                     </label>
+                                    <Typography variant="h6">{t("employees.images.change_image")}</Typography>
                                 </Stack>
                             </Grid>
                             <Grid item xs={12} md={8}>
@@ -280,7 +281,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                             {(employee?.id === user?.id) && 
                                                 <Button 
                                                     sx={{
-                                                        bgcolor: theme.palette.primary.main,
+                                                        bgcolor: palette.primary.main,
                                                         color: "white",
                                                         width: "50%"
                                                     }}

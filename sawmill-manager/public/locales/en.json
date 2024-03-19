@@ -58,15 +58,16 @@
             "birthday": "Birthday",
             "role": "Role",
             "sawmills": "Sawmills",
-            "employed_at": "Employed at",
-            "images": {
-                "label": "Images",
-                "description": "Add user picture"
-            }
+            "employed_at": "Employed at"
         },
         "steps": {
             "content": "Content",
             "relations": "Relations"
+        },
+        "images": {
+            "label": "Images",
+            "description": "Add user picture",
+            "change_image": "Click on image to change"
         },
         "password_change": "Password change",
         "password_warning": "An email will be sent to the employee to set up their password. Please ensure the spelling is correct."
@@ -184,7 +185,9 @@
             "address": "Address",
             "no_address": "Address missing",
             "open_hours": "Open hours",
-            "no_open_hours": "Not provided"
+            "no_open_hours": "Not specified",
+            "open_from": "Open from",
+            "open_until": "Open until"
         },
         "steps": {
             "content": "Content",
@@ -216,7 +219,9 @@
             "last_service_working_hours": "Service working hours",
             "last_service_date": "Service date",
             "no_last_service_date": "No service date",
-            "sawmill": "Sawmill"
+            "sawmill": "Sawmill",
+            "next_service_date": "Next service",
+            "no_next_service_date": "Not provided"
         },
         "steps": {
             "content": "Content",
@@ -229,6 +234,11 @@
                 "placeholder": "Name or contact number"
             },
             "submit": "Filter"
+        },
+        "images": {
+            "label": "Equipment image",
+            "description": "Add equipment image",
+            "change_image": "Click on image to change"
         }
     },
     "products": {
@@ -257,6 +267,7 @@
             }
         },
         "filter": {
+            "submit": "Submit",
             "sawmill": {
               "label": "Sawmill"
             }
@@ -353,6 +364,29 @@
         "output": {
             "products": "Output products",
             "wastes": "Output wastes"
+        }
+    },
+    "dashboard": {
+        "recentDailyLogs": {
+            "title": "Recent daily logs"
+        },
+        "map": {
+            "title": "Map"
+        },
+        "closestServices": {
+            "title": "Closest services"
+        },
+        "dailyProductivity": {
+            "title": "Daily productivity"
+        },
+        "biggestCustomers": {
+            "title": "Biggest customers"
+        },
+        "mostSoldProducts": {
+            "title": "Most sold products"
+        },
+        "pendingOrders": {
+            "title": "Pending orders"
         }
     },
     "images": {

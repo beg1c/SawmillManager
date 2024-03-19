@@ -14,11 +14,17 @@ class CustomerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        $data = [
           'id' => $this->id,
           'name' => $this->name,
           'contact_number' => $this->contact_number,
           'address' => $this->address,
         ];
+
+        if ($this->orders_sum_amount) {
+            $data['total_spent'] = intval($this->orders_sum_amount);
+        }
+
+        return $data;
     }
 }

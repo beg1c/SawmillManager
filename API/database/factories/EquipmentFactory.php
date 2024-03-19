@@ -29,7 +29,8 @@ class EquipmentFactory extends Factory
                                                 'equipment3.jpg',
                                                 'equipment4.jpg',
                                                 'equipment5.jpg',
-                                                'equipment6.jpg'])
+                                                'equipment6.jpg']),
+            'next_service_date' => fake()->dateTimeBetween('+4 week', '+1 year'),
         ];
     }
 }

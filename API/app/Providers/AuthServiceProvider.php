@@ -83,5 +83,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('view-all-daily-logs', function ($user) {
             return $user->role->role_name === 'executive';
         });
+
+        Gate::define('manage-daily-logs', function ($user) {
+            return in_array($user->role->role_name, ['executive', 'manager']);
+        });
     }
 }

@@ -15,14 +15,13 @@ import {
 import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
 import { IEquipment } from "../../interfaces/interfaces";
-import { green } from "@mui/material/colors";
 import { Close, Edit, HandymanRounded } from "@mui/icons-material";
 import { useTheme } from "@mui/material";
 
 export const EquipmentList: React.FC<IResourceComponentsProps> = () => {
     const { edit } = useNavigation();
     const t = useTranslate();
-    const theme = useTheme();
+    const { palette } = useTheme();
     const { mutate: mutateDelete } = useDelete();
     const { data } = useCan({
       resource: "equipment",
@@ -43,7 +42,7 @@ export const EquipmentList: React.FC<IResourceComponentsProps> = () => {
                     return (
                       <Avatar 
                         sx={{ 
-                            bgcolor: green[500], 
+                            bgcolor: palette.primary.main, 
                             width: 64, 
                             height: 64 
                         }}
@@ -66,18 +65,6 @@ export const EquipmentList: React.FC<IResourceComponentsProps> = () => {
                 flex: 2,
                 minWidth: 150,
             },
-            // {
-            //     field: "description",
-            //     headerName: t("equipment.fields.description"),
-            //     flex: 1,
-            //     minWidth: 200,
-            // },
-            // {
-            //     field: "notes",
-            //     headerName: t("equipment.fields.notes"),
-            //     flex: 1,
-            //     minWidth: 150,
-            // },
             {
               field: "production_year",
               headerName: t("equipment.fields.production_year"),
@@ -100,6 +87,16 @@ export const EquipmentList: React.FC<IResourceComponentsProps> = () => {
                 flex: 1,
                 minWidth: 100,
             },
+            {
+                field: "next_service_date",
+                headerName: t("equipment.fields.next_service_date"),
+                flex: 1,
+                minWidth: 100,
+                valueGetter: (params) => {
+                  return (params.row.next_service_date ? params.row.next_service_date : 
+                      t("equipment.fields.no_next_service_date"))
+                }
+              },
             {
               field: "actions",
               headerName: t("table.actions"),

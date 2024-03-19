@@ -19,7 +19,8 @@ class SawmillFactory extends Factory
         return [
             'name' => fake()->name(),
             'address' => fake()->address(),
-            'open_hours' => fake()->randomElement(['07-15', '08-16', '09-17']),
+            'open_from' => '07:00:00',
+            'open_until' => '15:00:00',
         ];
     }
 }

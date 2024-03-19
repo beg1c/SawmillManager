@@ -19,7 +19,7 @@ class ProductFactory extends Factory
         return [
             'name' => fake()->words(3, true),
             'description' => fake()->sentence(),
-            'unit_of_measure'=> fake()->randomElement(['Cubic meter', 'Piece']),
+            'unit_of_measure'=> 'm3',
             'price' => fake()->randomNumber(2, true),
             'photo' => fake()->randomElement(['product1.jpg',
                                                 'product2.jpg',

@@ -1,5 +1,5 @@
-import { Avatar, Box, Grid, Paper, Stack, Typography } from "@mui/material";
-import { HttpError, IResourceComponentsProps, useCan, useShow } from "@refinedev/core";
+import { Avatar, Box, Grid, Paper, Stack, Typography, useTheme } from "@mui/material";
+import { HttpError, IResourceComponentsProps, useCan, useNavigation, useShow } from "@refinedev/core";
 import { IDailyLog, IMaterialWQuantity, IProductWQuantity, IWasteWQuantity } from "../../interfaces/interfaces";
 import { useTranslation } from "react-i18next";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -8,18 +8,21 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React from "react";
 import { ForestOutlined, LocalGroceryStoreOutlined, RecyclingOutlined } from "@mui/icons-material";
-import { EditButton, List } from "@refinedev/mui";
+import { DeleteButton, EditButton, List } from "@refinedev/mui";
 import { AddProducts } from "../../components/dailyLog";
 import { useModalForm } from "@refinedev/react-hook-form";
 import { AddMaterials } from "../../components/dailyLog/addMaterials";
 import { AddWastes } from "../../components/dailyLog/addWastes";
+import { RotateLoader } from "react-spinners";
 
 
 export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
     const { t } = useTranslation();
     const { queryResult } = useShow<IDailyLog>({});
-    const { data } = queryResult;
+    const { data, isLoading} = queryResult;
     const dailyLog = data?.data;
+    const { push } = useNavigation();
+    const { palette } = useTheme();
 
     const productsDrawerFormProps = useModalForm<
         IDailyLog,
@@ -217,18 +220,31 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                             <Typography variant="h6">
                                 {dailyLog?.sawmill.name}
                             </Typography>
-                            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                <DatePicker
-                                    readOnly
-                                    value={dailyLog?.date && isValid(parseISO(dailyLog?.date.toString())) ? 
-                                        parseISO(dailyLog?.date.toString()) : null}
-                                    slotProps={{
-                                        textField: { 
-                                            size: 'small',
-                                        } 
-                                    }} 
+                            <Box 
+                                display='flex'
+                                alignItems='center'
+                            >  
+                                <DeleteButton 
+                                    hideText={true}
+                                    sx={{ marginRight: 1 }}
+                                    size="large"
+                                    onSuccess={() => {  
+                                        push("/dailylogs");
+                                    }}  
                                 />
-                            </LocalizationProvider>
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <DatePicker
+                                        readOnly
+                                        value={dailyLog?.date && isValid(parseISO(dailyLog?.date.toString())) ? 
+                                            parseISO(dailyLog?.date.toString()) : null}
+                                        slotProps={{
+                                            textField: { 
+                                                size: 'small',
+                                            } 
+                                        }} 
+                                    />
+                                </LocalizationProvider>
+                            </Box> 
                         </Paper>
                     </Grid>
                     <Grid item xs={12} lg={4}>
@@ -248,6 +264,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 rows={dailyLog?.materials || []}
                                 hideFooterPagination
                                 rowHeight={124}
+                                loading={isLoading}
                             />
                         </List>
                     </Grid>
@@ -268,6 +285,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 rows={dailyLog?.products || []}
                                 hideFooterPagination
                                 rowHeight={124}
+                                loading={isLoading}
                             />
                         </List>
                     </Grid>
@@ -288,6 +306,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 rows={dailyLog?.wastes || []}
                                 hideFooterPagination
                                 rowHeight={124}
+                                loading={isLoading}
                             />
                         </List>
                     </Grid>

@@ -140,59 +140,69 @@ export const ProductItem: React.FC<ProductItem> = ({
                 }}
             >
                 <Divider />
-                <Tooltip title={name}>
+                <Box
+                    display="flex"
+                    justifyContent="space-between"
+                >
+                <Stack>
+                    <Tooltip title={name}>
+                        <Typography
+                            sx={{
+                                fontWeight: 800,
+                                fontSize: "18px",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                            }}
+                        >
+                            {name}
+                        </Typography>
+                    </Tooltip>
+                    <Tooltip title={description}>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                mt: 2,
+                                overflowWrap: "break-word",
+                                color: "text.secondary",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                display: "-webkit-box",
+                                WebkitLineClamp: "3",
+                                WebkitBoxOrient: "vertical",
+                                flex: 1,
+                            }}
+                        >
+                            {description}
+                        </Typography>
+                    </Tooltip>
+                </Stack>
+                <Stack>
+                    <Tooltip title={`${price} €`} placement="top">
+                        <Typography
+                            sx={{
+                                fontWeight: 700,
+                                fontSize: "22px",
+                                overflowWrap: "break-word",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                display: "-webkit-box",
+                            }}
+                        >{`${price} €`}</Typography>
+                    </Tooltip>
                     <Typography
                         sx={{
-                            fontWeight: 800,
-                            fontSize: "18px",
-                            overflow: "hidden",
-                            whiteSpace: "nowrap",
-                            textOverflow: "ellipsis",
-                        }}
-                    >
-                        {name}
-                    </Typography>
-                </Tooltip>
-                <Tooltip title={description}>
-                    <Typography
-                        variant="body2"
-                        sx={{
-                            mt: 2,
+                            minWidth: 60,
+                            fontWeight: 400,
+                            fontSize: "16px",
                             overflowWrap: "break-word",
-                            color: "text.secondary",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             display: "-webkit-box",
-                            WebkitLineClamp: "3",
-                            WebkitBoxOrient: "vertical",
-                            flex: 1,
                         }}
-                    >
-                        {description}
-                    </Typography>
-                </Tooltip>
-                <Tooltip title={`${price} €`} placement="top">
-                    <Typography
-                        sx={{
-                            fontWeight: 500,
-                            fontSize: "24px",
-                            overflowWrap: "break-word",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            display: "-webkit-box",
-                        }}
-                    >{`${price} €`}</Typography>
-                </Tooltip>
-                <Typography
-                    sx={{
-                        fontWeight: 500,
-                        fontSize: "24px",
-                        overflowWrap: "break-word",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "-webkit-box",
-                    }}
-                >{`/ ${unit_of_measure}`}</Typography>
+                    >{`per ${unit_of_measure}`}</Typography>
+                </Stack>
+                </Box>
             </CardContent>
         </Card>
     );

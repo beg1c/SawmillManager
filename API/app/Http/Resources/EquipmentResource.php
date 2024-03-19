@@ -30,7 +30,8 @@ class EquipmentResource extends JsonResource
             'last_service_date' => $this->last_service_date,
             'last_service_working_hours' => $this->last_service_working_hours,
             'sawmill' => new SawmillResource($this->sawmill),
-            'photo' => $photoUrl
+            'photo' => $photoUrl,
+            'next_service_date' => $this->next_service_date,
         ];
 
         return $data;

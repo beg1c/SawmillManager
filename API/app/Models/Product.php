@@ -15,6 +15,11 @@ class Product extends Model
         return $this->belongsToMany(Inventory::class)->withPivot(['quantity']);
     }
 
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class)->withPivot(['quantity']);
+    }
+
     protected $fillable = [
         'name',
         'description',

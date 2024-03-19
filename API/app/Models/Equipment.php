@@ -24,6 +24,7 @@ class Equipment extends Model
         'production_year',
         'last_service_date',
         'last_service_working_hours',
-        'photo'
+        'photo',
+        'next_service_date'
     ];
 }

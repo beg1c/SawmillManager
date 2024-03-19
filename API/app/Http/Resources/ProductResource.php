@@ -33,6 +33,10 @@ class ProductResource extends JsonResource
             $data['quantity'] = $this->pivot->quantity;
         }
 
+        if ($this->total_sold) {
+            $data['quantity'] = $this->total_sold;
+        }
+
         return $data;
     }
 }
