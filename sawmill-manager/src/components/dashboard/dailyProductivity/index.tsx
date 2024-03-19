@@ -20,7 +20,7 @@ export const DailyProductivity: React.FC<DailyProductivityProps> = ({dailyProduc
             <BarChart
                 width={500}
                 height={300}
-                data={dailyProductivity}
+                data={testData}
                 margin={{
                     top: 20,
                     right: 30,
@@ -33,7 +33,7 @@ export const DailyProductivity: React.FC<DailyProductivityProps> = ({dailyProduc
 
                 <Tooltip 
                     separator=": "
-                    cursor={{fill: '#ffffff'}}
+                    cursor={{fill: palette.background.paper}}
                     formatter={(value: number) => {
                         return value + ' m3';
                     }}
@@ -42,13 +42,14 @@ export const DailyProductivity: React.FC<DailyProductivityProps> = ({dailyProduc
                 <Bar 
                     dataKey="material_quantity" 
                     name="Material input"
-                    fill="#ffc658" 
-                    activeBar={<Rectangle fill={palette.warning.main} />}
+                    fill={palette.primary.main}
+                    radius={[4, 4, 0, 0]} 
+                    activeBar={<Rectangle fill={palette.primary.light} />}
                 >
                     <LabelList
                         dataKey="material_quantity"
                         position="insideTop"
-                        fill='#ffffffcc'
+                        fill={palette.background.paper}
                         formatter={(value: number) => {
                             return value + ' m3';
                         }}
@@ -58,13 +59,13 @@ export const DailyProductivity: React.FC<DailyProductivityProps> = ({dailyProduc
                     dataKey="product_quantity" 
                     name="Product output"
                     stackId="a" 
-                    fill="#8884d8" 
-                    activeBar={<Rectangle fill={palette.info.main} />}
+                    fill={palette.primary.dark}
+                    activeBar={<Rectangle fill={palette.primary.main} />}
                 >
                     <LabelList
                         dataKey="product_quantity"
                         position="insideTop"
-                        fill='#ffffffcc'
+                        fill={palette.background.paper}
                         formatter={(value: number) => {
                             return value + ' m3';
                         }}
@@ -74,13 +75,14 @@ export const DailyProductivity: React.FC<DailyProductivityProps> = ({dailyProduc
                     dataKey="waste_quantity" 
                     name="Waste output"
                     stackId="a" 
-                    fill="#82ca9d" 
-                    activeBar={<Rectangle fill={palette.warning.dark} />}
+                    fill={palette.warning.main}
+                    radius={[4, 4, 0, 0]} 
+                    activeBar={<Rectangle fill={palette.warning.light} />}
                 >
                     <LabelList
                         dataKey="product_quantity"
                         position="insideTop"
-                        fill='#ffffffcc'
+                        fill={palette.background.paper}
                         formatter={(value: number) => {
                             return value + ' m3';
                         }}
@@ -90,3 +92,49 @@ export const DailyProductivity: React.FC<DailyProductivityProps> = ({dailyProduc
         </ResponsiveContainer>
     );
 };
+
+
+const testData: any = [
+    {
+        date: '2024-03-10',
+        product_quantity: 60,
+        waste_quantity: 20,
+        material_quantity: 100
+    },
+    {
+        date: '2024-03-11',
+        product_quantity: 67,
+        waste_quantity: 24,
+        material_quantity: 120
+    },
+    {
+        date: '2024-03-12',
+        product_quantity: 55,
+        waste_quantity: 18,
+        material_quantity: 110
+    },
+    {
+        date: '2024-03-13',
+        product_quantity: 45,
+        waste_quantity: 20,
+        material_quantity: 95
+    },
+    {
+        date: '2024-03-14',
+        product_quantity: 55,
+        waste_quantity: 23,
+        material_quantity: 100
+    },
+    {
+        date: '2024-03-15',
+        product_quantity: 65,
+        waste_quantity: 24,
+        material_quantity: 120
+    },
+    {
+        date: '2024-03-16',
+        product_quantity: 53,
+        waste_quantity: 20,
+        material_quantity: 110
+    }
+];

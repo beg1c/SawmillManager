@@ -32,17 +32,17 @@ export const BiggestCustomers: React.FC<BiggestCustomersProps> = ({customers}) =
                 <XAxis type="number" dataKey="total_spent" hide />
                 <Tooltip 
                     separator=": "
-                    cursor={{fill: '#ffffff'}}
+                    cursor={{fill: palette.background.paper}}
                     formatter={(value: number) => {
                         return value + '€';
                     }}
                 />
                 <Bar 
                     dataKey="total_spent" 
-                    fill={palette.primary.main} 
+                    fill={palette.primary.main}
                     radius={[0, 4, 4, 0]} 
                     name="Total spent"
-                    activeBar={<Rectangle fill={palette.warning.main} />}
+                    activeBar={<Rectangle fill={"#434343"} />}
                 >  
                     <LabelList
                         dataKey="total_spent"
@@ -55,7 +55,7 @@ export const BiggestCustomers: React.FC<BiggestCustomersProps> = ({customers}) =
                     <LabelList
                         dataKey="name"
                         position="insideLeft"
-                        fill='#ffffffcc'
+                        fill={palette.background.paper}
                     />
                 </Bar>
             </BarChart>

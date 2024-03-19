@@ -97,7 +97,7 @@ class DashboardController extends Controller
 
     public function getBiggestCustomers()
     {
-        $pageSize = request()->query('pageSize', 5);
+        $pageSize = request()->query('pageSize', 7);
         $querySawmill = request()->query('sawmill');
 
         $customers = Customer::withSum('orders', 'amount')

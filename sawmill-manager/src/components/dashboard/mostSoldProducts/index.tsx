@@ -1,7 +1,8 @@
 import { useTheme } from "@mui/material";
 import { IProductWQuantity } from "../../../interfaces/interfaces";
 import React from "react";
-import { Bar, BarChart, LabelList, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, LabelList, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useNavigation } from "@refinedev/core";
 
 
 interface MostSoldProductsProps {
@@ -32,17 +33,17 @@ export const MostSoldProducts: React.FC<MostSoldProductsProps> = ({products}) =>
                 <XAxis type="number" dataKey="quantity" hide/>
                 <Tooltip 
                     separator=": "
-                    cursor={{fill: '#ffffff'}}
+                    cursor={{fill: palette.background.paper}}
                     formatter={(value: number) => {
                         return value + ' cubic meters';
                     }}
                 />
                 <Bar 
                     dataKey="quantity" 
-                    fill={palette.primary.main} 
+                    fill={palette.primary.main}
                     radius={[0, 4, 4, 0]} 
                     name="Sold"
-                    activeBar={<Rectangle fill={palette.warning.main} />}
+                    activeBar={<Rectangle fill={"#434343"} />}
                 >  
                     <LabelList
                         dataKey="quantity"
@@ -55,7 +56,7 @@ export const MostSoldProducts: React.FC<MostSoldProductsProps> = ({products}) =>
                     <LabelList
                         dataKey="name"
                         position="insideLeft"
-                        fill='#ffffffcc'
+                        fill={palette.background.paper}
                     />
                 </Bar>
             </BarChart>

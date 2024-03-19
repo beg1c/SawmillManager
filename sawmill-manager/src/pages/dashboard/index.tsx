@@ -4,7 +4,7 @@ import { ICustomerWTotalSpent, IDailyProductivity, IProductWQuantity } from "../
 import { RefineListView } from "../../components/refine-list-view";
 import { Grid } from "@mui/material";
 import { Card } from "../../components/card";
-import { ListAltOutlined, LocalGroceryStoreOutlined, MonetizationOnOutlined, PeopleAltOutlined, ShoppingBagOutlined } from "@mui/icons-material/";
+import { BarChart, EngineeringOutlined, ListAltOutlined, LocalGroceryStoreOutlined, Map, MonetizationOnOutlined, PeopleAltOutlined, ShoppingBagOutlined, WorkHistory, WorkHistoryOutlined } from "@mui/icons-material/";
 import { PendingOrders } from "../../components/dashboard/pendingOrders";
 import { RecentDailyLogs } from "../../components/dashboard/recentDailyLogs";
 import { MostSoldProducts } from "../../components/dashboard/mostSoldProducts";
@@ -67,6 +67,8 @@ export const DashboardPage: React.FC = () => {
                 sx={{
                     ".MuiCardContent-root:last-child": {
                     paddingBottom: "24px",
+                    marginLeft: "-1px",
+                    
                     },
                 }}
                 cardContentProps={{
@@ -146,6 +148,7 @@ export const DashboardPage: React.FC = () => {
                 }}
             >
                 <Card
+                icon={<BarChart />}
                 title={t("dashboard.dailyProductivity.title")}
                 cardContentProps={{
                     sx: {
@@ -168,6 +171,7 @@ export const DashboardPage: React.FC = () => {
                 }}
             >
                 <Card
+                icon={<EngineeringOutlined />}
                 title={t("dashboard.closestServices.title")}
                 >
                     <ClosestServices />
@@ -185,6 +189,7 @@ export const DashboardPage: React.FC = () => {
                 }}
             >
                 <Card
+                    icon={<Map />}
                     title={t("dashboard.map.title")}
                     cardContentProps={{
                     sx: {
@@ -207,6 +212,7 @@ export const DashboardPage: React.FC = () => {
                 }}
             >
                 <Card
+                icon={<WorkHistoryOutlined />}
                 title={t("dashboard.recentDailyLogs.title")}
                 cardContentProps={{
                     sx: {
