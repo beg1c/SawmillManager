@@ -16,17 +16,17 @@ class EquipmentController extends Controller
     {
         $sortField = request()->query('sort', 'id');
         $sortDirection = request()->query('order', 'asc');
-        $pageSize = request()->query('pageSize', 25);
+        $pageSize = request()->query('pageSize');
 
-        if (Gate::allows('view-all-equipment')) {
-            $equipment = Equipment::orderBy($sortField, $sortDirection)
-                        ->paginate($pageSize, ['*'], 'current');
+        $user_sawmills_ids = Auth::user()->sawmills()->pluck('sawmill_id')->toArray();
+        $equipment = Equipment::whereIn('sawmill_id', $user_sawmills_ids)
+                    ->orderBy($sortField, $sortDirection);
+
+        if ($pageSize) {
+            $equipment->paginate($pageSize, ['*'], 'current');
         }
         else {
-            $user_sawmills_ids = Auth::user()->sawmills()->pluck('sawmill_id')->toArray();
-            $equipment = Equipment::whereIn('sawmill_id', $user_sawmills_ids)
-                        ->orderBy($sortField, $sortDirection)
-                        ->paginate($pageSize, ['*'], 'current');
+            $equipment->get();
         }
 
         return EquipmentResource::collection($equipment);
@@ -34,56 +34,62 @@ class EquipmentController extends Controller
 
     public function store(EquipmentStoreRequest $request)
     {
+        if (Gate::denies('manage-equipment')) {
+            return response()->json([
+                "message" => "You do not have permission to create equipment."
+            ], 403);
+        }
+
+        $user = Auth::user();
+        $sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+
+        if (!in_array($request['sawmill.id'], $sawmill_ids)) {
+            return response()->json([
+                "message" => "You do not have permission to create equipment for that sawmill."
+            ], 403);
+        }
+
         $photoName = null;
         if ($request->has('photo')) {
             $photoName = $this->savePhoto($request->photo);
         }
 
-        if (Gate::allows('manage-all-equipment')) {
-            return $this->createEquipment($request, $photoName);
-        }
-
-        if (Gate::allows('manage-equipment-associated-sawmills')) {
-            $user = Auth::user();
-            $sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
-
-            if (!in_array($request['sawmill.id'], $sawmill_ids)) {
-                return response()->json([
-                    "message" => "You do not have permission to create equipment for that sawmill."
-                ], 403);
-            }
-
-            return $this->createEquipment($request, $photoName);
-        }
-
-        return response()->json([
-            "message" => "You do not have permission to create equipment."
-        ], 403);
+        return $this->createEquipment($request, $photoName);
     }
 
     public function show($id)
     {
         $equipment = Equipment::findOrFail($id);
 
-        if (Gate::allows('view-all-equipment')) {
-            return new EquipmentResource($equipment);
-        }
-        else {
-            $user = Auth::user();
-            $sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+        $user = Auth::user();
+        $sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
 
-            if (!in_array($equipment->sawmill_id, $sawmill_ids)) {
-                return response()->json([
-                    'message' => 'You do not have permission to view that equipment.'
-                ], 403);
-            }
-
-            return new EquipmentResource($equipment);
+        if (!in_array($equipment->sawmill_id, $sawmill_ids)) {
+            return response()->json([
+                'message' => 'You do not have permission to view that equipment.'
+            ], 403);
         }
+
+        return new EquipmentResource($equipment);
     }
 
     public function update(EquipmentStoreRequest $request, $id)
     {
+        if (Gate::denies('manage-equipment')) {
+            return response()->json([
+                "message" => "You do not have permission to update equipment."
+            ], 403);
+        }
+
+        $user = Auth::user();
+        $sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+
+        if (!in_array($request['sawmill.id'], $sawmill_ids)) {
+            return response()->json([
+                "message" => "You do not have permission to update equipment for that sawmill."
+            ], 403);
+        }
+
         $equipment = Equipment::findOrfail($id);
         $photoName = null;
 
@@ -91,59 +97,32 @@ class EquipmentController extends Controller
             $photoName = $this->savePhoto($request->photo);
         }
 
-        if (Gate::allows('manage-all-equipment')) {
-            return $this->updateEquipment($request, $photoName, $id);
-        }
-
-        if (Gate::allows('manage-equipment-associated-sawmills')) {
-            $user = Auth::user();
-            $sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
-
-            if (!in_array($request['sawmill.id'], $sawmill_ids)) {
-                return response()->json([
-                    "message" => "You do not have permission to update equipment for that sawmill."
-                ], 403);
-            }
-
-            return $this->updateEquipment($request, $photoName, $id);
-        }
-
-        return response()->json([
-            "message" => "You do not have permission to update equipment."
-        ], 403);
+        return $this->updateEquipment($request, $photoName, $id);
     }
 
     public function destroy($id)
     {
+        if (Gate::denies('manage-equipment')) {
+            return response()->json([
+                "message" => "You do not have permission to delete equipment."
+            ], 403);
+        }
+
         $equipment = Equipment::findOrFail($id);
 
-        if (Gate::allows('manage-all-equipment')) {
-            $equipment->delete();
+        $user = Auth::user();
+        $sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+
+        if (!in_array($equipment->sawmill_id, $sawmill_ids)) {
             return response()->json([
-                "message" => "Equipment deleted."
-            ]);
+                "message" => "You do not have permission to delete that equipment."
+            ], 403);
         }
 
-        if (Gate::allows('manage-equipment-associated-sawmills')) {
-            $user = Auth::user();
-            $sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
-
-            if (!in_array($equipment->sawmill_id, $sawmill_ids)) {
-                return response()->json([
-                    "message" => "You do not have permission to delete that equipment."
-                ], 403);
-            }
-
-            $equipment = Equipment::findOrFail($id);
-                $equipment->delete();
-                return response()->json([
-                    "message" => "Equipment deleted."
-                ]);
-        }
-
+        $equipment->delete();
         return response()->json([
-            "message" => "You do not have permission to delete equipment."
-        ], 403);
+            "message" => "Equipment deleted."
+        ]);
     }
 
     private function savePhoto($base64Photo)

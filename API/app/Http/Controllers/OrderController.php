@@ -16,21 +16,16 @@ class OrderController extends Controller
     {
         $sortField = request()->query('sort', 'id');
         $sortDirection = request()->query('order', 'asc');
-        $pageSize = request()->query('pageSize', 10);
+        $pageSize = request()->query('pageSize');
         $queryStatuses = request()->query('status', []);
         $queryCustomer = request()->query('customer');
         $querySawmill = request()->query('sawmill');
 
-        if (Gate::allows('view-all-orders')) {
-            $orders = Order::orderBy($sortField, $sortDirection);
-        }
-        else {
-            $user = Auth::user();
-            $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
 
-            $orders = Order::whereIn('sawmill_id', $user_sawmill_ids)
-                        ->orderBy($sortField, $sortDirection)->get();
-        }
+        $orders = Order::whereIn('sawmill_id', $user_sawmill_ids)
+                    ->orderBy($sortField, $sortDirection)->get();
 
         if ($queryStatuses) {
             $orders->whereIn('status', $queryStatuses);
@@ -44,82 +39,83 @@ class OrderController extends Controller
             $orders->where('sawmill_id', 'like', $querySawmill);
         }
 
-        $orders = $orders->paginate($pageSize, ['*'], 'current');
+        if ($pageSize) {
+            $orders = $orders->paginate($pageSize, ['*'], 'current');
+        }
+        else {
+            $orders = $orders->get();
+        }
+
         return OrderResource::collection($orders);
     }
 
     public function store(OrderStoreRequest $request)
     {
-        if (Gate::allows('manage-all-orders')) {
-            return $this->createOrder($request);
-        }
-        else if (Gate::allows('manage-orders-associated-sawmills')) {
-            $user = Auth::user();
-            $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
-
-            if (!in_array($request['sawmill.id'], $user_sawmill_ids)) {
-                return response()->json([
-                    "message" => "You are not authorized to assign order to that sawmill."
-                ], 403);
-            }
-
-            return $this->createOrder($request);
-        }
-        else {
+        if (Gate::denies('manage-orders')) {
             return response()->json([
                 "message" => "You are not authorized to create orders."
             ], 403);
         }
+
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+
+        if (!in_array($request['sawmill.id'], $user_sawmill_ids)) {
+            return response()->json([
+                "message" => "You are not authorized to assign order to that sawmill."
+            ], 403);
+        }
+
+        return $this->createOrder($request);
     }
 
     public function show($id)
     {
-        if (Gate::allows('view-all-orders')) {
-            $order = Order::findOrFail($id);
-            return new OrderResource($order);
-        }
-        else {
-            $user = Auth::user();
-            $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
-            $order = Order::findOrFail($id);
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+        $order = Order::findOrFail($id);
 
-            if (!in_array($order->sawmill->id, $user_sawmill_ids)) {
-                return response()->json([
-                    "message" => "You are not authorized to view order assigned to other sawmill."
-                ], 403);
-            }
-
-            return new OrderResource($order);
+        if (!in_array($order->sawmill->id, $user_sawmill_ids)) {
+            return response()->json([
+                "message" => "You are not authorized to view order assigned to that sawmill."
+            ], 403);
         }
+
+        return new OrderResource($order);
     }
 
     public function update(OrderStoreRequest $request, $id)
     {
-        if (Gate::allows('manage-all-orders')) {
-            return $this->updateOrder($request, $id);
+        if (Gate::denies('manage-orders')) {
+            return response()->json([
+                "message" => "You are not authorized to update orders."
+            ], 403);
         }
 
-        if (Gate::allows('manage-orders-associated-sawmills')) {
-            $user = Auth::user();
-            $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
 
-            if(!in_array($order->sawmill->id, $user_sawmill_ids)) {
-                return response()->json([
-                    "message" => "You are not authorized to update order assigned to other sawmill."
-                ], 403);
-            }
-
-            return $this->updateOrder($request, $id);
+        if(!in_array($order->sawmill->id, $user_sawmill_ids)) {
+            return response()->json([
+                "message" => "You are not authorized to update order assigned to that sawmill."
+            ], 403);
         }
 
-        return response()->json([
-            "message" => "You are not authorized to update orders."
-        ], 403);
+        return $this->updateOrder($request, $id);
     }
 
     public function updateStatus(OrderStatusRequest $request, $id)
     {
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
         $order = Order::findOrFail($id);
+
+        if(!in_array($order->sawmill->id, $user_sawmill_ids)) {
+            return response()->json([
+                "message" => "You are not authorized to update order assigned to that sawmill."
+            ], 403);
+        }
+
         $status = $request['status'];
         $ready_at = date('Y-m-d H:i:s', strtotime($request['ready_at']));
         $dispatched_at = date('Y-m-d H:i:s', strtotime($request['dispatched_at']));
@@ -138,39 +134,30 @@ class OrderController extends Controller
             ]);
         }
 
-        $order->save();
-
         return new OrderResource($order);
     }
 
     public function destroy($id)
     {
+        if (Gate::denies('manage-orders')) {
+            return response()->json([
+                "message" => "You are not authorized to delete orders."
+            ]);
+        }
+
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
         $order = Order::findOrFail($id);
 
-        if (Gate::allows('manage-all-orders')) {
-            $order->delete();
+        if(!in_array($order->sawmill->id, $user_sawmill_ids)) {
             return response()->json([
-                "message" => "Order deleted."
-            ]);
-        }
-        else if (Gate::allows('manage-orders-associated-sawmills')) {
-            $user = Auth::user();
-            $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
-
-            if(!in_array($user->sawmill, $user_sawmill_ids)) {
-                return response()->json([
-                    "message" => "You are not authorized to delete orders assigned to sawmills you don't manage."
-                ], 403);
-            }
-
-            $order->delete();
-            return response()->json([
-                "message" => "Order deleted."
-            ]);
+                "message" => "You are not authorized to delete order assigned to that sawmill."
+            ], 403);
         }
 
+        $order->delete();
         return response()->json([
-            "message" => "You are not authorized to delete orders."
+            "message" => "Order deleted."
         ]);
     }
 
@@ -196,7 +183,6 @@ class OrderController extends Controller
         $order->update([
             'amount' => $amount,
         ]);
-        $order->save();
 
         return new OrderResource($order);
     }
@@ -206,7 +192,7 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $order->customer()->associate($request['customer.id']);
         $order->sawmill()->associate($request['sawmill.id']);
-        $order->save();
+        $amount = $order->amount;
 
         $products = $request['products'];
 
@@ -216,8 +202,13 @@ class OrderController extends Controller
 
             if (!empty($quantity)) {
                 $order->products()->attach($productId, ['quantity' => $quantity]);
+                $amount += $quantity * $product['price'];
             }
         }
+
+        $order->update([
+            'amount' => $amount,
+        ]);
 
         return new OrderResource($order);
     }

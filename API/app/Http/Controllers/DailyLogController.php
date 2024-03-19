@@ -19,27 +19,29 @@ class DailyLogController extends Controller
         $pageSize = request()->query('pageSize', 10);
         $querySawmill = request()->query('sawmill');
 
-        if (Gate::allows('view-all-daily-logs')) {
-            $dailyLogs = DailyLog::orderBy($sortField, $sortDirection);
-        }
-        else {
-            $user = Auth::user();
-            $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
 
-            $dailyLogs = DailyLog::whereIn('sawmill_id', $user_sawmill_ids)
-                        ->orderBy($sortField, $sortDirection)->get();
-        }
+        $dailyLogs = DailyLog::whereIn('sawmill_id', $user_sawmill_ids)
+                    ->orderBy($sortField, $sortDirection)->get();
 
         if ($querySawmill) {
             $dailyLogs->where('sawmill_id', 'like', $querySawmill);
         }
 
         $dailyLogs = $dailyLogs->paginate($pageSize, ['*'], 'current');
+
         return DailyLogResource::collection($dailyLogs);
     }
 
     public function store(DailyLogStoreRequest $request)
     {
+        if (Gate::denies('manage-daily-logs')) {
+            return response()->json([
+                "message" => "You do not have permission to create daily logs."
+            ], 403);
+        }
+
         $user = Auth::user();
         $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
 
@@ -52,35 +54,43 @@ class DailyLogController extends Controller
         $dailyLog = DailyLog::create($request->all());
 
         $dailyLog->sawmill()->associate($request['sawmill.id']);
-        $dailyLog->save();
 
         return new DailyLogResource($dailyLog);
     }
 
     public function show($id)
     {
-        if (Gate::allows('view-all-daily_logs')) {
-            $dailyLog = DailyLog::findOrFail($id);
-            return new DailyLogResource($dailyLog);
-        }
-        else {
-            $user = Auth::user();
-            $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
-            $dailyLog = DailyLog::findOrFail($id);
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+        $dailyLog = DailyLog::findOrFail($id);
 
-            if (!in_array($dailyLog->sawmill->id, $user_sawmill_ids)) {
-                return response()->json([
-                    "message" => "You are not authorized to view daily log assigned to other sawmill."
-                ], 403);
-            }
-
-            return new DailyLogResource($dailyLog);
+        if (!in_array($dailyLog->sawmill->id, $user_sawmill_ids)) {
+            return response()->json([
+                "message" => "You are not authorized to view daily log assigned to other sawmill."
+            ], 403);
         }
+
+        return new DailyLogResource($dailyLog);
     }
 
     public function update(DailyLogUpdateRequest $request, $id)
     {
+        if (Gate::denies('manage-daily-logs')) {
+            return response()->json([
+                "message" => "You do not have permission to update daily logs."
+            ], 403);
+        }
+
         $dailyLog = DailyLog::findorfail($id);
+
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+
+        if (!in_array($dailyLog->sawmill->id, $user_sawmill_ids)) {
+            return response()->json([
+                "message" => "You are not authorized to update logs assigned to that sawmill."
+            ], 403);
+        }
 
         if (isset($request['date'])) {
             $dailyLog->update([
@@ -90,46 +100,18 @@ class DailyLogController extends Controller
 
         if (isset($request->sawmill->id)) {
             $dailyLog->sawmill()->associate($request->sawmill->id);
-            $dailyLog->save();
         }
 
         if (isset($request['products'])) {
-            $products = $request['products'];
-
-            foreach ($products as $product) {
-                $productId = $product['id'];
-                $quantity = $product['quantity'];
-
-                if (!empty($quantity)) {
-                    $dailyLog->products()->attach($productId, ['quantity' => $quantity]);
-                }
-            }
+            $this->updateOrAttachItems($dailyLog, 'products', $request->input('products'));
         }
 
         if (isset($request['materials'])) {
-            $materials = $request['materials'];
-
-            foreach ($materials as $material) {
-                $materialId = $material['id'];
-                $quantity = $material['quantity'];
-
-                if (!empty($quantity)) {
-                    $dailyLog->materials()->attach($materialId, ['quantity' => $quantity]);
-                }
-            }
+            $this->updateOrAttachItems($dailyLog, 'materials', $request->input('materials'));
         }
 
         if (isset($request['wastes'])) {
-            $wastes = $request['wastes'];
-
-            foreach ($wastes as $waste) {
-                $wasteId = $waste['id'];
-                $quantity = $waste['quantity'];
-
-                if (!empty($quantity)) {
-                    $dailyLog->wastes()->attach($wasteId, ['quantity' => $quantity]);
-                }
-            }
+            $this->updateOrAttachItems($dailyLog, 'wastes', $request->input('wastes'));
         }
 
         return new DailyLogResource($dailyLog);
@@ -159,5 +141,23 @@ class DailyLogController extends Controller
         return response()->json([
             'message' => 'Daily log deleted.'
         ]);
+    }
+
+    private function updateOrAttachItems($dailyLog, $relation, $items)
+    {
+        if ($items) {
+            foreach ($items as $item) {
+                $itemId = $item['id'];
+                $quantity = $item['quantity'];
+
+                $existingItem = $dailyLog->{$relation}()->where('id', $itemId)->first();
+
+                if ($existingItem && !empty($quantity)) {
+                    $existingItem->pivot->update(['quantity' => $quantity]);
+                } elseif (!empty($quantity)) {
+                    $dailyLog->{$relation}()->attach($itemId, ['quantity' => $quantity]);
+                }
+            }
+        }
     }
 }

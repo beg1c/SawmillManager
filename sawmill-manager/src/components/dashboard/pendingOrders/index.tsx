@@ -32,12 +32,12 @@ export const PendingOrders = () => {
                 renderCell: function render({ row }) {
                     return (
                         <Stack spacing="4px">
-                            <Typography>{row.customer.name}</Typography>
+                            <Typography>{row.customer?.name}</Typography>
                             <Typography
                                 variant="caption"
                                 color="text.secondary"
                             >
-                                {row.customer.contact_number}
+                                {row.customer?.contact_number}
                             </Typography>
                         </Stack>
                     );

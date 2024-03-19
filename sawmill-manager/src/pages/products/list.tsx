@@ -39,7 +39,8 @@ export const ProductList: React.FC<IResourceComponentsProps> = () => {
     >({
         refineCoreProps: { 
             resource: "products",
-            action: "create" 
+            action: "create", 
+            redirect: false,
         },
     });
 

@@ -87,6 +87,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                 headerName: t("logs.fields.sawmill"),
                 minWidth: 100,
                 flex: 1,
+                sortable: false,
                 valueGetter: (params) => {
                     return params?.row?.sawmill.name;
                 }

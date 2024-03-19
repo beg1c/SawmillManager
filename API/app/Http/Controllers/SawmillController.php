@@ -13,22 +13,17 @@ class SawmillController extends Controller
 {
     public function index()
     {
-        if (Gate::allows('manage-sawmills')) {
-            $sawmills = Sawmill::all();
-        }
-        else {
-            $user = Auth::user();
-            $sawmills = $user->sawmills;
-        }
+        $user = Auth::user();
+        $sawmills = $user->sawmills;
 
         return SawmillResource::collection($sawmills);
     }
 
     public function store(SawmillStoreRequest $request)
     {
-        if (!Gate::allows('manage-sawmills')) {
+        if (Gate::denies('manage-sawmills')) {
             return response()->json([
-                "message" => "You must be administrator to create sawmill.",
+                "message" => "You must are not authorized to create sawmills.",
             ], 403);
         }
 
@@ -40,26 +35,20 @@ class SawmillController extends Controller
     {
         $sawmill = Sawmill::findOrFail($id);
 
-        if (Gate::allows('manage-sawmills')) {
+        $user = Auth::user();
+        if ($user->sawmills->contains($sawmill)) {
             return new SawmillResource($sawmill);
         }
         else {
-            $user = Auth::user();
-            if ($user->sawmills->contains($sawmill)) {
-                return new SawmillResource($sawmill);
-            }
-            else {
-                return response()->json([
-                    "message" => "You are not authorized to view that sawmill."
-                ], 403);
-            }
+            return response()->json([
+                "message" => "You are not authorized to view that sawmill."
+            ], 403);
         }
-
     }
 
     public function update(SawmillStoreRequest $request, $id)
     {
-        if (!Gate::allows('manage-sawmills')) {
+        if (Gate::denies('manage-sawmills')) {
             return response()->json([
                 "message" => "You are not authorized to update sawmills."
             ], 403);
@@ -72,7 +61,7 @@ class SawmillController extends Controller
 
     public function destroy($id)
     {
-        if (!Gate::allows('manage-sawmills')) {
+        if (Gate::denies('manage-sawmills')) {
             return response()->json([
                 "message" => "You are not authorized to delete sawmills."
             ], 403);

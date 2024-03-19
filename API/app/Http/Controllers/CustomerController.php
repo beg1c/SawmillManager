@@ -25,7 +25,11 @@ class CustomerController extends Controller
                     ->orWhere('address', 'like', '%' . $searchQuery . '%');
         }
 
-        $customers = $customers->paginate($pageSize, ['*'], 'current');
+        if ($pageSize) {
+            $customers = $customers->paginate($pageSize, ['*'], 'current');
+        } else {
+            $customers = $customers->get();
+        }
 
         return CustomerResource::collection($customers);
     }

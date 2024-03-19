@@ -28,25 +28,13 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         // Equipment
-        Gate::define('view-all-equipment', function ($user) {
+        Gate::define('manage-equipment', function ($user) {
             return $user->role->role_name === 'executive';
-        });
-        Gate::define('manage-all-equipment', function ($user) {
-            return $user->role->role_name === 'executive';
-        });
-        Gate::define('manage-equipment-associated-sawmills', function ($user) {
-            return $user->role->role_name === 'manager';
         });
 
         // Orders
-        Gate::define('view-all-orders', function ($user) {
-            return $user->role->role_name === 'executive';
-        });
-        Gate::define('manage-all-orders', function ($user) {
-            return $user->role->role_name === 'executive';
-        });
-        Gate::define('manage-orders-associated-sawmills', function ($user) {
-            return $user->role->role_name === 'manager';
+        Gate::define('manage-orders', function ($user) {
+            return in_array($user->role->role_name, ['executive', 'manager']);
         });
 
         // Products
@@ -80,10 +68,6 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         // Daily logs
-        Gate::define('view-all-daily-logs', function ($user) {
-            return $user->role->role_name === 'executive';
-        });
-
         Gate::define('manage-daily-logs', function ($user) {
             return in_array($user->role->role_name, ['executive', 'manager']);
         });

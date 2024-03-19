@@ -24,7 +24,7 @@ class InventoryItemRequest extends FormRequest
         return [
             'type' => 'in:product,material,waste',
             'item_id' => 'exists:products,id|exists:materials,id|exists:wastes,id',
-            'quantity' => 'required|numeric|min:0'
+            'quantity' => 'required|numeric|min:1'
         ];
     }
 }

@@ -15,7 +15,7 @@ class MaterialController extends Controller
     {
         $sortField = request()->query('sort', 'id');
         $sortDirection = request()->query('order', 'asc');
-        $pageSize = request()->query('pageSize', 10);
+        $pageSize = request()->query('pageSize');
         $searchQuery = request()->query('q');
 
         $materials = Material::orderBy($sortField, $sortDirection);
@@ -27,25 +27,29 @@ class MaterialController extends Controller
                     ->orWhere('unit_of_measure', 'like', '%' . $searchQuery . '%');
         }
 
-        $materials = $materials->paginate($pageSize, ['*'], 'current');
+        if ($pageSize) {
+            $materials = $materials->paginate($pageSize, ['*'], 'current');
+        } else {
+            $materials = $materials->get();
+        }
 
         return MaterialResource::collection($materials);
     }
 
     public function store(MaterialStoreRequest $request)
     {
+        if (Gate::denies('manage-materials')) {
+            return response()->json([
+                "message" => "You are not authorized to create materials."
+            ], 403);
+        }
+
         $photoName = null;
         if ($request->has('photo')) {
             $photoname = $this->savePhoto($request->photo);
         }
 
-        if (Gate::allows('manage-materials')) {
-            return $this->createMaterial($request, $photoName);
-        }
-
-        return response()->json([
-            "message" => "You are not authorized to create materials."
-        ], 403);
+        return $this->createMaterial($request, $photoName);
     }
 
     public function show($id)
@@ -56,17 +60,32 @@ class MaterialController extends Controller
 
     public function update(MaterialStoreRequest $request, $id)
     {
+
+        if (Gate::denies('manage-materials')) {
+            return response()->json([
+                "message" => "You are not authorized to update materials."
+            ], 403);
+        }
+
         $photoName = null;
         if ($request->has('photo')) {
             $photoName = $this->savePhoto($request->photo);
         }
 
+        return $this->updateMaterial($request, $photoName, $id);
+    }
+
+    public function destroy($id) {
         if (Gate::allows('manage-materials')) {
-            return $this->updateMaterial($request, $photoName, $id);
+            $material = Material::findOrFail($id);
+            $material->delete();
+            return response()->json([
+                "message" => "Material deleted."
+            ]);
         }
 
         return response()->json([
-            "message" => "You are not authorized to update materials."
+            "message" => "You are not authorized to delete materials."
         ], 403);
     }
 
