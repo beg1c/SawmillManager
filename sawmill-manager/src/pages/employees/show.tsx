@@ -49,7 +49,7 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
           </Grid>
         </Grid>
       )
-}
+  }
 
   return (
     <Grid container spacing={2}>

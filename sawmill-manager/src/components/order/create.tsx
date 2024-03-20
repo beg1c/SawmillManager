@@ -53,7 +53,7 @@ export const CreateOrder: React.FC<
             products: orderProducts
         };
 
-        onFinish(extendedValues);
+        onFinish(extendedValues).then(close);
     };
 
     const [selectedProducts, setSelectedProducts] = useState<IProductWQuantity[]>([createEmptyProduct()]);
@@ -82,9 +82,11 @@ export const CreateOrder: React.FC<
         setSelectedProducts(newSelects);
       };
 
-    const handleDeleteSelect = (id: number) => {
-      const updatedSelects = selectedProducts?.filter(product => product.id !== id);
-      setSelectedProducts(updatedSelects);
+    const handleDeleteSelect = (id: number) => {    
+      if (selectedProducts.length > 1) {
+            const updatedSelects = selectedProducts?.filter(product => product.id !== id);
+            setSelectedProducts(updatedSelects);
+        }
     };
 
     const { autocompleteProps: productsAutocompleteProps} = useAutocomplete<IProduct>({
@@ -241,9 +243,11 @@ export const CreateOrder: React.FC<
                                             id="price"
                                             label="Price"
                                             size="small"
-                                            value={(product.price * product.quantity).toFixed(2)}
+                                            value={product.quantity ? (product.price * product.quantity).toFixed(2) : '0.00'}
                                             style={{
                                                 width: "170px",
+                                                marginLeft: "3px",
+                                                marginRight: "3px",
                                             }}
                                             InputProps={{
                                                 readOnly: true,
@@ -281,7 +285,7 @@ export const CreateOrder: React.FC<
                                             color: "text.primary",
                                         }}
                                     >
-                                        Total: {amount.toFixed(2)} €
+                                        Total: {amount ? amount.toFixed(2) : '0.00'} €
                                     </Typography>
                                 </Box>
                                 <FormControl>

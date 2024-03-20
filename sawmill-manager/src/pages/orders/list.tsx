@@ -39,7 +39,7 @@ import { CreateOrder } from "../../components/order";
 export const OrderList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
 
-    const { dataGridProps, search, filters, sorter } = useDataGrid<
+    const { dataGridProps, search, filters } = useDataGrid<
         IOrder,
         HttpError,
         IOrderFilterVariables
@@ -77,10 +77,11 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
     >({
         refineCoreProps: { action: "create" },
         syncWithLocation: true,
+        warnWhenUnsavedChanges: false,
     });
 
     const {
-        modal: { show: showCreateDrawer },
+        modal: { show: showCreateDrawer},
     } = createDrawerFormProps;
 
 

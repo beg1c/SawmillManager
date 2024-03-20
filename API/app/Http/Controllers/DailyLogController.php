@@ -16,20 +16,25 @@ class DailyLogController extends Controller
     {
         $sortField = request()->query('sort', 'date');
         $sortDirection = request()->query('order', 'desc');
-        $pageSize = request()->query('pageSize', 10);
+        $pageSize = request()->query('pageSize');
         $querySawmill = request()->query('sawmill');
 
         $user = Auth::user();
         $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
 
         $dailyLogs = DailyLog::whereIn('sawmill_id', $user_sawmill_ids)
-                    ->orderBy($sortField, $sortDirection)->get();
+                    ->orderBy($sortField, $sortDirection);
 
         if ($querySawmill) {
             $dailyLogs->where('sawmill_id', 'like', $querySawmill);
         }
 
-        $dailyLogs = $dailyLogs->paginate($pageSize, ['*'], 'current');
+        if ($pageSize) {
+            $dailyLogs = $dailyLogs->paginate($pageSize, ['*'], 'current');
+        }
+        else {
+            $dailyLogs = $dailyLogs->get();
+        }
 
         return DailyLogResource::collection($dailyLogs);
     }

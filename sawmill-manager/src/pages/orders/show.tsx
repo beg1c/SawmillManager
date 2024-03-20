@@ -19,9 +19,10 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import { IOrder, IProductWQuantity } from "../../interfaces/interfaces";
-import { Button, Card, CardContent, CardHeader, Divider, IconButton, Step, StepLabel, Stepper } from "@mui/material";
+import { Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Step, StepLabel, Stepper } from "@mui/material";
 import dayjs from "dayjs";
-import { InventoryRounded, LocalShippingOutlined } from "@mui/icons-material";
+import { BusinessOutlined, EventBusyOutlined, HomeOutlined, InventoryRounded, LocalShippingOutlined, MoneyOutlined, NotesOutlined, PaymentOutlined, Person2Outlined, PhoneOutlined, SellOutlined, TextSnippetOutlined } from "@mui/icons-material";
+import { RotateLoader } from "react-spinners";
 
 interface StepperEvent {
     status: string;
@@ -34,11 +35,34 @@ interface StatusUpdate {
     dispatched_at?: string;
 }
 
+type OrderInfoTextProps = {
+    icon: React.ReactNode;
+    label?: string;
+    text?: string;
+  };
+
+const OrderInfoText: React.FC<OrderInfoTextProps> = ({ icon, label, text }) => (
+    <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        gap={1}
+        margin={2}
+    >
+        <Stack direction="row" gap={1}>
+            {icon}
+            <Typography variant="body1">{label}</Typography>
+        </Stack>
+        <Typography variant="body1">{text}</Typography>
+    </Stack>
+  );
+
 export const OrderShow: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
-
     const { queryResult } = useShow<IOrder>();
-
+    const order = queryResult?.data?.data;
+    const { isLoading } = queryResult;
+    const { palette } = useTheme(); 
     const [record, setRecord] = useState<Record<string, any> | null>(null)
 
     useEffect(() => {
@@ -91,6 +115,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                 field: "name",
                 headerName: t("orders.products.fields.items"),
                 width: 300,
+                sortable: false,
                 renderCell: function render({ row }) {
                     return (
                         <Stack direction="row" spacing={4} alignItems="center">
@@ -100,17 +125,12 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                             >
                                 <InventoryRounded sx={{ fontSize: 32 }}/>
                             </Avatar>
-                            <Box>
-                                <Typography
-                                    variant="body1"
-                                    whiteSpace="break-spaces"
-                                >
-                                    {row.name}
-                                </Typography>
-                                <Typography variant="caption">
-                                    #{row.id}
-                                </Typography>
-                            </Box>
+                            <Typography
+                                variant="body1"
+                                whiteSpace="break-spaces"
+                            >
+                                {row.name}
+                            </Typography>
                         </Stack>
                     );
                 },
@@ -120,196 +140,208 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                 headerName: t("orders.products.fields.quantity"),
                 width: 150,
                 sortable: false,
-                valueGetter: (params) => {return params.row.quantity},
+                valueGetter: (params) => {return params.row.quantity + ' ' + params.row.unit_of_measure},
             },
             {
                 field: "price",
                 headerName: t("orders.products.fields.price"),
                 width: 100,
                 type: "number",
+                sortable: false,
                 valueGetter: (params) => {return params.row.price.toFixed(2) + " €"}
-            },
-            {
-                field: "unit_of_measure",
-                headerName: t("orders.products.fields.unit_of_measure"),
-                width: 100,
             },
             {
                 field: "total",
                 headerName: t("orders.products.fields.total"),
                 width: 100,
                 type: "number",
+                flex: 1,
+                sortable: false,
                 valueGetter: (params) => {return (params.row.price * params.row.quantity).toFixed(2) + " €"},
             },
         ],
         [t],
     );
 
-    const CustomFooter = () => (
-        <Stack direction="row" spacing={4} justifyContent="flex-end" p={1}>
-            <Typography sx={{ color: "primary.main" }} fontWeight={700}>
-                {t("orders.products.mainTotal")}
-            </Typography>
-            <Typography>{record?.amount?.toFixed(2)} $</Typography>
-        </Stack>
-    );
+    if (isLoading) {
+        return (
+            <Grid container justifyContent="center" alignItems="center" style={{ height: '80vh' }}>
+              <Grid item>
+                  <RotateLoader 
+                    color={palette.primary.main}
+                    speedMultiplier={0.5}
+                  />
+              </Grid>
+            </Grid>
+        )
+    }
 
     return (
-        <Stack spacing={2}>
-            <Card>
-                <CardHeader
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: 2,
-                    }}
-                    title={
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                            <Typography variant="h6">
-                                {t("orders.fields.orderID")}
-                            </Typography>
-                            <Typography variant="caption">{`#${
-                                record?.id ?? ""
-                            }`}</Typography>
-                        </Stack>
-                    }
-                    avatar={
-                        <IconButton onClick={goBack}>
-                            <ArrowBackIcon />
-                        </IconButton>
-                    }
-                    action={
-                        <Stack direction="row" spacing={2}>
-                            <Button
-                                disabled={!!record?.ready_at}
-                                variant="outlined"
-                                size="small"
-                                startIcon={<CheckOutlinedIcon />}
-                                onClick={() =>
-                                    handleMutate({
-                                        status: 'Ready',
-                                        ready_at: new Date().toISOString()
-                                    })
-                                }
-                            >
-                                {t("buttons.ready")}
-                            </Button>
-                            <Button
-                                disabled={!!record?.dispatched_at}
-                                variant="outlined"
-                                size="small"
-                                color="secondary"
-                                startIcon={
-                                    <LocalShippingOutlined />
-                                }
-                                onClick={() =>
-                                    handleMutate({
-                                        status: 'Dispatched',
-                                        dispatched_at: new Date().toISOString()
-                                    })
-                                }
-                            >
-                                {t("buttons.dispatched")}
-                            </Button>
-                            {/* <Button
-                                // disabled={!canRejectOrder}
-                                variant="outlined"
-                                size="small"
-                                color="error"
-                                startIcon={
-                                    <CloseOutlinedIcon sx={{ bg: "red" }} />
-                                }
-                            >
-                                {t("buttons.cancel")}
-                            </Button> */}
-                        </Stack>
-                    }
-                />
-                <CardContent>
-                    <Stepper
-                        nonLinear
-                        activeStep={record?.events.findIndex(
-                            (el: { status: any; }) => el.status === record?.status,
-                        )}
-                        orientation={isSmallOrLess ? "vertical" : "horizontal"}
-                    >
-                        {record?.events.map((event: StepperEvent, index: number) => (
-                            <Step key={index}>
-                                <StepLabel
-                                    optional={
-                                        <Typography variant="caption">
-                                            {event.date &&
-                                                dayjs(event.date).format(
-                                                    "L LT",
-                                                )}
-                                        </Typography>
+        <Grid container spacing={2}>
+            <Grid item xs={12}>
+                <Card>
+                    <CardHeader
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: 2,
+                        }}
+                        title={
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                                <Typography variant="h6">
+                                    {t("orders.fields.orderID")}
+                                </Typography>
+                                <Typography variant="caption">{`#${
+                                    record?.id ?? ""
+                                }`}</Typography>
+                            </Stack>
+                        }
+                        avatar={
+                            <IconButton onClick={goBack}>
+                                <ArrowBackIcon />
+                            </IconButton>
+                        }
+                        action={
+                            <Stack direction="row" spacing={2}>
+                                <Button
+                                    disabled={!!record?.ready_at}
+                                    variant="outlined"
+                                    size="small"
+                                    startIcon={<CheckOutlinedIcon />}
+                                    onClick={() =>
+                                        handleMutate({
+                                            status: 'Ready',
+                                            ready_at: new Date().toISOString()
+                                        })
                                     }
-                                    error={event.status === "Cancelled"}
                                 >
-                                    {event.status}
-                                </StepLabel>
-                            </Step>
-                        ))}
-                    </Stepper>
-                </CardContent>
-            </Card>
-            <Paper sx={{ padding: 2 }}>
-                <Stack
-                    flexWrap="wrap"
-                    direction={isSmallOrLess ? "column" : "row"}
-                    justifyContent={isSmallOrLess ? "center" : "space-between"}
-                >
-                    <Stack
-                        direction={isSmallOrLess ? "column" : "row"}
-                        alignItems={isSmallOrLess ? "center" : "flex-start"}
-                        textAlign={isSmallOrLess ? "center" : "left"}
-                        gap={2}
-                    >
-                        <Box>
-                            <Typography>{t("customers.customer")}</Typography>
-                            <Typography variant="h6">
-                                {record?.customer?.name}
-                            </Typography>
-                            <Typography variant="caption">
-                                {record?.customer?.address}
-                            </Typography>
-                            <Typography variant="h6">
-                                {record?.customer?.contact_number}
-                            </Typography>
-                        </Box>
+                                    {t("buttons.ready")}
+                                </Button>
+                                <Button
+                                    disabled={!!record?.dispatched_at}
+                                    variant="outlined"
+                                    size="small"
+                                    color="secondary"
+                                    startIcon={
+                                        <LocalShippingOutlined />
+                                    }
+                                    onClick={() =>
+                                        handleMutate({
+                                            status: 'Dispatched',
+                                            dispatched_at: new Date().toISOString()
+                                        })
+                                    }
+                                >
+                                    {t("buttons.dispatched")}
+                                </Button>
+                                {/* <Button
+                                    variant="outlined"
+                                    size="small"
+                                    color="error"
+                                    startIcon={
+                                        <CloseOutlinedIcon sx={{ bg: "red" }} />
+                                    }
+                                >
+                                    {t("buttons.cancel")}
+                                </Button> */}
+                            </Stack>
+                        }
+                    />
+                    <CardContent>
+                        <Stepper
+                            nonLinear
+                            activeStep={record?.events.findIndex(
+                                (el: { status: any; }) => el.status === record?.status,
+                            )}
+                            orientation={isSmallOrLess ? "vertical" : "horizontal"}
+                        >
+                            {record?.events.map((event: StepperEvent, index: number) => (
+                                <Step key={index}>
+                                    <StepLabel
+                                        optional={
+                                            <Typography variant="caption">
+                                                {event.date &&
+                                                    dayjs(event.date).format(
+                                                        "L LT",
+                                                    )}
+                                            </Typography>
+                                        }
+                                        error={event.status === "Cancelled"}
+                                    >
+                                        {event.status}
+                                    </StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={12} xl={4}>
+                <Paper>
+                    <Stack display="flex">
+                        <OrderInfoText
+                            icon={<Person2Outlined color="primary" />}
+                            label="Customer"
+                            text={order?.customer.name}
+                        />
+                        <Divider style={{backgroundColor: palette.text.disabled}}/>
+                        <OrderInfoText
+                            icon={<HomeOutlined color="primary" />}
+                            label="Address"
+                            text={order?.customer?.address ? order?.customer.address : "Not provided"}
+                        />
+                        <Divider style={{backgroundColor: palette.text.disabled}}/>
+                        <OrderInfoText
+                            icon={<PhoneOutlined color="primary" />}
+                            label="Contact number"
+                            text={order?.customer?.contact_number ? order?.customer.contact_number : "Not provided"}
+                        />
+                        <Divider style={{backgroundColor: palette.text.disabled}}/>
+                        <OrderInfoText
+                            icon={<EventBusyOutlined color="primary" />}
+                            label="Deadline"
+                            text={order?.deadline ? order?.deadline : "Not provided"}
+                        />
+                        <Divider style={{backgroundColor: palette.text.disabled}}/>
+                        <OrderInfoText
+                            icon={<BusinessOutlined color="primary" />}
+                            label="Sawmill"
+                            text={order?.sawmill.name}
+                        />
+                        <Divider style={{backgroundColor: palette.text.disabled}}/>
+                        <OrderInfoText
+                            icon={<TextSnippetOutlined color="primary" />}
+                            label="Notes"
+                            text={order?.notes}
+                        />
+                            <Divider style={{backgroundColor: palette.text.disabled}}/>
+                        <OrderInfoText
+                            icon={<SellOutlined color="primary" />}
+                            label="Total"
+                            text={order?.amount + ' €'} 
+                        />
                     </Stack>
-                    <Divider flexItem style={{ backgroundColor: 'black' }}  />
-                    <Stack 
-                        alignItems={isSmallOrLess ? "center" : "flex-end"}
-                    >
-                        <Typography>
-                            {t("orders.fields.notes")}
-                        </Typography>
-                        <Typography variant="caption" width={200} sx={{ textAlign: "justify" }}>
-                            {record?.notes}
-                        </Typography>
-                    </Stack>
-                </Stack>
-            </Paper>
-
-            <List
-                headerProps={{
-                    title: t("orders.products.products"),
-                }}
-            >
-                <DataGrid
-                    disableColumnMenu
-                    autoHeight
-                    columns={columns}
-                    rows={record?.products || []}
-                    hideFooterPagination
-                    rowHeight={124}
-                    components={{
-                        Footer: CustomFooter,
+                </Paper>
+            </Grid>
+            <Grid item xs={12} xl={8}>
+                <List
+                    headerProps={{
+                        title: t("orders.products.products"),
                     }}
-                />
-            </List>
-        </Stack>
+                >
+                    <DataGrid
+                        disableColumnMenu
+                        autoHeight
+                        columns={columns}
+                        rows={record?.products || []}
+                        hideFooter
+                        rowHeight={124}
+                    />
+                </List>
+            </Grid>
+        </Grid>
     );
 };
+
+

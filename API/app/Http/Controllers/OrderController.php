@@ -14,8 +14,8 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $sortField = request()->query('sort', 'id');
-        $sortDirection = request()->query('order', 'asc');
+        $sortField = request()->query('sort', 'ordered_at');
+        $sortDirection = request()->query('order', 'desc');
         $pageSize = request()->query('pageSize');
         $queryStatuses = request()->query('status', []);
         $queryCustomer = request()->query('customer');
@@ -25,7 +25,7 @@ class OrderController extends Controller
         $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
 
         $orders = Order::whereIn('sawmill_id', $user_sawmill_ids)
-                    ->orderBy($sortField, $sortDirection)->get();
+                    ->orderBy($sortField, $sortDirection);
 
         if ($queryStatuses) {
             $orders->whereIn('status', $queryStatuses);
@@ -84,25 +84,25 @@ class OrderController extends Controller
         return new OrderResource($order);
     }
 
-    public function update(OrderStoreRequest $request, $id)
-    {
-        if (Gate::denies('manage-orders')) {
-            return response()->json([
-                "message" => "You are not authorized to update orders."
-            ], 403);
-        }
+    // public function update(OrderStoreRequest $request, $id)
+    // {
+    //     if (Gate::denies('manage-orders')) {
+    //         return response()->json([
+    //             "message" => "You are not authorized to update orders."
+    //         ], 403);
+    //     }
 
-        $user = Auth::user();
-        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+    //     $user = Auth::user();
+    //     $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
 
-        if(!in_array($order->sawmill->id, $user_sawmill_ids)) {
-            return response()->json([
-                "message" => "You are not authorized to update order assigned to that sawmill."
-            ], 403);
-        }
+    //     if(!in_array($order->sawmill->id, $user_sawmill_ids)) {
+    //         return response()->json([
+    //             "message" => "You are not authorized to update order assigned to that sawmill."
+    //         ], 403);
+    //     }
 
-        return $this->updateOrder($request, $id);
-    }
+    //     return $this->updateOrder($request, $id);
+    // }
 
     public function updateStatus(OrderStatusRequest $request, $id)
     {
@@ -121,11 +121,19 @@ class OrderController extends Controller
         $dispatched_at = date('Y-m-d H:i:s', strtotime($request['dispatched_at']));
 
         if ($status === 'Dispatched') {
-            $order->update([
-                'ready_at' => $dispatched_at,
-                'dispatched_at' => $dispatched_at,
-                'status' => $status,
-            ]);
+            if (!isset($order->ready_at)) {
+                $order->update([
+                    'ready_at' => $dispatched_at,
+                    'dispatched_at' => $dispatched_at,
+                    'status' => $status,
+                ]);
+            }
+            else {
+                $order->update([
+                    'dispatched_at' => $dispatched_at,
+                    'status' => $status,
+                ]);
+            }
         }
         else if ($status === 'Ready') {
             $order->update([
@@ -187,29 +195,29 @@ class OrderController extends Controller
         return new OrderResource($order);
     }
 
-    public function updateOrder($request, $id)
-    {
-        $order = Order::findOrFail($id);
-        $order->customer()->associate($request['customer.id']);
-        $order->sawmill()->associate($request['sawmill.id']);
-        $amount = $order->amount;
+    // public function updateOrder($request, $id)
+    // {
+    //     $order = Order::findOrFail($id);
+    //     $order->customer()->associate($request['customer.id']);
+    //     $order->sawmill()->associate($request['sawmill.id']);
+    //     $amount = $order->amount;
 
-        $products = $request['products'];
+    //     $products = $request['products'];
 
-        foreach ($products as $product) {
-            $productId = $product['id'];
-            $quantity = $product['quantity'];
+    //     foreach ($products as $product) {
+    //         $productId = $product['id'];
+    //         $quantity = $product['quantity'];
 
-            if (!empty($quantity)) {
-                $order->products()->attach($productId, ['quantity' => $quantity]);
-                $amount += $quantity * $product['price'];
-            }
-        }
+    //         if (!empty($quantity)) {
+    //             $order->products()->attach($productId, ['quantity' => $quantity]);
+    //             $amount += $quantity * $product['price'];
+    //         }
+    //     }
 
-        $order->update([
-            'amount' => $amount,
-        ]);
+    //     $order->update([
+    //         'amount' => $amount,
+    //     ]);
 
-        return new OrderResource($order);
-    }
+    //     return new OrderResource($order);
+    // }
 }
