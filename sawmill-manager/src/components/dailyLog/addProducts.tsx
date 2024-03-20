@@ -66,7 +66,6 @@ export const AddProducts: React.FC<
 
     useEffect(() => {
         if (queryResult && queryResult.data?.data.products?.length) {
-            console.log(selectedProducts);
             setSelectedProducts(queryResult.data.data.products);
         }
     }, []);

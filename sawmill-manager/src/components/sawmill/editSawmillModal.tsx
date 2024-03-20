@@ -49,6 +49,7 @@ export const EditSawmillModal: React.FC<
                     sx={{ display: "flex", flexDirection: "column" }}
                 >
                     <TextField
+                        required
                         id="name"
                         {...register("name", {
                             required: "Sawmill name is required",

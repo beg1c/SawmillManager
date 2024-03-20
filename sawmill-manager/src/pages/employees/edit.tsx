@@ -143,7 +143,6 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
         resource: "sawmills",
     });
 
-
     if (formLoading) {
         return (
             <Grid container justifyContent="center" alignItems="center" style={{ height: '80vh' }}>
@@ -234,6 +233,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                                     size="small"
                                                     margin="none"
                                                     variant="outlined"
+                                                    defaultValue={employee?.name}
                                                 />
                                                 {errors.name && (
                                                     <FormHelperText error>
@@ -270,6 +270,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                                     size="small"
                                                     margin="none"
                                                     variant="outlined"
+                                                    defaultValue={employee?.email}
                                                 />
                                                 {errors.email && (
                                                     <FormHelperText error>
@@ -320,6 +321,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                                     mask="(999) 999 99 99"
                                                     disabled={false}
                                                     {...register("contact_number")}
+                                                    defaultValue={employee?.contact_number || undefined}
                                                 >
                                                     {/* @ts-expect-error False alarm */}
                                                     {(
@@ -354,7 +356,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                                     <Controller
                                                         control={control}
                                                         name="birthday"
-                                                        defaultValue={null as any}
+                                                        defaultValue={employee?.birthday || undefined}
                                                         render={({field}) => (
                                                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                                                             <DatePicker

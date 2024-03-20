@@ -64,6 +64,29 @@ class InventoryController extends Controller
         }
     }
 
+    public function show()
+    {
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+        $querySawmill = request()->query('sawmill');
+
+        if (!$querySawmill) {
+            return response()->json([
+                "message" => "Specify sawmill in your query."
+            ], 400);
+        }
+
+        $inventory = Inventory::where('sawmill_id', $querySawmill)->first();
+
+        if (!in_array($querySawmill, $user_sawmill_ids)) {
+            return response()->json([
+                "message" => "You are not authorized to view that inventory."
+            ], 403);
+        }
+
+        return new InventoryResource($inventory);
+    }
+
     /* For simplicity sake we will handle available quantities (adding, subtracting) on front-end
     for now and only send calculated values to API. */
     public function updateItem(InventoryItemRequest $request)

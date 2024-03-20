@@ -33,7 +33,6 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
             redirect: false,
         },
         warnWhenUnsavedChanges: false,
-        syncWithLocation: true,
     });
 
     const {
@@ -49,7 +48,6 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
             redirect: false,
         },
         warnWhenUnsavedChanges: false,
-        syncWithLocation: true,
     });
 
     const {
@@ -65,7 +63,6 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
             redirect: false,
         },
         warnWhenUnsavedChanges: false,
-        syncWithLocation: true,
     });
 
     const {

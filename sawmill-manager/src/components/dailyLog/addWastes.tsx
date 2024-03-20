@@ -67,7 +67,6 @@ export const AddWastes: React.FC<
 
     useEffect(() => {
         if (queryResult && queryResult.data?.data.wastes?.length) {
-            console.log(selectedWastes);
             setSelectedWastes(queryResult.data.data.wastes);
         }
     }, []);

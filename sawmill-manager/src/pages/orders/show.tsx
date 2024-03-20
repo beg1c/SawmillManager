@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
     IResourceComponentsProps,
-    useNavigation,
+    useGo,
     useShow,
     useTranslate,
     useUpdate,
@@ -11,7 +11,6 @@ import { List } from "@refinedev/mui";
 
 import { useTheme } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
-import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -21,7 +20,7 @@ import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import { IOrder, IProductWQuantity } from "../../interfaces/interfaces";
 import { Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Step, StepLabel, Stepper } from "@mui/material";
 import dayjs from "dayjs";
-import { BusinessOutlined, EventBusyOutlined, HomeOutlined, InventoryRounded, LocalShippingOutlined, MoneyOutlined, NotesOutlined, PaymentOutlined, Person2Outlined, PhoneOutlined, SellOutlined, TextSnippetOutlined } from "@mui/icons-material";
+import { BusinessOutlined, EventBusyOutlined, HomeOutlined, InventoryRounded, LocalShippingOutlined, Person2Outlined, PhoneOutlined, SellOutlined, TextSnippetOutlined } from "@mui/icons-material";
 import { RotateLoader } from "react-spinners";
 
 interface StepperEvent {
@@ -85,6 +84,13 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                     resource: "orders/update-status",
                     id: record?.id.toString(),
                     values: status,
+                    successNotification: () => {  
+                        return {  
+                            message: `Successfully updated status.`,  
+                            description: "Successful",  
+                            type: "success",  
+                        };  
+                    }, 
                 },
                 {
                     onSuccess: (data) => {
@@ -104,7 +110,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
 
     const theme = useTheme();
 
-    const { goBack } = useNavigation();
+    const go = useGo();
     const { mutate } = useUpdate();
 
     const isSmallOrLess = useMediaQuery(theme.breakpoints.down("sm"));
@@ -198,7 +204,14 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                             </Stack>
                         }
                         avatar={
-                            <IconButton onClick={goBack}>
+                            <IconButton onClick={() => {
+                                go({
+                                    to: {
+                                      resource: "orders",
+                                      action: "list",
+                                    },
+                                  })
+                            }}>
                                 <ArrowBackIcon />
                             </IconButton>
                         }
@@ -283,31 +296,31 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                         <OrderInfoText
                             icon={<Person2Outlined color="primary" />}
                             label="Customer"
-                            text={order?.customer.name}
+                            text={order?.customer?.name}
                         />
                         <Divider style={{backgroundColor: palette.text.disabled}}/>
                         <OrderInfoText
                             icon={<HomeOutlined color="primary" />}
                             label="Address"
-                            text={order?.customer?.address ? order?.customer.address : "Not provided"}
+                            text={order?.customer?.address}
                         />
                         <Divider style={{backgroundColor: palette.text.disabled}}/>
                         <OrderInfoText
                             icon={<PhoneOutlined color="primary" />}
                             label="Contact number"
-                            text={order?.customer?.contact_number ? order?.customer.contact_number : "Not provided"}
+                            text={order?.customer?.contact_number}
                         />
                         <Divider style={{backgroundColor: palette.text.disabled}}/>
                         <OrderInfoText
                             icon={<EventBusyOutlined color="primary" />}
                             label="Deadline"
-                            text={order?.deadline ? order?.deadline : "Not provided"}
+                            text={order?.deadline}
                         />
                         <Divider style={{backgroundColor: palette.text.disabled}}/>
                         <OrderInfoText
                             icon={<BusinessOutlined color="primary" />}
                             label="Sawmill"
-                            text={order?.sawmill.name}
+                            text={order?.sawmill?.name}
                         />
                         <Divider style={{backgroundColor: palette.text.disabled}}/>
                         <OrderInfoText

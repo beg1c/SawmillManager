@@ -5,7 +5,6 @@ import {
     getDefaultFilter,
     HttpError,
     IResourceComponentsProps,
-    useCan,
     useNavigation,
     useTranslate,
 } from "@refinedev/core";
@@ -76,12 +75,11 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
         HttpError
     >({
         refineCoreProps: { action: "create" },
-        syncWithLocation: true,
         warnWhenUnsavedChanges: false,
     });
 
     const {
-        modal: { show: showCreateDrawer},
+        modal: { show: showCreateDrawer },
     } = createDrawerFormProps;
 
 

@@ -48,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('inventory/{type}', [InventoryController::class, 'index']);
+    Route::get('inventory', [InventoryController::class, 'show']);
 
     Route::apiResources([
         'sawmills' => SawmillController::class,

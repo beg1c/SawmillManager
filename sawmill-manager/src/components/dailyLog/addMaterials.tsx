@@ -67,7 +67,6 @@ export const AddMaterials: React.FC<
 
     useEffect(() => {
         if (queryResult && queryResult.data?.data.materials?.length) {
-            console.log(selectedMaterials);
             setSelectedMaterials(queryResult.data.data.materials);
         }
     }, []);

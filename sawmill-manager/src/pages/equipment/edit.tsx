@@ -15,7 +15,6 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { IEquipment, ISawmill } from "../../interfaces/interfaces";
-import { green } from "@mui/material/colors";
 import { Controller, FieldValues, SubmitHandler } from "react-hook-form";
 import { Autocomplete, Input, Typography, useTheme } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -134,7 +133,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                 />
                                 <Avatar
                                     sx={{
-                                        bgcolor: green[500],
+                                        bgcolor: palette.primary.main,
                                         cursor: "pointer",
                                         width: {
                                             xs: 180,
@@ -175,6 +174,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     size="small"
                                     margin="none"
                                     variant="outlined"
+                                    defaultValue={equipment?.type}
                                 />
                                 {errors.type && (
                                     <FormHelperText error>
@@ -203,6 +203,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     size="small"
                                     margin="none"
                                     variant="outlined"
+                                    defaultValue={equipment?.name}
                                 />
                                 {errors.name && (
                                     <FormHelperText error>
@@ -230,6 +231,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     size="small"
                                     margin="none"
                                     variant="outlined"
+                                    defaultValue={equipment?.production_year}
                                 />
                                 {errors.production_year && (
                                     <FormHelperText error>
@@ -251,7 +253,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                 <Controller
                                     control={control}
                                     name="next_service_date"
-                                    defaultValue={null as any}
+                                    defaultValue={equipment?.next_service_date || undefined}
                                     render={({field}) => (
                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                                         <DatePicker
@@ -272,10 +274,10 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     )}
                                 >
                                 </Controller>
-                            {errors.last_service_date && (
+                                {errors.next_service_date && (
                                 <FormHelperText error>
                                     {// @ts-ignore 
-                                    } {errors.last_service_date.message}
+                                    } {errors.next_service_date.message}
                                 </FormHelperText>
                             )}
                         </FormControl>
@@ -309,7 +311,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                 <Controller
                                     control={control}
                                     name="last_service_date"
-                                    defaultValue={null as any}
+                                    defaultValue={equipment?.last_service_date || undefined}
                                     render={({field}) => (
                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                                         <DatePicker
@@ -357,6 +359,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                 size="small"
                                 margin="none"
                                 variant="outlined"
+                                defaultValue={equipment?.last_service_working_hours}
                             />
                             {errors.last_service_working_hours && (
                                 <FormHelperText error>
@@ -378,7 +381,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                 <Controller
                                     control={control}
                                     name="sawmill"  
-                                    defaultValue={null as any}
+                                    defaultValue={equipment?.sawmill}
                                     render={({ field }) => (
                                         <Autocomplete
                                             size="small"

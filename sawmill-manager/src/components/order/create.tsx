@@ -36,8 +36,9 @@ export const CreateOrder: React.FC<
         formState: { errors },
         refineCore: { onFinish },
         handleSubmit,
-        modal: { visible, close },
+        modal: { visible, close},
         saveButtonProps,
+        reset,
     }) => {
 
     const t = useTranslate();
@@ -53,7 +54,11 @@ export const CreateOrder: React.FC<
             products: orderProducts
         };
 
-        onFinish(extendedValues).then(close);
+        onFinish(extendedValues).then(() => {
+            close();
+            reset();
+            setSelectedProducts([createEmptyProduct()]);
+        });
     };
 
     const [selectedProducts, setSelectedProducts] = useState<IProductWQuantity[]>([createEmptyProduct()]);
@@ -162,6 +167,7 @@ export const CreateOrder: React.FC<
                                         {t("customers.customer")}
                                     </FormLabel>
                                     <Controller
+                                        shouldUnregister={true}
                                         control={control}
                                         name="customer"
                                         rules={{
@@ -222,6 +228,7 @@ export const CreateOrder: React.FC<
                                     >
                                         <Autocomplete
                                             fullWidth
+                                            defaultValue={product}
                                             {...productsAutocompleteProps}
                                             size="small"
                                             getOptionLabel={(item) => { 
