@@ -38,13 +38,14 @@ export const AddWastes: React.FC<
 
         //Remove empty waste if exists
         const orderWastes = selectedWastes.filter(waste => waste.id !== 0);
+        setSelectedWastes(orderWastes);
     
         const extendedValues: IDailyLog = {
             ...values,
             wastes: orderWastes
         };
 
-        onFinish(extendedValues);
+        onFinish(extendedValues).then(close);
     };
 
     const [selectedWastes, setSelectedWastes] = useState<IWasteWQuantity[]>([createEmptyWaste()]);
@@ -65,10 +66,11 @@ export const AddWastes: React.FC<
     };
 
     useEffect(() => {
-        if (queryResult && queryResult.data?.data.wastes) {
+        if (queryResult && queryResult.data?.data.wastes?.length) {
+            console.log(selectedWastes);
             setSelectedWastes(queryResult.data.data.wastes);
         }
-    }, [queryResult]);
+    }, []);
 
 
 
@@ -99,7 +101,7 @@ export const AddWastes: React.FC<
                     <Typography
                         variant="h5"
                     >
-                        Add wastes
+                        {t("logs.fields.addWastes")}
                     </Typography>
                 }
                 footerButtons={
@@ -140,19 +142,7 @@ export const AddWastes: React.FC<
                         }}
                     >
                         <form onSubmit={handleSubmit(extendedOnFinish)}>
-                            <Stack gap="10px" marginTop="10px">
-                                <FormLabel
-                                    required
-                                    sx={{
-                                        marginBottom: "8px",
-                                        fontWeight: "700",
-                                        fontSize: "14px",
-                                        color: "text.primary",
-                                    }}
-                                >
-                                    {t("wastes.wastes")}
-                                </FormLabel>
-                                
+                            <Stack gap="10px" marginTop="10px">                           
                                 {selectedWastes?.map((waste, index) => (
                                     <FormControl 
                                         key={index} 
@@ -160,10 +150,11 @@ export const AddWastes: React.FC<
                                         style={{ display: "inline-flex", flexDirection: "row"}}
                                     >
                                         <Autocomplete
+                                            disableClearable
                                             fullWidth
                                             {...wastesAutocompleteProps}
                                             size="small"
-                                            value={waste}
+                                            defaultValue={waste}
                                             getOptionLabel={(item) => { 
                                                 return item.name;
                                             }}
@@ -176,6 +167,7 @@ export const AddWastes: React.FC<
                                                 <TextField 
                                                     {...params}
                                                     variant="outlined"
+                                                    label="Waste"
                                                 />              
                                             }
                                         />
@@ -188,14 +180,17 @@ export const AddWastes: React.FC<
                                             label="Quantity"
                                             size="small"
                                             type="number"
-                                            value={waste?.quantity}
+                                            defaultValue={waste?.quantity ? waste.quantity : 0}
                                             onChange={(event) => handleWasteChange(waste, parseInt(event.target.value), index)}
-                                            defaultValue={1}
                                             style={{
                                                 width: "120px",
+                                                marginLeft: "3px",  
                                             }}
                                         />
-                                        <IconButton onClick={() => handleDeleteSelect(waste.id)} aria-label="delete">
+                                        <IconButton 
+                                            onClick={() => handleDeleteSelect(waste.id)} 
+                                            aria-label="delete"
+                                        >
                                             <Close />
                                         </IconButton>
                                     </FormControl>

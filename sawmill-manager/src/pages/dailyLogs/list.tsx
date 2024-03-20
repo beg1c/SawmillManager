@@ -105,9 +105,13 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             placement="top"
                             title={
                                 <Stack sx={{ padding: "2px" }}>
-                                    {row.materials?.map((material) => (
-                                        <li key={material.id}>{material.quantity + 'x ' + material.name}</li>
-                                    ))}
+                                    {row.materials?.length ? 
+                                        row.materials.map((material) => (
+                                            <li key={material.id}>{material.quantity + 'x ' + material.name}</li>
+                                        ))
+                                    :
+                                        <li>{t("materials.noMaterials")}</li>
+                                    }
                                 </Stack>
                             }
                         >
@@ -135,9 +139,13 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             placement="top"
                             title={
                                 <Stack sx={{ padding: "2px" }}>
-                                    {row.products?.map((product) => (
-                                        <li key={product.id}>{product.quantity + 'x ' + product.name}</li>
-                                    ))}
+                                    {row.products?.length ? 
+                                        row.products.map((product) => (
+                                            <li key={product.id}>{product.quantity + 'x ' + product.name}</li>
+                                        ))
+                                    :
+                                        <li>{t("products.noProducts")}</li>
+                                    }
                                 </Stack>
                             }
                         >
@@ -165,9 +173,13 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             placement="top"
                             title={
                                 <Stack sx={{ padding: "2px" }}>
-                                    {row.wastes?.map((waste) => (
-                                        <li key={waste.id}>{waste.quantity + 'x ' + waste.name}</li>
-                                    ))}
+                                    {row.wastes?.length ? 
+                                        row.wastes.map((waste) => (
+                                            <li key={waste.id}>{waste.quantity + 'x ' + waste.name}</li>
+                                        ))
+                                    :
+                                        <li>{t("wastes.noWastes")}</li>
+                                    }
                                 </Stack>
                             }
                         >

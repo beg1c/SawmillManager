@@ -356,6 +356,9 @@
             "sawmill": "Sawmill",
             "materials": "Materials",
             "products": "Products",
+            "addMaterials": "Add materials",
+            "addWastes": "Add wastes",
+            "addProducts": "Add products",
             "wastes": "Wastes",
             "quantity": "Quantity",
             "value": "Value"

@@ -38,13 +38,14 @@ export const AddMaterials: React.FC<
 
         //Remove empty material if exists
         const orderMaterials = selectedMaterials.filter(material => material.id !== 0);
+        setSelectedMaterials(orderMaterials);
     
         const extendedValues: IDailyLog = {
             ...values,
             materials: orderMaterials
         };
 
-        onFinish(extendedValues);
+        onFinish(extendedValues).then(close);
     };
 
     const [selectedMaterials, setSelectedMaterials] = useState<IMaterialWQuantity[]>([createEmptyMaterial()]);
@@ -65,10 +66,11 @@ export const AddMaterials: React.FC<
     };
 
     useEffect(() => {
-        if (queryResult && queryResult.data?.data.materials) {
+        if (queryResult && queryResult.data?.data.materials?.length) {
+            console.log(selectedMaterials);
             setSelectedMaterials(queryResult.data.data.materials);
         }
-    }, [queryResult]);
+    }, []);
 
 
 
@@ -99,7 +101,7 @@ export const AddMaterials: React.FC<
                     <Typography
                         variant="h5"
                     >
-                        Add materials
+                        {t("logs.fields.addMaterials")}
                     </Typography>
                 }
                 footerButtons={
@@ -140,19 +142,7 @@ export const AddMaterials: React.FC<
                         }}
                     >
                         <form onSubmit={handleSubmit(extendedOnFinish)}>
-                            <Stack gap="10px" marginTop="10px">
-                                <FormLabel
-                                    required
-                                    sx={{
-                                        marginBottom: "8px",
-                                        fontWeight: "700",
-                                        fontSize: "14px",
-                                        color: "text.primary",
-                                    }}
-                                >
-                                    {t("materials.materials")}
-                                </FormLabel>
-                                
+                            <Stack gap="10px" marginTop="10px">                           
                                 {selectedMaterials?.map((material, index) => (
                                     <FormControl 
                                         key={index} 
@@ -160,10 +150,11 @@ export const AddMaterials: React.FC<
                                         style={{ display: "inline-flex", flexDirection: "row"}}
                                     >
                                         <Autocomplete
+                                            disableClearable
                                             fullWidth
                                             {...materialsAutocompleteProps}
                                             size="small"
-                                            value={material}
+                                            defaultValue={material}
                                             getOptionLabel={(item) => { 
                                                 return item.name;
                                             }}
@@ -176,6 +167,7 @@ export const AddMaterials: React.FC<
                                                 <TextField 
                                                     {...params}
                                                     variant="outlined"
+                                                    label="Material"
                                                 />              
                                             }
                                         />
@@ -188,14 +180,17 @@ export const AddMaterials: React.FC<
                                             label="Quantity"
                                             size="small"
                                             type="number"
-                                            value={material?.quantity}
+                                            defaultValue={material?.quantity ? material.quantity : 0}
                                             onChange={(event) => handleMaterialChange(material, parseInt(event.target.value), index)}
-                                            defaultValue={1}
                                             style={{
                                                 width: "120px",
+                                                marginLeft: "3px",  
                                             }}
                                         />
-                                        <IconButton onClick={() => handleDeleteSelect(material.id)} aria-label="delete">
+                                        <IconButton 
+                                            onClick={() => handleDeleteSelect(material.id)} 
+                                            aria-label="delete"
+                                        >
                                             <Close />
                                         </IconButton>
                                     </FormControl>

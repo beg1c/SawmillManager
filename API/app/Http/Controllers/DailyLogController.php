@@ -60,6 +60,8 @@ class DailyLogController extends Controller
 
         $dailyLog->sawmill()->associate($request['sawmill.id']);
 
+        $dailyLog->save();
+
         return new DailyLogResource($dailyLog);
     }
 
@@ -119,6 +121,8 @@ class DailyLogController extends Controller
             $this->updateOrAttachItems($dailyLog, 'wastes', $request->input('wastes'));
         }
 
+        $dailyLog->save();
+
         return new DailyLogResource($dailyLog);
     }
 
@@ -150,18 +154,23 @@ class DailyLogController extends Controller
 
     private function updateOrAttachItems($dailyLog, $relation, $items)
     {
-        if ($items) {
-            foreach ($items as $item) {
-                $itemId = $item['id'];
-                $quantity = $item['quantity'];
+        $itemIdsInRequest = collect($items)->pluck('id');
 
-                $existingItem = $dailyLog->{$relation}()->where('id', $itemId)->first();
+        $existingItemIds = $dailyLog->{$relation}->pluck('id');
 
-                if ($existingItem && !empty($quantity)) {
-                    $existingItem->pivot->update(['quantity' => $quantity]);
-                } elseif (!empty($quantity)) {
-                    $dailyLog->{$relation}()->attach($itemId, ['quantity' => $quantity]);
-                }
+        $itemsToDelete = $existingItemIds->diff($itemIdsInRequest);
+        $dailyLog->{$relation}()->detach($itemsToDelete);
+
+        foreach ($items as $item) {
+            $itemId = $item['id'];
+            $quantity = $item['quantity'];
+
+            $existingItem = $dailyLog->{$relation}()->where($relation . '.id', $itemId)->first();
+
+            if ($existingItem && !empty($quantity)) {
+                $existingItem->pivot->update(['quantity' => $quantity]);
+            } elseif (!empty($quantity)) {
+                $dailyLog->{$relation}()->attach($itemId, ['quantity' => $quantity]);
             }
         }
     }

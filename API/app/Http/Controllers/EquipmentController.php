@@ -23,10 +23,10 @@ class EquipmentController extends Controller
                     ->orderBy($sortField, $sortDirection);
 
         if ($pageSize) {
-            $equipment->paginate($pageSize, ['*'], 'current');
+            $equipment = $equipment->paginate($pageSize, ['*'], 'current');
         }
         else {
-            $equipment->get();
+            $equipment = $equipment->get();
         }
 
         return EquipmentResource::collection($equipment);
@@ -89,8 +89,6 @@ class EquipmentController extends Controller
                 "message" => "You do not have permission to update equipment for that sawmill."
             ], 403);
         }
-
-        $equipment = Equipment::findOrfail($id);
         $photoName = null;
 
         if ($request->has('photo')) {
@@ -154,7 +152,7 @@ class EquipmentController extends Controller
         return new EquipmentResource($equipment);
     }
 
-    private function updateEquipment($request, $photoname, $id)
+    private function updateEquipment($request, $photoName, $id)
     {
         $updateData = ([
             'name' => $request['name'],
@@ -166,6 +164,8 @@ class EquipmentController extends Controller
             'last_service_working_hours' => $request['last_service_working_hours'],
             'next_service_date' => $request['next_service_date'],
         ]);
+
+        $equipment = Equipment::findOrfail($id);
 
         if ($photoName !== null) {
             $updateData['photo'] = $photoName;

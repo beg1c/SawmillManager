@@ -19,7 +19,7 @@ export const CreateDailyLogModal: React.FC<
     UseModalFormReturnType<IDailyLog, HttpError>
 > = ({
     saveButtonProps,
-    modal: { visible, close, title },
+    modal: { visible, close },
     register,
     control,
     formState: { errors },

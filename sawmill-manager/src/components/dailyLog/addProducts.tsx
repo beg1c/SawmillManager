@@ -3,7 +3,6 @@ import { useTranslate, HttpError } from "@refinedev/core";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import Drawer from "@mui/material/Drawer";
-import FormLabel from "@mui/material/FormLabel";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -38,13 +37,14 @@ export const AddProducts: React.FC<
 
         //Remove empty product if exists
         const orderProducts = selectedProducts.filter(product => product.id !== 0);
+        setSelectedProducts(orderProducts);
     
         const extendedValues: IDailyLog = {
             ...values,
             products: orderProducts
         };
 
-        onFinish(extendedValues);
+        onFinish(extendedValues).then(close);
     };
 
     const [selectedProducts, setSelectedProducts] = useState<IProductWQuantity[]>([createEmptyProduct()]);
@@ -65,10 +65,11 @@ export const AddProducts: React.FC<
     };
 
     useEffect(() => {
-        if (queryResult && queryResult.data?.data.products) {
+        if (queryResult && queryResult.data?.data.products?.length) {
+            console.log(selectedProducts);
             setSelectedProducts(queryResult.data.data.products);
         }
-    }, [queryResult]);
+    }, []);
 
 
 
@@ -99,7 +100,7 @@ export const AddProducts: React.FC<
                     <Typography
                         variant="h5"
                     >
-                        Add products
+                        {t("logs.fields.addProducts")}
                     </Typography>
                 }
                 footerButtons={
@@ -140,19 +141,7 @@ export const AddProducts: React.FC<
                         }}
                     >
                         <form onSubmit={handleSubmit(extendedOnFinish)}>
-                            <Stack gap="10px" marginTop="10px">
-                                <FormLabel
-                                    required
-                                    sx={{
-                                        marginBottom: "8px",
-                                        fontWeight: "700",
-                                        fontSize: "14px",
-                                        color: "text.primary",
-                                    }}
-                                >
-                                    {t("products.products")}
-                                </FormLabel>
-                                
+                            <Stack gap="10px" marginTop="10px">                           
                                 {selectedProducts?.map((product, index) => (
                                     <FormControl 
                                         key={index} 
@@ -160,10 +149,11 @@ export const AddProducts: React.FC<
                                         style={{ display: "inline-flex", flexDirection: "row"}}
                                     >
                                         <Autocomplete
+                                            disableClearable
                                             fullWidth
                                             {...productsAutocompleteProps}
                                             size="small"
-                                            value={product}
+                                            defaultValue={product}
                                             getOptionLabel={(item) => { 
                                                 return item.name;
                                             }}
@@ -176,6 +166,7 @@ export const AddProducts: React.FC<
                                                 <TextField 
                                                     {...params}
                                                     variant="outlined"
+                                                    label="Product"
                                                 />              
                                             }
                                         />
@@ -188,14 +179,17 @@ export const AddProducts: React.FC<
                                             label="Quantity"
                                             size="small"
                                             type="number"
-                                            value={product?.quantity}
+                                            defaultValue={product?.quantity ? product.quantity : 0}
                                             onChange={(event) => handleProductChange(product, parseInt(event.target.value), index)}
-                                            defaultValue={1}
                                             style={{
                                                 width: "120px",
+                                                marginLeft: "3px",  
                                             }}
                                         />
-                                        <IconButton onClick={() => handleDeleteSelect(product.id)} aria-label="delete">
+                                        <IconButton 
+                                            onClick={() => handleDeleteSelect(product.id)} 
+                                            aria-label="delete"
+                                        >
                                             <Close />
                                         </IconButton>
                                     </FormControl>

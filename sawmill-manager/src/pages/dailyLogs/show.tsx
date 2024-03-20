@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid, Paper, Stack, Typography, useTheme } from "@mui/material";
+import { Avatar, Box, Grid, IconButton, Paper, Stack, Typography, useTheme } from "@mui/material";
 import { HttpError, IResourceComponentsProps, useCan, useNavigation, useShow } from "@refinedev/core";
 import { IDailyLog, IMaterialWQuantity, IProductWQuantity, IWasteWQuantity } from "../../interfaces/interfaces";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,7 @@ import { isValid, parseISO } from "date-fns";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React from "react";
-import { ForestOutlined, LocalGroceryStoreOutlined, RecyclingOutlined } from "@mui/icons-material";
+import { ArrowBackOutlined, ForestOutlined, LocalGroceryStoreOutlined, RecyclingOutlined } from "@mui/icons-material";
 import { DeleteButton, EditButton, List } from "@refinedev/mui";
 import { AddProducts } from "../../components/dailyLog";
 import { useModalForm } from "@refinedev/react-hook-form";
@@ -15,20 +15,24 @@ import { AddMaterials } from "../../components/dailyLog/addMaterials";
 import { AddWastes } from "../../components/dailyLog/addWastes";
 import { RotateLoader } from "react-spinners";
 
-
 export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
     const { t } = useTranslation();
     const { queryResult } = useShow<IDailyLog>({});
-    const { data, isLoading} = queryResult;
+    const { data, isLoading } = queryResult;
     const dailyLog = data?.data;
     const { push } = useNavigation();
+    const { goBack } = useNavigation();
     const { palette } = useTheme();
 
     const productsDrawerFormProps = useModalForm<
         IDailyLog,
         HttpError
     >({
-        refineCoreProps: { action: "edit" },
+        refineCoreProps: { 
+            action: "edit", 
+            redirect: false,
+        },
+        warnWhenUnsavedChanges: false,
         syncWithLocation: true,
     });
 
@@ -40,7 +44,11 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
         IDailyLog,
         HttpError
     >({
-        refineCoreProps: { action: "edit" },
+        refineCoreProps: { 
+            action: "edit", 
+            redirect: false,
+        },
+        warnWhenUnsavedChanges: false,
         syncWithLocation: true,
     });
 
@@ -52,7 +60,11 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
         IDailyLog,
         HttpError
     >({
-        refineCoreProps: { action: "edit" },
+        refineCoreProps: { 
+            action: "edit", 
+            redirect: false,
+        },
+        warnWhenUnsavedChanges: false,
         syncWithLocation: true,
     });
 
@@ -92,7 +104,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("logs.fields.quantity"),
                     width: 150,
                     sortable: false,
-                    valueGetter: (params) => {return params?.row?.quantity},
+                    valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
@@ -139,7 +151,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("logs.fields.quantity"),
                     width: 150,
                     sortable: false,
-                    valueGetter: (params) => {return params?.row?.quantity},
+                    valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
@@ -188,7 +200,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("logs.fields.quantity"),
                     width: 150,
                     sortable: false,
-                    valueGetter: (params) => {return params?.row?.quantity},
+                    valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
@@ -205,6 +217,19 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
             [t],
         );
 
+        if (isLoading) {
+            return (
+                <Grid container justifyContent="center" alignItems="center" style={{ height: '80vh' }}>
+                  <Grid item>
+                      <RotateLoader 
+                        color={palette.primary.main}
+                        speedMultiplier={0.5}
+                      />
+                  </Grid>
+                </Grid>
+            )
+        }
+
         return (
             <>
                 <Grid container spacing={2}>
@@ -217,9 +242,19 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 alignItems: 'center' 
                             }}
                         >
-                            <Typography variant="h6">
-                                {dailyLog?.sawmill.name}
-                            </Typography>
+                            <Stack direction="row">
+                                <IconButton onClick={goBack}>
+                                        <ArrowBackOutlined />
+                                </IconButton>
+                                <Stack marginLeft={1}>
+                                    <Typography variant="h6">
+                                        {dailyLog?.sawmill.name}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        {dailyLog?.sawmill.address}
+                                    </Typography>
+                                </Stack>
+                            </Stack>
                             <Box 
                                 display='flex'
                                 alignItems='center'
@@ -254,7 +289,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 <EditButton />
                             }
                             headerButtonProps={{
-                                onClick: () => showMaterialsDrawer()
+                                onClick: () => showMaterialsDrawer(dailyLog?.id)
                             }}
                         >
                             <DataGrid
@@ -262,9 +297,9 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 autoHeight
                                 columns={materialColumns}
                                 rows={dailyLog?.materials || []}
-                                hideFooterPagination
+                                hideFooter
                                 rowHeight={124}
-                                loading={isLoading}
+                                localeText={{ noRowsLabel: t("materials.noMaterials") }}
                             />
                         </List>
                     </Grid>
@@ -275,7 +310,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 <EditButton />
                             }
                             headerButtonProps={{
-                                onClick: () => showProductsDrawer()
+                                onClick: () => showProductsDrawer(dailyLog?.id)
                             }}
                         >
                             <DataGrid
@@ -283,9 +318,9 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 autoHeight
                                 columns={productColumns}
                                 rows={dailyLog?.products || []}
-                                hideFooterPagination
+                                hideFooter
                                 rowHeight={124}
-                                loading={isLoading}
+                                localeText={{ noRowsLabel: t("products.noProducts") }}
                             />
                         </List>
                     </Grid>
@@ -296,7 +331,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 <EditButton />
                             }
                             headerButtonProps={{
-                                onClick: () => showWastesDrawer()
+                                onClick: () => showWastesDrawer(dailyLog?.id)
                             }}
                         >
                             <DataGrid
@@ -304,9 +339,9 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 autoHeight
                                 columns={wasteColumns}
                                 rows={dailyLog?.wastes || []}
-                                hideFooterPagination
+                                hideFooter
                                 rowHeight={124}
-                                loading={isLoading}
+                                localeText={{ noRowsLabel: t("wastes.noWastes") }}
                             />
                         </List>
                     </Grid>
