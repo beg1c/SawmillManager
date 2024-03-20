@@ -39,7 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('orders/update-status/{id}', [OrderController::class,'updateStatus']);
 
     Route::prefix('dashboard')->group(function () {
-        Route::get('recent-daily-logs', [DashboardController::class, 'getRecentDailyLogs']);
+        Route::get('get-recent-daily-logs', [DashboardController::class, 'getRecentDailyLogs']);
         Route::get('get-pending-orders', [DashboardController::class, 'getPendingOrders']);
         Route::get('get-biggest-customers', [DashboardController::class, 'getBiggestCustomers']);
         Route::get('get-most-sold-products', [DashboardController::class, 'getMostSoldProducts']);

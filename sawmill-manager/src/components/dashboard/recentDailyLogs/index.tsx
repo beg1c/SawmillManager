@@ -22,7 +22,7 @@ export const RecentDailyLogs = () => {
             renderCell: function render({ row }) {
                 return (
                     <Stack spacing="4px">
-                        <Typography>{row.date.toString()}</Typography>
+                        <Typography>{row?.date?.toString()}</Typography>
                     </Stack>
                     );
                 },
@@ -33,7 +33,7 @@ export const RecentDailyLogs = () => {
                 renderCell: function render({ row }) {
                     return (
                         <Stack spacing="4px">
-                            <Typography>{row.sawmill.name}</Typography>
+                            <Typography>{row?.sawmill?.name}</Typography>
                         </Stack>
                         );
                     },

@@ -137,7 +137,8 @@ class DashboardController extends Controller
         $querySawmill = request()->query('sawmill');
         $pageSize = request()->query('pageSize', 5);
 
-        $equipment = Equipment::orderBy('next_service_date', 'asc');
+        $equipment = Equipment::whereNotNull('next_service_date')
+                ->orderBy('next_service_date', 'asc');
 
         if ($querySawmill) {
             $equipment->where('sawmill_id', $querySawmill);

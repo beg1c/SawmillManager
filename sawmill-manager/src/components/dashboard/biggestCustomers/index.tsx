@@ -1,7 +1,8 @@
-import { useTheme } from "@mui/material";
+import { Grid, useTheme } from "@mui/material";
 import { ICustomerWTotalSpent } from "../../../interfaces/interfaces";
 import React from "react";
 import { Bar, BarChart, LabelList, Legend, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { RotateLoader } from "react-spinners";
 
 
 interface BiggestCustomersProps {
@@ -10,11 +11,6 @@ interface BiggestCustomersProps {
 
 export const BiggestCustomers: React.FC<BiggestCustomersProps> = ({customers}) => {
     const { palette } = useTheme();
-
-
-    if (customers.length === 0) {
-        return <div>Loading...</div>;
-    }
 
     return (    
         <ResponsiveContainer width="100%" height="100%">
