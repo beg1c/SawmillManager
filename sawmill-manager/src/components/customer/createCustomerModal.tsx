@@ -19,7 +19,6 @@ export const CreateCustomerModal: React.FC<
     register,
     formState: { errors },
 }) => {
-
     const t = useTranslate();
 
     return (
@@ -36,6 +35,7 @@ export const CreateCustomerModal: React.FC<
                     sx={{ display: "flex", flexDirection: "column" }}
                 >
                     <TextField
+                        required
                         id="name"
                         {...register("name", {
                             required: "This field is required",

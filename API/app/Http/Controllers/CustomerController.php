@@ -12,8 +12,8 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $sortField = request()->query('sort', 'id');
-        $sortDirection = request()->query('order', 'asc');
+        $sortField = request()->query('sort', 'created_at');
+        $sortDirection = request()->query('order', 'desc');
         $pageSize = request()->query('pageSize');
         $searchQuery = request()->query('q');
 
@@ -36,7 +36,7 @@ class CustomerController extends Controller
 
     public function store(CustomerStoreRequest $request)
     {
-        if (Gate::allows('manage-customers')) {
+        if (Gate::authorize('manage-customers')) {
             $customer = Customer::create(($request->all()));
             return new CustomerResource($customer);
         }

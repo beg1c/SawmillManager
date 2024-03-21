@@ -6,9 +6,9 @@ import {
     HttpError,
     IResourceComponentsProps,
     useCan,
-    useDelete, useModal, useTranslate
+    useDelete, useTranslate
 } from "@refinedev/core";
-import { List, useDataGrid, useThemedLayoutContext } from "@refinedev/mui";
+import { List, useDataGrid } from "@refinedev/mui";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
@@ -23,6 +23,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { ICustomer, ICustomerFilterVariables, IOrder } from "../../interfaces/interfaces";
 import { Close, Edit, Add, Visibility } from "@mui/icons-material";
 import { CreateCustomerModal, EditCustomerModal } from "../../components/customer";
+
 
 export const CustomerList: React.FC<IResourceComponentsProps> = () => {
     const { mutate: mutateDelete } = useDelete();
@@ -68,7 +69,7 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
         HttpError
     >({
         refineCoreProps: { action: "create" },
-        syncWithLocation: true,
+        warnWhenUnsavedChanges: false,
     });
 
     const {
@@ -79,12 +80,24 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
         ICustomer, HttpError
     >({
         refineCoreProps: { action: "edit" },
-        syncWithLocation: true,
+        warnWhenUnsavedChanges: false,
     });
 
     const {
         modal: { show: showEditModal },
     } = editModalFormProps;
+
+    
+    const { register, handleSubmit } = useForm<
+        ICustomer,
+        HttpError,
+        ICustomerFilterVariables
+    >({
+        defaultValues: {
+            q: getDefaultFilter("q", filters, "eq"),
+        },
+    });
+
 
     const columns = React.useMemo<GridColDef<ICustomer>[]>(
         () => [
@@ -152,16 +165,6 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
         ],
         [t]
     );
-
-    const { register, handleSubmit, control } = useForm<
-        ICustomer,
-        HttpError,
-        ICustomerFilterVariables
-    >({
-        defaultValues: {
-            q: getDefaultFilter("q", filters, "eq"),
-        },
-    });
 
     return (
         <>

@@ -7,13 +7,10 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
-
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { ICustomer } from "../../interfaces/interfaces";
-import { Grid } from "@mui/material";
-import { ScaleLoader } from "react-spinners";
 
-
+    
 export const EditCustomerModal: React.FC<
     UseModalFormReturnType<ICustomer, HttpError>
 > = ({
@@ -44,6 +41,7 @@ export const EditCustomerModal: React.FC<
                     sx={{ display: "flex", flexDirection: "column" }}
                 >
                     <TextField
+                        required
                         id="name"
                         {...register("name", {
                             required: "This field is required",
