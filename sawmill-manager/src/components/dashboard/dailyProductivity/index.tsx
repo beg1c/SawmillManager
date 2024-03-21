@@ -2,6 +2,7 @@ import { useTheme } from "@mui/material";
 import { IDailyProductivity } from "../../../interfaces/interfaces";
 import React from "react";
 import { Bar, BarChart, LabelList, Legend, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import FullLoader from "../../fullLoader";
 
 
 interface DailyProductivityProps {
@@ -11,8 +12,8 @@ interface DailyProductivityProps {
 export const DailyProductivity: React.FC<DailyProductivityProps> = ({dailyProductivity}) => {
     const { palette } = useTheme();
 
-    if (dailyProductivity.length === 0) {
-        return <div>Loading...</div>;
+    if (!dailyProductivity.length) {
+        return <FullLoader />;
     }
 
     return (    

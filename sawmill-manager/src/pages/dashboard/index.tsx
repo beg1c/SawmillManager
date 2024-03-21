@@ -144,7 +144,7 @@ export const DashboardPage: React.FC = () => {
                 lg={15}
                 xl={15}
                 sx={{
-                height: "504px",
+                    height: "504px",
                 }}
             >
                 <Card
@@ -167,12 +167,17 @@ export const DashboardPage: React.FC = () => {
                 lg={9}
                 xl={9}
                 sx={{
-                height: "504px",
+                    height: "504px",
                 }}
             >
                 <Card
-                icon={<EngineeringOutlined />}
-                title={t("dashboard.closestServices.title")}
+                    icon={<EngineeringOutlined />}
+                    title={t("dashboard.closestServices.title")}
+                    cardContentProps={{
+                        sx: {
+                        height: "424px",
+                        },
+                    }}
                 >
                     <ClosestServices />
                 </Card>

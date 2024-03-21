@@ -73,6 +73,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordProps> = ({
                         }}
                         margin="normal"
                         fullWidth
+                        placeholder="Current password"
                         label="Current password"
                         name="name"
                     />
@@ -85,6 +86,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordProps> = ({
                         }}
                         margin="normal"
                         fullWidth
+                        placeholder="New password"
                         label="New password"
                         name="newPassword"
                     />
@@ -97,6 +99,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordProps> = ({
                         }}
                         margin="normal"
                         fullWidth
+                        placeholder="New password"
                         label="Repeat new password"
                         name="repeatNewPassword"
                     />

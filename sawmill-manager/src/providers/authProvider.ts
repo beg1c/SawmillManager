@@ -1,10 +1,10 @@
-import { AuthBindings, useApiUrl } from "@refinedev/core";
+import { AuthBindings } from "@refinedev/core";
 
 export const TOKEN_KEY = "bearer-token";
 
 import axios from "axios";
 import { IEmployee } from "../interfaces/interfaces";
-const apiUrl = "http://127.0.0.1:8000/api/";
+const apiUrl = import.meta.env.VITE_APP_API_URL;
 
 const axiosInstance = axios.create();
 
@@ -21,12 +21,12 @@ axiosInstance.interceptors.request.use(
     },
 );
 
-let employee: IEmployee;
+let employee: IEmployee | undefined;
 
 export const authProvider: AuthBindings = {
   login: async ({ email, password }) => {
     const response = await fetch(
-      apiUrl + "login",
+      apiUrl + "/login",
       {
         method: "POST",
         body: JSON.stringify({ email, password }),
@@ -41,6 +41,8 @@ export const authProvider: AuthBindings = {
 
     if (response.status == 200) {
       localStorage.setItem(TOKEN_KEY, data.data.bearer_token);
+      employee = data?.data;
+      
       return { success: true };
     }
 
@@ -61,7 +63,7 @@ export const authProvider: AuthBindings = {
   },
   forgotPassword: async ({ email }) => {
     const response = await fetch(
-      apiUrl + "forgot-password",
+      apiUrl + "/forgot-password",
       {
         method: "POST",
         body: JSON.stringify({ email }),
@@ -107,8 +109,12 @@ export const authProvider: AuthBindings = {
     if (employee) {
       return employee.role.role_name;
     }
-    else {
-      const response = await fetch(apiUrl + "users/me", 
+  },
+  getIdentity: async () => {
+    if (employee) {
+      return employee;
+    } else {
+      const response = await fetch(apiUrl + "/users/me", 
         {
           method: "GET",
           headers: {
@@ -125,28 +131,8 @@ export const authProvider: AuthBindings = {
 
       employee = data.data;
 
-      return employee.role.role_name;
+      return employee;
     }
-  },
-  getIdentity: async () => {
-    const response = await fetch(apiUrl + "users/me", 
-      {
-        method: "GET",
-        headers: {
-          "Authorization": "Bearer " + localStorage.getItem(TOKEN_KEY),
-        },
-      }
-    );
-
-    if (response.status < 200 || response.status > 299) {
-      return null;
-    }
-
-    const data = await response.json();
-
-    employee = data.data;
-
-    return data.data;
   },
   onError: async (error) => {
     console.error(error);

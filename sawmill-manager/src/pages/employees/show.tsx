@@ -1,6 +1,6 @@
 import { Avatar, Box, Grid, Paper, Stack, Typography, useTheme } from "@mui/material";
 import { green } from "@mui/material/colors";
-import { IResourceComponentsProps, useGo, useShow } from "@refinedev/core";
+import { IResourceComponentsProps, useGetIdentity, useGo, useLogout, useShow } from "@refinedev/core";
 import {
   DeleteButton,
   EditButton,
@@ -37,6 +37,8 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
   const { palette } = useTheme();
   const employee = data?.data;
   const go = useGo();
+  const { data: user } = useGetIdentity<IEmployee>();
+  const { mutate: logout } = useLogout();
 
   if (isLoading) {
     return (
@@ -99,12 +101,15 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
                     <DeleteButton 
                       confirmTitle="Are you sure you want to delete employee?"
                       accessControl={{ enabled: true, hideIfUnauthorized: true }}
-                      onSuccess = {() => go({
-                        to: {
-                          resource: "employees",
-                          action: "list",
-                        },
-                      })}
+                      onSuccess = {() => {
+                        if (user?.id === employee?.id) {
+                          logout();
+                        } else {
+                          go({to: {
+                            resource: "employees",
+                            action: "list",
+                          }});
+                      }}}
                     />
                   </Box> 
                   </Grid>

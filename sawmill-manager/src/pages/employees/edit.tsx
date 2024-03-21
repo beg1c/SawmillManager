@@ -5,9 +5,9 @@ import {
     useTranslate,
     HttpError,
     useModal,
-    useApiUrl,
     useGetIdentity,
     useUpdate,
+    useCan,
 } from "@refinedev/core";
 import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { useStepsForm } from "@refinedev/react-hook-form";
@@ -45,6 +45,10 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
         t("employees.steps.content"),
         t("employees.steps.relations"),
     ];
+    const { data: can } = useCan({
+        resource: 'employees',
+        action: 'edit'
+    })
 
     const { mutate: mutateUpdate } = useUpdate();
     
@@ -57,7 +61,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
     const { show: showCropModal } = imageCropModalProps;
     
     const changePasswordModalProps = useModal();
-    const { show: showPasswordModal } = changePasswordModalProps;
+    const { show: showPasswordModal, close: closePasswordModal } = changePasswordModalProps;
 
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -80,13 +84,19 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
     }
 
     const handlePasswordChange = (currentPassword: string, newPassword: string) => {
-        employee?.id && mutateUpdate({
+        employee?.id && mutateUpdate(
+        {
             resource: 'change-password',
             values: {
                 current_password: currentPassword,
                 new_password: newPassword
-            },
+            },  
             id: employee.id,
+        },
+        {
+            onSuccess: () => {
+                closePasswordModal();
+            },
         })
     }
     
@@ -420,6 +430,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                             render={({ field }) => (
                                                 <Autocomplete
                                                     size="small"
+                                                    disabled={!can?.can}
                                                     {...rolesAutocompleteProps}
                                                     {...field}
                                                     onChange={(_, value) => {
@@ -481,7 +492,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                             render={({ field }) => (
                                                 <Autocomplete
                                                     multiple
-                                                    disabled={role?.role_name === 'executive'}
+                                                    disabled={role?.role_name === 'executive' || !can?.can}
                                                     size="small"
                                                     {...sawmillsAutocompleteProps}
                                                     {...field}

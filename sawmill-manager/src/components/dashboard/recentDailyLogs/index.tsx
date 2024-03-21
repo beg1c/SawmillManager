@@ -4,6 +4,7 @@ import { useNavigation } from "@refinedev/core"
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Stack, Typography } from "@mui/material";
 import { useMemo } from "react";
+import FullLoader from "../../fullLoader";
 
 
 export const RecentDailyLogs = () => {
@@ -41,6 +42,10 @@ export const RecentDailyLogs = () => {
         ],
         [],
     );
+
+    if (dataGridProps.loading) {
+        return <FullLoader />
+    }
 
     return (
         <DataGrid

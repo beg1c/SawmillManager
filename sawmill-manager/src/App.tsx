@@ -46,7 +46,7 @@ import { InventoryProductList } from "./pages/inventory/products";
 import { InventoryWasteList } from "./pages/inventory/wastes";
 import { DailyLogList, DailyLogShow } from "./pages/dailyLogs";
 import { DashboardPage } from "./pages/dashboard";
-const apiUrl = "http://127.0.0.1:8000/api";
+const apiUrl = import.meta.env.VITE_APP_API_URL;
 
 function App() {
     const { t, i18n } = useTranslation();

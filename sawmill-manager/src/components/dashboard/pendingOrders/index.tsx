@@ -2,9 +2,10 @@ import { NumberField, useDataGrid } from "@refinedev/mui"
 import { IOrder } from "../../../interfaces/interfaces"
 import { useNavigation } from "@refinedev/core"
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Alert, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { OrderStatus } from "../../orderStatus";
+import FullLoader from "../../fullLoader";
 
 
 export const PendingOrders = () => {
@@ -63,6 +64,10 @@ export const PendingOrders = () => {
         ],
         [],
     );
+
+    if (dataGridProps.loading) {
+        return <FullLoader />
+    }
 
     return (
         <DataGrid

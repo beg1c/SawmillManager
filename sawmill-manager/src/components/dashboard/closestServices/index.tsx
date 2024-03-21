@@ -2,9 +2,10 @@ import { useDataGrid } from "@refinedev/mui"
 import { IEquipment } from "../../../interfaces/interfaces"
 import { useNavigation } from "@refinedev/core"
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Avatar, Grid, Stack, Typography, useTheme } from "@mui/material";
+import { Avatar, Stack, Typography, useTheme } from "@mui/material";
 import { useMemo } from "react";
 import { HandymanRounded } from "@mui/icons-material";
+import FullLoader from "../../fullLoader";
 
 export const ClosestServices = () => {
     const { edit } = useNavigation();
@@ -65,6 +66,10 @@ export const ClosestServices = () => {
         ],
         [],
     );
+
+    if (dataGridProps.loading) {
+        return <FullLoader />
+    }
 
     return (
         <DataGrid
