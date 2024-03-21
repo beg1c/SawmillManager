@@ -71,8 +71,6 @@ export const AddWastes: React.FC<
         }
     }, []);
 
-
-
     const handleAddSelect = () => {
         const newSelects = [...selectedWastes, createEmptyWaste()];
         setSelectedWastes(newSelects);
@@ -141,7 +139,7 @@ export const AddWastes: React.FC<
                         }}
                     >
                         <form onSubmit={handleSubmit(extendedOnFinish)}>
-                            <Stack gap="10px" marginTop="10px">                           
+                            <Stack gap="10px" marginTop="10px">
                                 {selectedWastes?.map((waste, index) => (
                                     <FormControl 
                                         key={index} 
@@ -153,11 +151,13 @@ export const AddWastes: React.FC<
                                             fullWidth
                                             {...wastesAutocompleteProps}
                                             size="small"
-                                            defaultValue={waste}
+                                            value={waste}
                                             getOptionLabel={(item) => { 
                                                 return item.name;
                                             }}
-                                            isOptionEqualToValue={(option, value) => option.id === value.id}
+                                            isOptionEqualToValue={(option, value) => {
+                                                return option.id === value.id;
+                                            }}
                                             onChange={(_,value) => value ? handleWasteChange(value, 1, index) : null}
                                             getOptionDisabled={(option) =>
                                                 selectedWastes.some(waste => waste.id === option.id)    
@@ -179,7 +179,7 @@ export const AddWastes: React.FC<
                                             label="Quantity"
                                             size="small"
                                             type="number"
-                                            defaultValue={waste?.quantity ? waste.quantity : 0}
+                                            value={waste?.quantity ? waste.quantity : 0}
                                             onChange={(event) => handleWasteChange(waste, parseInt(event.target.value), index)}
                                             style={{
                                                 width: "120px",

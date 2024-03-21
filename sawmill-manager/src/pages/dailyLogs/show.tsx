@@ -21,8 +21,11 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
     const { data, isLoading } = queryResult;
     const dailyLog = data?.data;
     const { push } = useNavigation();
-    const { goBack } = useNavigation();
     const { palette } = useTheme();
+    const { data: can } = useCan({
+        resource: 'dailylogs',
+        action: 'delete'
+    })
 
     const productsDrawerFormProps = useModalForm<
         IDailyLog,
@@ -99,14 +102,14 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                 {
                     field: "quantity",
                     headerName: t("logs.fields.quantity"),
-                    width: 150,
+                    width: 100,
                     sortable: false,
                     valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
                     headerName: t("logs.fields.value"),
-                    width: 150,
+                    minWidth: 50,
                     sortable: false,
                     valueGetter: (params) => {
                         return (params?.row?.price * params?.row?.quantity).toFixed(2) + ' €'
@@ -146,15 +149,16 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                 {
                     field: "quantity",
                     headerName: t("logs.fields.quantity"),
-                    width: 150,
+                    width: 100,
                     sortable: false,
                     valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
                     headerName: t("logs.fields.value"),
-                    width: 150,
+                    width: 100,
                     sortable: false,
+                    flex: 1,
                     valueGetter: (params) => {
                         if (params?.row?.price){
                             return (params?.row?.price * params?.row?.quantity).toFixed(2) + ' €'
@@ -195,14 +199,14 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                 {
                     field: "quantity",
                     headerName: t("logs.fields.quantity"),
-                    width: 150,
+                    width: 100,
                     sortable: false,
                     valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
                     headerName: t("logs.fields.value"),
-                    width: 150,
+                    width: 100,
                     sortable: false,
                     valueGetter: (params) => {
                         if (params?.row?.price){
@@ -240,7 +244,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                             }}
                         >
                             <Stack direction="row">
-                                <IconButton onClick={goBack}>
+                                <IconButton onClick={() => push("/dailylogs")}>
                                         <ArrowBackOutlined />
                                 </IconButton>
                                 <Stack marginLeft={1}>
@@ -256,14 +260,15 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 display='flex'
                                 alignItems='center'
                             >  
+                                {can?.can &&
                                 <DeleteButton 
                                     hideText={true}
                                     sx={{ marginRight: 1 }}
                                     size="large"
                                     onSuccess={() => {  
                                         push("/dailylogs");
-                                    }}  
-                                />
+                                    }}        
+                                />}
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                                     <DatePicker
                                         readOnly
@@ -283,7 +288,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                         <List
                             title={t("logs.input.materials")}
                             headerButtons={
-                                <EditButton />
+                                can?.can ? <EditButton /> : null
                             }
                             headerButtonProps={{
                                 onClick: () => showMaterialsDrawer(dailyLog?.id)
@@ -304,7 +309,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                         <List
                             title={t("logs.output.products")}
                             headerButtons={
-                                <EditButton />
+                                can?.can ? <EditButton /> : null
                             }
                             headerButtonProps={{
                                 onClick: () => showProductsDrawer(dailyLog?.id)
@@ -325,7 +330,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                         <List
                             title={t("logs.output.wastes")}
                             headerButtons={
-                                <EditButton />
+                                can?.can ? <EditButton /> : null
                             }
                             headerButtonProps={{
                                 onClick: () => showWastesDrawer(dailyLog?.id)

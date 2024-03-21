@@ -3,6 +3,7 @@ import { useTranslate, HttpError } from "@refinedev/core";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import Drawer from "@mui/material/Drawer";
+import FormLabel from "@mui/material/FormLabel";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -69,8 +70,6 @@ export const AddProducts: React.FC<
             setSelectedProducts(queryResult.data.data.products);
         }
     }, []);
-
-
 
     const handleAddSelect = () => {
         const newSelects = [...selectedProducts, createEmptyProduct()];
@@ -140,7 +139,7 @@ export const AddProducts: React.FC<
                         }}
                     >
                         <form onSubmit={handleSubmit(extendedOnFinish)}>
-                            <Stack gap="10px" marginTop="10px">                           
+                            <Stack gap="10px" marginTop="10px">
                                 {selectedProducts?.map((product, index) => (
                                     <FormControl 
                                         key={index} 
@@ -152,11 +151,13 @@ export const AddProducts: React.FC<
                                             fullWidth
                                             {...productsAutocompleteProps}
                                             size="small"
-                                            defaultValue={product}
+                                            value={product}
                                             getOptionLabel={(item) => { 
                                                 return item.name;
                                             }}
-                                            isOptionEqualToValue={(option, value) => option.id === value.id}
+                                            isOptionEqualToValue={(option, value) => {
+                                                return option.id === value.id;
+                                            }}
                                             onChange={(_,value) => value ? handleProductChange(value, 1, index) : null}
                                             getOptionDisabled={(option) =>
                                                 selectedProducts.some(product => product.id === option.id)    
@@ -178,7 +179,7 @@ export const AddProducts: React.FC<
                                             label="Quantity"
                                             size="small"
                                             type="number"
-                                            defaultValue={product?.quantity ? product.quantity : 0}
+                                            value={product?.quantity ? product.quantity : 0}
                                             onChange={(event) => handleProductChange(product, parseInt(event.target.value), index)}
                                             style={{
                                                 width: "120px",

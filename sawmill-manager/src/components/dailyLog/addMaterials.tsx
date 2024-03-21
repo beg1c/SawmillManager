@@ -71,8 +71,6 @@ export const AddMaterials: React.FC<
         }
     }, []);
 
-
-
     const handleAddSelect = () => {
         const newSelects = [...selectedMaterials, createEmptyMaterial()];
         setSelectedMaterials(newSelects);
@@ -141,7 +139,7 @@ export const AddMaterials: React.FC<
                         }}
                     >
                         <form onSubmit={handleSubmit(extendedOnFinish)}>
-                            <Stack gap="10px" marginTop="10px">                           
+                            <Stack gap="10px" marginTop="10px">
                                 {selectedMaterials?.map((material, index) => (
                                     <FormControl 
                                         key={index} 
@@ -153,11 +151,13 @@ export const AddMaterials: React.FC<
                                             fullWidth
                                             {...materialsAutocompleteProps}
                                             size="small"
-                                            defaultValue={material}
+                                            value={material}
                                             getOptionLabel={(item) => { 
                                                 return item.name;
                                             }}
-                                            isOptionEqualToValue={(option, value) => option.id === value.id}
+                                            isOptionEqualToValue={(option, value) => {
+                                                return option.id === value.id;
+                                            }}
                                             onChange={(_,value) => value ? handleMaterialChange(value, 1, index) : null}
                                             getOptionDisabled={(option) =>
                                                 selectedMaterials.some(material => material.id === option.id)    
@@ -179,7 +179,7 @@ export const AddMaterials: React.FC<
                                             label="Quantity"
                                             size="small"
                                             type="number"
-                                            defaultValue={material?.quantity ? material.quantity : 0}
+                                            value={material?.quantity ? material.quantity : 0}
                                             onChange={(event) => handleMaterialChange(material, parseInt(event.target.value), index)}
                                             style={{
                                                 width: "120px",

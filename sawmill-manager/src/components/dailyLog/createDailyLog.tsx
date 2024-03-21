@@ -24,7 +24,6 @@ export const CreateDailyLogModal: React.FC<
     control,
     formState: { errors },
 }) => {
-
     const t = useTranslate();
 
     const { autocompleteProps: sawmillsAutocompleteProps } = useAutocomplete<ISawmill>({
@@ -54,7 +53,7 @@ export const CreateDailyLogModal: React.FC<
                                 color: "text.primary",
                             }}
                         >
-                            Sawmill
+                            {t('logs.fields.sawmills')}
                         </FormLabel>
                         <Controller
                             control={control}
@@ -119,7 +118,7 @@ export const CreateDailyLogModal: React.FC<
                                 color: "text.primary",
                             }}
                         >
-                            Date
+                            {t("logs.fields.date")}
                         </FormLabel>
                             <Controller
                                 {...register("date", {

@@ -245,7 +245,7 @@
         "products": "Products",
         "manage": "Manage products",
         "product": "Product",
-        "noProducts": "No Products",
+        "noProducts": "No products",
         "productSearch": "Search for product",
         "titles": {
             "list": "Products",
@@ -277,7 +277,7 @@
         "materials": "Materials",
         "manage": "Manage materials",
         "product": "Material",
-        "noMaterials": "No Materials",
+        "noMaterials": "No materials",
         "materialSearch": "Search for material",
         "titles": {
             "list": "Materials",
@@ -309,7 +309,7 @@
         "wastes": "Wastes",
         "manage": "Manage wastes",
         "waste": "Waste",
-        "noWastes": "No Wastes",
+        "noWastes": "No wastes",
         "wasteSearch": "Search for waste",
         "titles": {
             "list": "Wastes",
@@ -354,6 +354,7 @@
             "wastesAmount": "{{amount}} wastes",
             "date": "Date",
             "sawmill": "Sawmill",
+            "sawmills": "Sawmills",
             "materials": "Materials",
             "products": "Products",
             "addMaterials": "Add materials",

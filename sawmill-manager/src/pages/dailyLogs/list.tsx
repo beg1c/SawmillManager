@@ -23,6 +23,7 @@ import { Controller } from "react-hook-form";
 import { IDailyLog, IDailyLogFilterVariables, ISawmill } from "../../interfaces/interfaces";
 import { CustomTooltip } from "../../components/customTooltip";
 import { CreateDailyLogModal } from "../../components/dailyLog/createDailyLog";
+import { format } from "date-fns";
 
 export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
@@ -67,7 +68,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
         HttpError
     >({
         refineCoreProps: { action: "create" },
-        syncWithLocation: true,
+        warnWhenUnsavedChanges: false,
     });
 
     const {
@@ -81,6 +82,10 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                 headerName: t("logs.fields.date"),
                 minWidth: 150,
                 flex: 1,
+                valueGetter: (params) => {
+                    const date = new Date(params?.row?.date);
+                    return format(date, 'dd.MM.yyyy');
+                }
             },
             {
                 field: "sawmill",
@@ -89,7 +94,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                 flex: 1,
                 sortable: false,
                 valueGetter: (params) => {
-                    return params?.row?.sawmill.name;
+                    return params?.row?.sawmill?.name;
                 }
             },
             {

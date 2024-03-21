@@ -73,7 +73,7 @@ class DailyLogController extends Controller
 
         if (!in_array($dailyLog->sawmill->id, $user_sawmill_ids)) {
             return response()->json([
-                "message" => "You are not authorized to view daily log assigned to other sawmill."
+                "message" => "You are not authorized to view daily log assigned to that sawmill."
             ], 403);
         }
 
@@ -110,15 +110,15 @@ class DailyLogController extends Controller
         }
 
         if (isset($request['products'])) {
-            $this->updateOrAttachItems($dailyLog, 'products', $request->input('products'));
+            $this->syncItems($dailyLog, 'products', $request->input('products'));
         }
 
         if (isset($request['materials'])) {
-            $this->updateOrAttachItems($dailyLog, 'materials', $request->input('materials'));
+            $this->syncItems($dailyLog, 'materials', $request->input('materials'));
         }
 
         if (isset($request['wastes'])) {
-            $this->updateOrAttachItems($dailyLog, 'wastes', $request->input('wastes'));
+            $this->syncItems($dailyLog, 'wastes', $request->input('wastes'));
         }
 
         $dailyLog->save();
@@ -130,7 +130,7 @@ class DailyLogController extends Controller
     {
         if (!Gate::allows('manage-daily-logs')) {
             return response()->json([
-                'message' => 'You are not allowed to manage logs.'
+                'message' => 'You are not allowed to delete logs.'
             ], 403);
         }
 
@@ -141,7 +141,7 @@ class DailyLogController extends Controller
 
         if (!in_array($dailyLog->sawmill->id, $user_sawmill_ids)) {
             return response()->json([
-                'message' => 'You are not allowed to delete daily logs for sawmills you do not manage.'
+                'message' => 'You are not allowed to delete logs for that sawmill.'
             ], 403);
         }
 
@@ -152,7 +152,7 @@ class DailyLogController extends Controller
         ]);
     }
 
-    private function updateOrAttachItems($dailyLog, $relation, $items)
+    private function syncItems($dailyLog, $relation, $items)
     {
         $itemIdsInRequest = collect($items)->pluck('id');
 
