@@ -85,7 +85,7 @@ class DashboardController extends Controller
         $querySawmill = request()->query('sawmill');
 
         $orders = Order::where('status', 'Pending')
-            ->orderBy('ordered_at', 'asc');
+            ->orderBy('ordered_at', 'desc');
 
         if ($querySawmill) {
             $orders->where('sawmill_id', 'like', $querySawmill);

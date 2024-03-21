@@ -6,6 +6,7 @@ import {
     HttpError,
     IResourceComponentsProps,
     useCan,
+    useNavigation,
     useTranslate
 } from "@refinedev/core";
 import { List, ShowButton, useAutocomplete, useDataGrid } from "@refinedev/mui";
@@ -31,6 +32,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
         resource: 'dailylogs',
         action: 'create'
     })
+    const { show } = useNavigation();
 
     const { dataGridProps, search } = useDataGrid<
         IDailyLog,
@@ -290,8 +292,17 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             {...dataGridProps}
                             columns={columns}
                             filterModel={undefined}
+                            onRowClick={({ id }) => {
+                                show("dailylogs", id);
+                            }}
                             autoHeight
                             pageSizeOptions={[10, 20, 50, 100]} 
+                            sx={{
+                                ...dataGridProps.sx,
+                                "& .MuiDataGrid-row": {
+                                    cursor: "pointer",
+                                },
+                            }}
                         />
                     </List>
                 </Grid>

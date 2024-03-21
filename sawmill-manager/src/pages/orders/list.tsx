@@ -19,7 +19,6 @@ import {
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { Controller } from "react-hook-form";
-
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -82,6 +81,33 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
         modal: { show: showCreateDrawer },
     } = createDrawerFormProps;
 
+    const { show } = useNavigation();
+
+    const { handleSubmit, control } = useForm<
+        BaseRecord,
+        HttpError,
+        IOrderFilterVariables
+    >({
+        defaultValues: {
+            customer: getDefaultFilter("customer", filters, "eq"),
+            sawmill: getDefaultFilter("sawmill", filters, "eq"),
+        },
+    });
+
+    const { autocompleteProps: sawmillAutocompleteProps } = useAutocomplete<ISawmill>({
+        resource: "sawmills",
+        defaultValue: getDefaultFilter("sawmill", filters, "eq"),
+    });
+
+    const { autocompleteProps: customerAutocompleteProps } = useAutocomplete<ICustomer>({
+        resource: "customers",
+    });
+
+    const statuses = [
+        { id: 1, name: 'Pending' },
+        { id: 2, name: 'Ready' },
+        { id: 3, name: 'Dispatched' },
+    ];
 
     const columns = React.useMemo<GridColDef<IOrder>[]>(
         () => [
@@ -193,34 +219,6 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
         ],
         [t],
     );
-
-    const { show } = useNavigation();
-
-    const { handleSubmit, control } = useForm<
-        BaseRecord,
-        HttpError,
-        IOrderFilterVariables
-    >({
-        defaultValues: {
-            customer: getDefaultFilter("customer", filters, "eq"),
-            sawmill: getDefaultFilter("sawmill", filters, "eq"),
-        },
-    });
-
-    const { autocompleteProps: sawmillAutocompleteProps } = useAutocomplete<ISawmill>({
-        resource: "sawmills",
-        defaultValue: getDefaultFilter("sawmill", filters, "eq"),
-    });
-
-    const { autocompleteProps: customerAutocompleteProps } = useAutocomplete<ICustomer>({
-        resource: "customers",
-    });
-
-    const statuses = [
-        { id: 1, name: 'Pending' },
-        { id: 2, name: 'Ready' },
-        { id: 3, name: 'Dispatched' },
-      ];
 
     return (
         <>

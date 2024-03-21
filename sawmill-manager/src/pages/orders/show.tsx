@@ -8,7 +8,6 @@ import {
     useUpdate,
 } from "@refinedev/core";
 import { List } from "@refinedev/mui";
-
 import { useTheme } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
@@ -93,7 +92,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                     }, 
                 },
                 {
-                    onSuccess: (data) => {
+                    onSuccess: (data: any) => {
                         setRecord(prevRecord => ({
                             ...data?.data?.data,
                             events: [

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('production_year')->nullable();
             $table->date('last_service_date')->nullable();
             $table->integer('last_service_working_hours')->nullable();
-            $table->unsignedBigInteger('sawmill_id');
+            $table->unsignedBigInteger('sawmill_id')->nullable();
             $table->timestamps();
 
             $table->foreign('sawmill_id')->references('id')
