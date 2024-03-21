@@ -89,11 +89,11 @@ export interface IEquipment {
     description?: string;
     notes?: string;
     production_year?: number;
-    last_service_date?: string;
+    last_service_date?: Date;
     last_service_working_hours?: string;
     sawmill?: ISawmill;
     photo: string;
-    next_service_date: string;
+    next_service_date: Date;
 }
 
 export interface ICustomer {

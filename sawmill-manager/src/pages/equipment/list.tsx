@@ -17,6 +17,7 @@ import Paper from "@mui/material/Paper";
 import { IEquipment } from "../../interfaces/interfaces";
 import { Close, Edit, HandymanRounded } from "@mui/icons-material";
 import { useTheme } from "@mui/material";
+import { format } from "date-fns";
 
 export const EquipmentList: React.FC<IResourceComponentsProps> = () => {
     const { edit } = useNavigation();
@@ -38,6 +39,7 @@ export const EquipmentList: React.FC<IResourceComponentsProps> = () => {
                 field: "avatar",
                 headerName: "",
                 align: "center",
+                sortable: false,
                 renderCell: function render(params) {
                     return (
                       <Avatar 
@@ -77,8 +79,12 @@ export const EquipmentList: React.FC<IResourceComponentsProps> = () => {
               flex: 1,
               minWidth: 100,
               valueGetter: (params) => {
-                return (params.row.last_service_date ? params.row.last_service_date : 
-                    t("equipment.fields.no_last_service_date"))
+                if (params?.row?.last_service_date) {
+                    const date = new Date(params?.row?.last_service_date);
+                    return format(date, 'dd.MM.yyyy');
+                } else {
+                    return t("equipment.fields.no_last_service_date");
+                }
               }
             },
             {
@@ -93,9 +99,13 @@ export const EquipmentList: React.FC<IResourceComponentsProps> = () => {
                 flex: 1,
                 minWidth: 100,
                 valueGetter: (params) => {
-                  return (params.row.next_service_date ? params.row.next_service_date : 
-                      t("equipment.fields.no_next_service_date"))
-                }
+                    if (params?.row?.next_service_date) {
+                        const date = new Date(params?.row?.next_service_date);
+                        return format(date, 'dd.MM.yyyy');
+                    } else {
+                        return t("equipment.fields.no_next_service_date");
+                    }
+                  }
               },
             {
               field: "actions",

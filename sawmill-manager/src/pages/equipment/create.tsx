@@ -14,7 +14,6 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { IEquipment, ISawmill } from "../../interfaces/interfaces";
-import { green } from "@mui/material/colors";
 import { Controller, FieldValues, SubmitHandler } from "react-hook-form";
 import { Autocomplete, Input, useTheme } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -219,17 +218,16 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                         color: "text.primary",
                                     }}
                                 >
-                                    {t("equipment.fields.next_service_date")}
+                                    {t("equipment.fields.last_service_date")}
                                 </FormLabel>
                                 <Controller
                                     control={control}
-                                    name="next_service_date"
+                                    name="last_service_date"
                                     defaultValue={null as any}
                                     render={({field}) => (
                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                                         <DatePicker
-                                            value={field.value && isValid(parseISO(field.value)) ? 
-                                                parseISO(field.value) : null}
+                                            value={field.value ? parseISO(field.value.toString()) : null}
                                             slotProps={{
                                                 textField: { 
                                                     size: 'small',
@@ -245,10 +243,10 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                     )}
                                 >
                                 </Controller>
-                                {errors.next_service_date && (
+                                {errors.last_service_date && (
                                 <FormHelperText error>
                                     {// @ts-ignore 
-                                    } {errors.next_service_date.message}
+                                    } {errors.last_service_date.message}
                                 </FormHelperText>
                             )}
                         </FormControl>
@@ -277,17 +275,16 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                     color: "text.primary",
                                 }}
                             >
-                                {t("equipment.fields.last_service_date")}
+                                {t("equipment.fields.next_service_date")}
                             </FormLabel>
                                 <Controller
                                     control={control}
-                                    name="last_service_date"
+                                    name="next_service_date"
                                     defaultValue={null as any}
                                     render={({field}) => (
                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                                         <DatePicker
-                                            value={field.value && isValid(parseISO(field.value)) ? 
-                                                parseISO(field.value) : null}
+                                            value={field.value ? parseISO(field.value.toString()) : null}
                                             slotProps={{
                                                 textField: { 
                                                     size: 'small',

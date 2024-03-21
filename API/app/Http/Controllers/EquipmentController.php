@@ -14,8 +14,8 @@ class EquipmentController extends Controller
 {
     public function index()
     {
-        $sortField = request()->query('sort', 'id');
-        $sortDirection = request()->query('order', 'asc');
+        $sortField = request()->query('sort', 'created_at');
+        $sortDirection = request()->query('order', 'desc');
         $pageSize = request()->query('pageSize');
 
         $user_sawmills_ids = Auth::user()->sawmills()->pluck('sawmill_id')->toArray();

@@ -18,7 +18,7 @@ import { IEquipment, ISawmill } from "../../interfaces/interfaces";
 import { Controller, FieldValues, SubmitHandler } from "react-hook-form";
 import { Autocomplete, Input, Typography, useTheme } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { format, isValid, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { RotateLoader } from "react-spinners";
 import { useState } from "react";
@@ -248,17 +248,16 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                         color: "text.primary",
                                     }}
                                 >
-                                    {t("equipment.fields.next_service_date")}
+                                    {t("equipment.fields.last_service_date")}
                                 </FormLabel>
                                 <Controller
                                     control={control}
-                                    name="next_service_date"
-                                    defaultValue={equipment?.next_service_date || undefined}
+                                    name="last_service_date"
+                                    defaultValue={equipment?.last_service_date || undefined}
                                     render={({field}) => (
                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                                         <DatePicker
-                                            value={field.value && isValid(parseISO(field.value)) ? 
-                                                parseISO(field.value) : null}
+                                            value={field.value ? parseISO(field.value.toString()) : null}
                                             slotProps={{
                                                 textField: { 
                                                     size: 'small',
@@ -274,10 +273,10 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     )}
                                 >
                                 </Controller>
-                                {errors.next_service_date && (
+                                {errors.last_service_date && (
                                 <FormHelperText error>
                                     {// @ts-ignore 
-                                    } {errors.next_service_date.message}
+                                    } {errors.last_service_date.message}
                                 </FormHelperText>
                             )}
                         </FormControl>
@@ -306,17 +305,16 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     color: "text.primary",
                                 }}
                             >
-                                {t("equipment.fields.last_service_date")}
+                                {t("equipment.fields.next_service_date")}
                             </FormLabel>
                                 <Controller
                                     control={control}
-                                    name="last_service_date"
-                                    defaultValue={equipment?.last_service_date || undefined}
+                                    name="next_service_date"
+                                    defaultValue={equipment?.next_service_date || undefined}
                                     render={({field}) => (
                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                                         <DatePicker
-                                            value={field.value && isValid(parseISO(field.value)) ? 
-                                                parseISO(field.value) : null}
+                                            value={field.value ? parseISO(field.value.toString()) : null}
                                             slotProps={{
                                                 textField: { 
                                                     size: 'small',
@@ -332,10 +330,10 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     )}
                                 >
                                 </Controller>
-                            {errors.last_service_date && (
+                            {errors.next_service_date && (
                                 <FormHelperText error>
                                     {// @ts-ignore 
-                                    } {errors.last_service_date.message}
+                                    } {errors.next_service_date.message}
                                 </FormHelperText>
                             )}
                         </FormControl>

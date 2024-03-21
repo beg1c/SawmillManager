@@ -29,7 +29,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // Equipment
         Gate::define('manage-equipment', function ($user) {
-            return $user->role->role_name === 'executive';
+            return in_array($user->role->role_name, ['executive', 'manager']);
         });
 
         // Orders
