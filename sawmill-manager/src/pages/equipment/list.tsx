@@ -150,6 +150,7 @@ export const EquipmentList: React.FC<IResourceComponentsProps> = () => {
                     columns={columns}
                     rowHeight={80}
                     autoHeight
+                    onCellEditCommit={() =>()}
                     density="comfortable"
                     pageSizeOptions={[10, 20, 50, 100]}
                 />

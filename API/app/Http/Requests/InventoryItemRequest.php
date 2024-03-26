@@ -11,7 +11,7 @@ class InventoryItemRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,8 +22,9 @@ class InventoryItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => 'in:product,material,waste',
-            'item_id' => 'exists:products,id|exists:materials,id|exists:wastes,id',
+            'inventory_id' => 'required|exists:inventories,id',
+            'type' => 'required|in:product,material,waste',
+            'item_id' => 'required|exists:products,id|exists:materials,id|exists:wastes,id',
             'quantity' => 'required|numeric|min:1'
         ];
     }
