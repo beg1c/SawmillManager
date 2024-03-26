@@ -47,11 +47,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('get-closest-services', [DashboardController::class, 'getClosestServices']);
     });
 
-    Route::get('inventory', [InventoryController::class, 'showInventory']);
-    Route::post('inventory', [InventoryController::class, 'addItemToInventory']);
-    Route::patch('inventory', [InventoryController::class, 'updateItemInInventory']);
-    Route::delete('inventory', [InventoryController::class, 'deleteItemFromInventory']);
-
     Route::apiResources([
         'sawmills' => SawmillController::class,
         'customers' => CustomerController::class,
@@ -63,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
         'materials' => MaterialController::class,
         'wastes' => WasteController::class,
         'dailylogs' => DailyLogController::class,
+        'inventory' => InventoryController::class,
     ]);
 });
 

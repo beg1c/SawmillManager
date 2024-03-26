@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class InventoryItemRequest extends FormRequest
+class InventoryItemStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,9 @@ class InventoryItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'inventory_id' => 'required|exists:inventories,id',
-            'type' => 'required|in:product,material,waste',
+            'type' => 'required|in:products,materials,wastes',
             'item_id' => 'required|exists:products,id|exists:materials,id|exists:wastes,id',
-            'quantity' => 'required|numeric|min:1'
+            'quantity' => 'numeric'
         ];
     }
 }

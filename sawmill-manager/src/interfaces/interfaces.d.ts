@@ -61,12 +61,12 @@ export interface IWasteWQuantity extends IWaste {
     quantity: number;
 }
 
-export interface IInventory<T extends IProductWQuantity | IWasteWQuantity | IMaterialWQuantity> {
+export interface IInventory {
     id: number;
     sawmill: ISawmill;
-    materials?: T extends IMaterialWQuantity ? T[] : never;
-    products?: T extends IProductWQuantity ? T[] : never;
-    wastes?: T extends IWasteWQuantity ? T[] : never;
+    materials: IMaterialWQuantity[];
+    products: IProductWQuantity[];
+    wastes: IWasteWQuantity[];
 }
 
 export interface IDailyLog {
