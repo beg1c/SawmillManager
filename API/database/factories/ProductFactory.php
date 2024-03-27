@@ -20,7 +20,7 @@ class ProductFactory extends Factory
             'name' => fake()->words(3, true),
             'description' => fake()->sentence(),
             'unit_of_measure'=> 'm3',
-            'price' => fake()->randomNumber(2, true),
+            'price' => fake()->randomFloat(2, 0, 400),
             'photo' => fake()->randomElement(['product1.jpg',
                                                 'product2.jpg',
                                                 'product3.jpg',

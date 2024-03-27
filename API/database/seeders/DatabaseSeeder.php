@@ -51,7 +51,7 @@ class DatabaseSeeder extends Seeder
 
             $products = Product::inRandomOrder()->take(rand(1, 5))->get();
             foreach ($products as $product) {
-                $order->products()->attach($product, ['quantity' => rand(1, 10)]);
+                $order->products()->attach($product, ['quantity' => rand(1000, 100000) / 1000]);
             }
         });
 
@@ -63,17 +63,17 @@ class DatabaseSeeder extends Seeder
 
                 $products = Product::inRandomOrder()->take(rand(3, 6))->get();
                 foreach ($products as $product) {
-                    $inventory->products()->attach($product, ['quantity' => rand(10, 100)]);
+                    $inventory->products()->attach($product, ['quantity' => rand(1000, 100000) / 1000]);
                 }
 
                 $materials = Material::inRandomOrder()->take(rand(3, 6))->get();
                 foreach ($materials as $material) {
-                    $inventory->materials()->attach($material, ['quantity' => rand(10, 100)]);
+                    $inventory->materials()->attach($material, ['quantity' => rand(1000, 100000) / 1000]);
                 }
 
                 $wastes = Waste::inRandomOrder()->take(rand(3, 6))->get();
                 foreach ($wastes as $waste) {
-                    $inventory->wastes()->attach($waste, ['quantity' => rand(10, 100)]);
+                    $inventory->wastes()->attach($waste, ['quantity' => rand(1000, 100000) / 1000]);
                 }
 
                 $inventory->sawmill()->associate($sawmill)->save();
@@ -90,9 +90,9 @@ class DatabaseSeeder extends Seeder
 
                 $dailyLog->sawmill()->associate($sawmill)->save();
 
-                $dailyLog->products()->attach(Product::inRandomOrder()->take(rand(1, 5))->pluck('id'), ['quantity' => rand(1, 100)]);
-                $dailyLog->materials()->attach(Material::inRandomOrder()->take(rand(1, 5))->pluck('id'), ['quantity' => rand(1, 100)]);
-                $dailyLog->wastes()->attach(Waste::inRandomOrder()->take(rand(1, 5))->pluck('id'), ['quantity' => rand(1, 100)]);
+                $dailyLog->products()->attach(Product::inRandomOrder()->take(rand(1, 5))->pluck('id'), ['quantity' => rand(1000, 100000) / 1000]);
+                $dailyLog->materials()->attach(Material::inRandomOrder()->take(rand(1, 5))->pluck('id'), ['quantity' => rand(1000, 100000) / 1000]);
+                $dailyLog->wastes()->attach(Waste::inRandomOrder()->take(rand(1, 5))->pluck('id'), ['quantity' => rand(1000, 100000) / 1000]);
             }
         });
     }

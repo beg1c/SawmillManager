@@ -17,7 +17,7 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'amount' => fake()->randomNumber(3, true),
+            'amount' => fake()->randomFloat(2, 0, 2000),
             'notes' => fake()->sentence(),
             'deadline' => fake()->dateTimeBetween('+2 week', '+10 week'),
             'ordered_at' => fake()->dateTimeBetween('-10 week', '-8 week'),

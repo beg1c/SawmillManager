@@ -20,7 +20,7 @@ class WasteFactory extends Factory
             'name' => fake()->words(3, true),
             'description' => fake()->sentence(),
             'unit_of_measure'=> 'm3',
-            'price' => fake()->randomNumber(2, true),
+            'price' => fake()->randomFloat(2, 0, 400),
         ];
     }
 }

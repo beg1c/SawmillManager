@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('inventory_id');
             $table->unsignedBigInteger('product_id');
-            $table->integer('quantity')->default(0);
+            $table->decimal('quantity', 10, 5)->default(0);
             $table->timestamps();
 
             $table->foreign('inventory_id')->references('id')->on('inventories')->onDelete('cascade');

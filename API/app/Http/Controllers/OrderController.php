@@ -172,7 +172,7 @@ class OrderController extends Controller
     private function createOrder($request)
     {
         $order = Order::create($request->all());
-        $amount = 0;
+        $amount = 0.0;
 
         $products = $request['products'];
 
