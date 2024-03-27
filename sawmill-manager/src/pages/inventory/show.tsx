@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import { Close, Edit, ForestOutlined, LocalGroceryStoreOutlined, RecyclingOutlined } from "@mui/icons-material";
-import { CreateButton, List, useAutocomplete } from "@refinedev/mui";
+import { CreateButton, List, ListButton, useAutocomplete } from "@refinedev/mui";
 import FullLoader from "../../components/fullLoader";
 import { EditInventoryItemModal } from "../../components/inventory/editInventoryItem";
 import { AddInventoryItemModal } from "../../components/inventory/addInventoryItem";
@@ -303,7 +303,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                         <CardContent sx={{ pt: 0 }}>
                             <Box
                                 component="form"
-                                sx={{ display: "flex", flexDirection: "column" }}
+                                sx={{ display: "flex", flexDirection: "column", alignItems: "end"}}
                                 autoComplete="off"
                             >
                                 <Autocomplete
@@ -324,6 +324,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                             {...params}
                                             variant="outlined"
                                             label="Sawmill"
+                                            margin="normal"
                                         />              
                                     }
                                 />
@@ -350,6 +351,15 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                         />              
                                     }
                                 />
+                                {inventoryType === "products" && 
+                                    <ListButton sx={{ marginTop: 2 }} resource="manage-products">{t("products.manage").toUpperCase()}</ListButton>
+                                }
+                                {inventoryType === "materials" && 
+                                    <ListButton sx={{ marginTop: 2 }} resource="manage-materials">{t("materials.manage").toUpperCase()}</ListButton>
+                                }
+                                {inventoryType === "wastes" && 
+                                    <ListButton sx={{ marginTop: 2 }} resource="manage-wastes">{t("wastes.manage").toUpperCase()}</ListButton>
+                                }
                             </Box>
                         </CardContent>
                     </Card>
