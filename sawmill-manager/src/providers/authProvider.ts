@@ -95,6 +95,7 @@ export const authProvider: AuthBindings = {
   check: async () => {
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
+      await authProvider.getIdentity?.();
       return {
         authenticated: true,
       };
@@ -129,7 +130,7 @@ export const authProvider: AuthBindings = {
 
       const data = await response.json();
 
-      employee = data.data;
+      employee = data?.data;
 
       return employee;
     }
