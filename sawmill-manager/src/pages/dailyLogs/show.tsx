@@ -104,7 +104,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("logs.fields.quantity"),
                     width: 100,
                     sortable: false,
-                    valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
+                    valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
@@ -151,7 +151,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("logs.fields.quantity"),
                     width: 100,
                     sortable: false,
-                    valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
+                    valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
@@ -201,7 +201,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("logs.fields.quantity"),
                     width: 100,
                     sortable: false,
-                    valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
+                    valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",

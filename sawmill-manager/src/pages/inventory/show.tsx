@@ -82,7 +82,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("inventory.fields.quantity"),
                     sortable: false,
                     flex: 1,
-                    valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
+                    valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
@@ -161,7 +161,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("inventory.fields.quantity"),
                     sortable: false,
                     flex: 1,
-                    valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
+                    valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
@@ -240,7 +240,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("inventory.fields.quantity"),
                     sortable: false,
                     flex: 1,
-                    valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
+                    valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",

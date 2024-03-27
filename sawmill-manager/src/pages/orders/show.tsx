@@ -145,7 +145,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                 headerName: t("orders.products.fields.quantity"),
                 width: 150,
                 sortable: false,
-                valueGetter: (params) => {return params.row.quantity + ' ' + params.row.unit_of_measure},
+                valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params.row.unit_of_measure},
             },
             {
                 field: "price",
@@ -153,7 +153,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                 width: 100,
                 type: "number",
                 sortable: false,
-                valueGetter: (params) => {return params.row.price.toFixed(2) + " €"}
+                valueGetter: (params) => {return params.row.price + " €"}
             },
             {
                 field: "total",

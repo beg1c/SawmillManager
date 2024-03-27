@@ -270,7 +270,7 @@ export const CreateOrder: React.FC<
                                             label="Quantity"
                                             size="small"
                                             type="number"
-                                            onChange={(event) => handleProductChange(product, parseInt(event.target.value), index)}
+                                            onChange={(event) => handleProductChange(product, parseFloat(event.target.value), index)}
                                             defaultValue={1}
                                             style={{
                                                 width: "120px",
