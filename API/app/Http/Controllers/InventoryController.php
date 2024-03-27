@@ -47,14 +47,14 @@ class InventoryController extends Controller
         }
 
         if (!$request->input('quantity')) {
-            return $this->deleteItemFromInventory($request->input('type'), $request->input('item_id'), $sawmill_id);
+            return $this->deleteInventoryItem($request->input('type'), $request->input('item_id'), $sawmill_id);
         }
 
-        return $this->updateItemInInventory($request->input('type'), $request->input('item_id'), $request->input('quantity'), $sawmill_id);
+        return $this->updateInventoryItem($request->input('type'), $request->input('item_id'), $request->input('quantity'), $sawmill_id);
     }
 
 
-    private function updateItemInInventory($type, $item_id, $quantity, $sawmill_id)
+    private function updateInventoryItem($type, $item_id, $quantity, $sawmill_id)
     {
         $user = Auth::user();
         $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
@@ -87,13 +87,13 @@ class InventoryController extends Controller
         if ($inventory->$relation()->where("{$relation}.id", $model->id)->exists()) {
             $inventory->$relation()->updateExistingPivot($model->id, ['quantity' => $quantity]);
         } else {
-            return response()->json(['message' => 'Item does not exist in inventory.'], 400);
+            $inventory->$relation()->attach($model->id, ['quantity' => $quantity]);
         }
 
         return new InventoryResource($inventory);
     }
 
-    private function deleteItemFromInventory($type, $item_id, $sawmill_id)
+    private function deleteInventoryItem($type, $item_id, $sawmill_id)
     {
         switch ($type) {
             case 'materials':
@@ -115,46 +115,6 @@ class InventoryController extends Controller
         $inventory = Inventory::where('sawmill_id', $sawmill_id)->first();
 
         $inventory->$relation()->detach($model->id);
-
-        return new InventoryResource($inventory);
-    }
-
-    public function addItemToInventory(InventoryItemRequest $request)
-    {
-        $user = Auth::user();
-        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
-
-        if (!in_array($request['inventory_id'], $user_sawmill_ids)) {
-            return response()->json([
-                "message" => "You are not authorized to modify that inventory."
-            ], 403);
-        }
-
-        switch ($request['type']) {
-            case 'material':
-                $model = Material::find($request['item_id']);
-                $relation = 'materials';
-                break;
-            case 'product':
-                $model = Product::find($request['item_id']);
-                $relation = 'products';
-                break;
-            case 'waste':
-                $model = Waste::find($request['item_id']);
-                $relation = 'wastes';
-                break;
-            default:
-                return response()->json(['message' => 'Invalid item type'], 400);
-        }
-
-        $inventory = Inventory::findOrFail($request['inventory_id']);
-        $quantity = $request['quantity'];
-
-        if ($inventory->$relation()->where("{$relation}.id", $model->id)->exists()) {
-            return response()->json(['message' => ucfirst($request['type']) . ' already exists in inventory'], 400);
-        }
-
-        $inventory->$relation()->attach($model->id, ['quantity' => $quantity]);
 
         return new InventoryResource($inventory);
     }

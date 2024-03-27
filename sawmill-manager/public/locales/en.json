@@ -43,6 +43,7 @@
             "backHome": "Back Home"
         }
     },
+    
     "employees": {
         "employees": "Employees",
         "titles": {
@@ -370,6 +371,18 @@
         "output": {
             "products": "Output products",
             "wastes": "Output wastes"
+        }
+    },
+    "inventory": {
+        "fields": {
+            "products": "Products",
+            "materials": "Materials",
+            "wastes": "Wastes",
+            "quantity": "Quantity",
+            "value": "Value"
+        },
+        "filter": {
+            "title": "Filters"
         }
     },
     "dashboard": {

@@ -1,55 +1,54 @@
-import { Autocomplete, Avatar, Box, Card, CardContent, CardHeader, Grid, Paper, Stack, TextField, Typography, useTheme } from "@mui/material";
-import { HttpError, IResourceComponentsProps, useModal, useNavigation, useShow, useUpdate } from "@refinedev/core";
+import { Autocomplete, Avatar, Box, Card, CardContent, CardHeader, Grid, Stack, TextField, Typography } from "@mui/material";
+import { IResourceComponentsProps, useModal, useNavigation, useShow, useUpdate } from "@refinedev/core";
 import { IInventory, IMaterialWQuantity, IProductWQuantity, ISawmill, IWasteWQuantity } from "../../interfaces/interfaces";
 import { useTranslation } from "react-i18next";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
-import React, { useEffect, useState } from "react";
-import { Close, Delete, Edit, ForestOutlined, LocalGroceryStoreOutlined, RecyclingOutlined } from "@mui/icons-material";
-import { CreateButton, DeleteButton, EditButton, List, useAutocomplete } from "@refinedev/mui";
+import React, { useState } from "react";
+import { Close, Edit, ForestOutlined, LocalGroceryStoreOutlined, RecyclingOutlined } from "@mui/icons-material";
+import { CreateButton, List, useAutocomplete } from "@refinedev/mui";
 import FullLoader from "../../components/fullLoader";
 import { EditInventoryItemModal } from "../../components/inventory/editInventoryItem";
+import { AddInventoryItemModal } from "../../components/inventory/addInventoryItem";
 
 
 export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
     const { t } = useTranslation();
     const { queryResult, setShowId } = useShow<IInventory>();
     const { data, isLoading } = queryResult;
-    const inventory = data?.data;
     const { mutate: mutateUpdate } = useUpdate();
+    const { showUrl, push } = useNavigation();
 
-    const [inventoryType, setInventoryType] = useState('Products');
+    const inventory = data?.data;
+    const [inventoryType, setInventoryType] = useState<"products" | "materials" | "wastes">('products');
+    const [editItem, setEditItem] = useState<IMaterialWQuantity | IProductWQuantity | IWasteWQuantity>();
 
     const { autocompleteProps: sawmillsAutocompleteProps} = useAutocomplete<ISawmill>({
         resource: "sawmills",
     });
 
+    const showAddModalProps = useModal();
+    const { show: showAddModal } = showAddModalProps;
+
     const showEditModalProps = useModal();
     const { show: showEditModal } = showEditModalProps;
-    const [editModalItem, setEditModalItem] = useState<IMaterialWQuantity | IProductWQuantity | IWasteWQuantity>();
-    const [editModalType, setEditModalType] = useState<"products" | "materials" | "wastes">("products");
-    const [editModalId, setEditModalId] = useState<number>(0);
 
-    const handleOpenModal = (
+    const handleOpenEditModal = (
         item: IMaterialWQuantity | IProductWQuantity | IWasteWQuantity,
-        type: "products" | "materials" | "wastes",
     ) => {
-        setEditModalItem(item);
-        setEditModalType(type);
+        setEditItem(item);
         showEditModal();
     }
 
-    useEffect(() => {
-        if (inventory)
-        {
-            setEditModalId(inventory.id)
-        }
-    }, [inventory]);
+    const handleShowChange = (inventoryId: number) => {
+        setShowId(inventoryId);
+        push(showUrl("inventory", inventoryId));
+    }
 
     const productColumns = React.useMemo<GridColDef<IProductWQuantity>[]>(
             () => [
                 {
                     field: "name",
-                    headerName: t("logs.fields.products"),
+                    headerName: t("inventory.fields.products"),
                     width: 300,
                     renderCell: function render({ row }) {
                         return (
@@ -58,7 +57,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                     sx={{ width: 64, height: 64 }}
                                     src={row.photo}
                                 >
-                                    <LocalGroceryStoreOutlined/>
+                                    <LocalGroceryStoreOutlined />
                                 </Avatar>
                                 <Box>
                                     <Typography
@@ -74,14 +73,14 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                 },
                 {
                     field: "quantity",
-                    headerName: t("logs.fields.quantity"),
+                    headerName: t("inventory.fields.quantity"),
                     sortable: false,
                     flex: 1,
                     valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
-                    headerName: t("logs.fields.value"),
+                    headerName: t("inventory.fields.value"),
                     sortable: false,
                     valueGetter: (params) => {
                         return (params?.row?.price * params?.row?.quantity).toFixed(2) + ' €'
@@ -97,8 +96,9 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                 key={2}
                                 label={t("buttons.edit")}
                                 icon={<Edit />}
-                                onClick={() => handleOpenModal(row, "products")}
-                                showInMenu />,
+                                color="primary"
+                                onClick={() => handleOpenEditModal(row)}
+                            />,
                             <GridActionsCellItem
                                 key={3}
                                 label={t("buttons.delete")}
@@ -108,12 +108,14 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                         resource: "inventory",
                                         id: inventory?.id!, 
                                         values: {
-                                          type: inventoryType.toLowerCase(),
+                                          type: inventoryType,
                                           item_id: row.id,
                                         },
+                                        mutationMode: "undoable",
+                                        undoableTimeout: 5000,
                                     });
                                 }}
-                                showInMenu />,
+                            />,
                         ];
                     },
                 }
@@ -125,16 +127,16 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
             () => [
                 {
                     field: "name",
-                    headerName: t("logs.fields.materials"),
+                    headerName: t("inventory.fields.materials"),
                     width: 300,
                     renderCell: function render({ row }) {
                         return (
                             <Stack direction="row" spacing={4} alignItems="center">
                                 <Avatar
-                                    sx={{ width: 108, height: 108 }}
+                                    sx={{ width: 64, height: 64 }}
                                     src={row.photo}
                                 >
-                                    <ForestOutlined sx={{ fontSize: 32 }}/>
+                                    <ForestOutlined />
                                 </Avatar>
                                 <Box>
                                     <Typography
@@ -150,21 +152,50 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                 },
                 {
                     field: "quantity",
-                    headerName: t("logs.fields.quantity"),
-                    width: 100,
+                    headerName: t("inventory.fields.quantity"),
                     sortable: false,
+                    flex: 1,
                     valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
-                    headerName: t("logs.fields.value"),
-                    width: 100,
+                    headerName: t("inventory.fields.value"),
                     sortable: false,
-                    flex: 1,
                     valueGetter: (params) => {
-                        if (params?.row?.price){
+                        if (params?.row.price) {
                             return (params?.row?.price * params?.row?.quantity).toFixed(2) + ' €'
                         }
+                    },
+                },
+                {
+                    field: "actions",
+                    headerName: t("table.actions"),
+                    type: "actions",
+                    getActions: function render({ row }) {
+                        return [
+                            <GridActionsCellItem
+                                key={2}
+                                label={t("buttons.edit")}
+                                icon={<Edit />}
+                                color="primary"
+                                onClick={() => handleOpenEditModal(row)}
+                                />,
+                            <GridActionsCellItem
+                                key={3}
+                                label={t("buttons.delete")}
+                                icon={<Close color="error" />}
+                                onClick={() => {
+                                    mutateUpdate({
+                                        resource: "inventory",
+                                        id: inventory?.id!, 
+                                        values: {
+                                          type: inventoryType,
+                                          item_id: row.id,
+                                        },
+                                    });
+                                }}
+                                />,
+                        ];
                     },
                 }
             ],
@@ -175,16 +206,16 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
             () => [
                 {
                     field: "name",
-                    headerName: t("logs.fields.wastes"),
+                    headerName: t("inventory.fields.wastes"),
                     width: 300,
                     renderCell: function render({ row }) {
                         return (
                             <Stack direction="row" spacing={4} alignItems="center">
                                 <Avatar
-                                    sx={{ width: 108, height: 108 }}
+                                    sx={{ width: 64, height: 64 }}
                                     src={row.photo}
                                 >
-                                    <RecyclingOutlined sx={{ fontSize: 32 }}/>
+                                    <RecyclingOutlined />
                                 </Avatar>
                                 <Box>
                                     <Typography
@@ -200,25 +231,56 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                 },
                 {
                     field: "quantity",
-                    headerName: t("logs.fields.quantity"),
-                    width: 100,
+                    headerName: t("inventory.fields.quantity"),
                     sortable: false,
+                    flex: 1,
                     valueGetter: (params) => {return params?.row?.quantity + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
-                    headerName: t("logs.fields.value"),
-                    width: 100,
+                    headerName: t("inventory.fields.value"),
                     sortable: false,
                     valueGetter: (params) => {
-                        if (params?.row?.price){
+                        if (params?.row.price) {
                             return (params?.row?.price * params?.row?.quantity).toFixed(2) + ' €'
                         }
+                    },
+                },
+                {
+                    field: "actions",
+                    headerName: t("table.actions"),
+                    type: "actions",
+                    getActions: function render({ row }) {
+                        return [
+                            <GridActionsCellItem
+                                key={2}
+                                label={t("buttons.edit")}
+                                icon={<Edit />}
+                                color="primary"
+                                onClick={() => handleOpenEditModal(row)}
+                                />,
+                            <GridActionsCellItem
+                                key={3}
+                                label={t("buttons.delete")}
+                                icon={<Close color="error" />}
+                                onClick={() => {
+                                    mutateUpdate({
+                                        resource: "inventory",
+                                        id: inventory?.id!, 
+                                        values: {
+                                          type: inventoryType,
+                                          item_id: row.id,
+                                        },
+                                    });
+                                }}
+                                />,
+                        ];
                     },
                 }
             ],
             [t],
         );
+
 
         if (isLoading) {
             return (
@@ -231,7 +293,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
             <Grid container spacing={2}>
                 <Grid item xs={12} lg={3}>
                 <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
-                        <CardHeader title={t("orders.filter.title")} />
+                        <CardHeader title={t("inventory.filter.title")} />
                         <CardContent sx={{ pt: 0 }}>
                             <Box
                                 component="form"
@@ -250,7 +312,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                     isOptionEqualToValue={(option, value) => {
                                         return option.id === value.id;
                                     }}
-                                    onChange={(_,value) => value ? setShowId(value.id) : null}
+                                    onChange={(_,value) => value ? handleShowChange(value.id) : null}
                                     renderInput={(params) => 
                                         <TextField 
                                             {...params}
@@ -263,14 +325,15 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                     fullWidth
                                     disableClearable
                                     size="small"
-                                    options={['Materials', 'Wastes', 'Products']}
+                                    options={['materials', 'wastes', 'products']}
                                     value={inventoryType}
                                     getOptionLabel={(item) => { 
-                                        return item;
+                                        return item.charAt(0).toUpperCase() + item.slice(1);
                                     }}
                                     isOptionEqualToValue={(option, value) => {
                                         return option === value;
                                     }}
+                                    // @ts-ignore
                                     onChange={(_,value) => setInventoryType(value)}
                                     renderInput={(params) => 
                                         <TextField 
@@ -286,16 +349,16 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     </Card>
                 </Grid>
                 <Grid item xs={12} lg={9}>
-                {inventoryType === 'Products' &&
+                {inventoryType === 'products' &&
                 <Grid item xs={12}>
                     <List
                         title={"Products at " + inventory?.sawmill.name}
                         headerButtons={
-                            <CreateButton hideText/>
+                            <CreateButton>Add product</CreateButton>
                         }
-                        // headerButtonProps={{
-                        //     onClick: () => showProductsDrawer(dailyLog?.id)
-                        // }}
+                        headerButtonProps={{
+                            onClick: () => showAddModal()
+                        }}
                     >
                         <DataGrid
                             disableColumnMenu
@@ -309,16 +372,16 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     </List>
                 </Grid>
                 }
-                {inventoryType === 'Materials' &&
+                {inventoryType === 'materials' &&
                 <Grid item xs={12}>
                     <List
-                        title={t("logs.input.materials")}
-                        // headerButtons={
-                        //     can?.can ? <EditButton /> : null
-                        // }
-                        // headerButtonProps={{
-                        //     onClick: () => showMaterialsDrawer(dailyLog?.id)
-                        // }}
+                        title={"Materials at " + inventory?.sawmill.name}
+                        headerButtons={
+                            <CreateButton>Add material</CreateButton>
+                        }
+                        headerButtonProps={{
+                            onClick: () => showAddModal()
+                        }}
                     >
                         <DataGrid
                             disableColumnMenu
@@ -326,22 +389,22 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                             columns={materialColumns}
                             rows={inventory?.materials || []}
                             hideFooter
-                            rowHeight={124}
+                            rowHeight={80}
                             localeText={{ noRowsLabel: t("materials.noMaterials") }}
                         />
                     </List>
                 </Grid>
                 }
-                {inventoryType === 'Wastes' &&
+                {inventoryType === 'wastes' &&
                 <Grid item xs={12}>
                     <List
-                        title={t("logs.output.wastes")}
-                        // headerButtons={
-                        //     can?.can ? <EditButton /> : null
-                        // }
-                        // headerButtonProps={{
-                        //     onClick: () => showWastesDrawer(dailyLog?.id)
-                        // }}
+                        title={"Wastes at " + inventory?.sawmill.name}
+                        headerButtons={
+                            <CreateButton>Add waste</CreateButton>
+                        }
+                        headerButtonProps={{
+                            onClick: () => showAddModal()
+                        }}
                     >
                         <DataGrid
                             disableColumnMenu
@@ -349,7 +412,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                             columns={wasteColumns}
                             rows={inventory?.wastes || []}
                             hideFooter
-                            rowHeight={124}
+                            rowHeight={80}
                             localeText={{ noRowsLabel: t("wastes.noWastes") }}
                         />
                     </List>
@@ -359,9 +422,14 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
             </Grid>
             <EditInventoryItemModal
                 {...showEditModalProps}
-                item={editModalItem}
-                type={editModalType}
-                inventoryId={editModalId}
+                item={editItem}
+                type={inventoryType}
+                inventoryId={inventory?.id}
+            />
+            <AddInventoryItemModal 
+                {...showAddModalProps}
+                inventory={inventory}
+                type={inventoryType}
             />
         </>
     )
