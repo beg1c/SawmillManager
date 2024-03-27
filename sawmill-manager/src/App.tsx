@@ -1,4 +1,4 @@
-import { Authenticated, I18nProvider, Refine, useGetIdentity } from "@refinedev/core";
+import { Authenticated, I18nProvider, Refine, useGetIdentity, useModal } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import {
@@ -38,13 +38,15 @@ import { SawmillList } from "./pages/sawmills/list";
 import { useTranslation } from "react-i18next";
 import { CustomerList } from "./pages/customers";
 import { OrderShow } from "./pages/orders";
-import { BadgeOutlined, BusinessOutlined, Dashboard, ForestOutlined, HomeRepairServiceOutlined, Inventory2Outlined, InventoryOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined, RecyclingOutlined, TextSnippet } from "@mui/icons-material";
+import { BadgeOutlined, BusinessOutlined, Calculate, CalculateOutlined, Dashboard, ForestOutlined, HomeRepairServiceOutlined, Inventory2Outlined, InventoryOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined, RecyclingOutlined, TextSnippet } from "@mui/icons-material";
 import { MaterialList } from "./pages/materials";
 import { WasteList } from "./pages/waste";
 import { DailyLogList, DailyLogShow } from "./pages/dailyLogs";
 import { DashboardPage } from "./pages/dashboard";
 import { InventoryList, InventoryShow } from "./pages/inventory";
 import { IIdentity } from "./interfaces/interfaces";
+import { Fab } from "@mui/material";
+import { CalculatorDrawer } from "./components/calculator";
 const apiUrl = import.meta.env.VITE_APP_API_URL;
 
 function App() {
@@ -55,6 +57,9 @@ function App() {
       changeLocale: (lang: string) => i18n.changeLanguage(lang),
       getLocale: () => i18n.language,
   };
+
+  const calculatorDrawerProps = useModal();
+  const { show: showCalculatorDrawer } = calculatorDrawerProps;
 
   return (
     <BrowserRouter>
@@ -189,7 +194,25 @@ function App() {
                       <ThemedLayoutV2
                         Header={() => <Header sticky />}
                         Title={Title}
+                        OffLayoutArea={() => (  
+                          <>
+                            <Fab  
+                              size="large"  
+                              color="primary"  
+                              sx={{  
+                              position: "fixed",  
+                              bottom: "16px",  
+                              right: "16px",  
+                              }}  
+                              onClick={showCalculatorDrawer} 
+                              variant="extended"   
+                            >  
+                              <Calculate fontSize="medium" sx={{ marginRight: 0.5 }}/>Calculator
+                            </Fab> 
+                          </>
+                          )}  
                       >
+                      <CalculatorDrawer {...calculatorDrawerProps}/> 
                         <Outlet />
                       </ThemedLayoutV2>
                     </Authenticated>
@@ -259,7 +282,6 @@ function App() {
                   />
                 </Route>
               </Routes>
-
               <RefineKbar />
               <UnsavedChangesNotifier />
             </Refine>
