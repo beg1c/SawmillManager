@@ -3,7 +3,7 @@ import { IResourceComponentsProps, useModal, useNavigation, useShow, useUpdate }
 import { IInventory, IMaterialWQuantity, IProductWQuantity, ISawmill, IWasteWQuantity } from "../../interfaces/interfaces";
 import { useTranslation } from "react-i18next";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Close, Edit, ForestOutlined, LocalGroceryStoreOutlined, RecyclingOutlined } from "@mui/icons-material";
 import { CreateButton, List, useAutocomplete } from "@refinedev/mui";
 import FullLoader from "../../components/fullLoader";
@@ -21,6 +21,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
     const inventory = data?.data;
     const [inventoryType, setInventoryType] = useState<"products" | "materials" | "wastes">('products');
     const [editItem, setEditItem] = useState<IMaterialWQuantity | IProductWQuantity | IWasteWQuantity>();
+    const [showLoading, setShowLoading] = useState<boolean>();
 
     const { autocompleteProps: sawmillsAutocompleteProps} = useAutocomplete<ISawmill>({
         resource: "sawmills",
@@ -41,8 +42,13 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
 
     const handleShowChange = (inventoryId: number) => {
         setShowId(inventoryId);
+        setShowLoading(true);
         push(showUrl("inventory", inventoryId));
     }
+
+    useEffect(() => {
+        setShowLoading(false);
+    }, [inventory]);
 
     const productColumns = React.useMemo<GridColDef<IProductWQuantity>[]>(
             () => [
@@ -361,6 +367,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                         }}
                     >
                         <DataGrid
+                            loading={showLoading}
                             disableColumnMenu
                             autoHeight
                             columns={productColumns}
@@ -384,6 +391,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                         }}
                     >
                         <DataGrid
+                            loading={showLoading}
                             disableColumnMenu
                             autoHeight
                             columns={materialColumns}
@@ -407,6 +415,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                         }}
                     >
                         <DataGrid
+                            loading={showLoading}
                             disableColumnMenu
                             autoHeight
                             columns={wasteColumns}
