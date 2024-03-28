@@ -67,6 +67,21 @@ export interface IInventory {
     materials: IMaterialWQuantity[];
     products: IProductWQuantity[];
     wastes: IWasteWQuantity[];
+    logs: IInventoryLog[];
+}
+
+export interface IInventoryLog {
+    id: number;
+    context: "user" | "order" | "daily_log";
+    action: "add" | "reduce" | "delete";
+    quantity: number;
+    timestamp: string;
+    user?: string;
+    dailylog?: string;
+    order?: string;
+    product?: string;
+    material?: string;
+    waste?: string;
 }
 
 export interface IDailyLog {

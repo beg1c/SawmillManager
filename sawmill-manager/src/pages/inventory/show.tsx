@@ -1,14 +1,16 @@
-import { Autocomplete, Avatar, Box, Card, CardContent, CardHeader, Grid, Stack, TextField, Typography } from "@mui/material";
+import { Autocomplete, Avatar, Box, Card, CardContent, CardHeader, Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, List as MUIList, TextField, Typography, ListItem, ListItemIcon, ListItemText, useTheme } from "@mui/material";
 import { IResourceComponentsProps, useModal, useNavigation, useShow, useUpdate } from "@refinedev/core";
-import { IInventory, IMaterialWQuantity, IProductWQuantity, ISawmill, IWasteWQuantity } from "../../interfaces/interfaces";
+import { IInventory, IInventoryLog, IMaterialWQuantity, IProductWQuantity, ISawmill, IWasteWQuantity } from "../../interfaces/interfaces";
 import { useTranslation } from "react-i18next";
-import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridCellParams, GridColDef, gridClasses } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-import { Close, Edit, ForestOutlined, LocalGroceryStoreOutlined, RecyclingOutlined } from "@mui/icons-material";
+import { Add, Close, CloseOutlined, DeleteOutline, Edit, ForestOutlined, LocalGroceryStoreOutlined, RecyclingOutlined, Remove } from "@mui/icons-material";
 import { CreateButton, List, ListButton, useAutocomplete } from "@refinedev/mui";
 import FullLoader from "../../components/fullLoader";
 import { EditInventoryItemModal } from "../../components/inventory/editInventoryItem";
 import { AddInventoryItemModal } from "../../components/inventory/addInventoryItem";
+import { format } from "date-fns";
+
 
 
 export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
@@ -49,6 +51,76 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
     useEffect(() => {
         setShowLoading(false);
     }, [inventory]);
+
+
+    const filteredLogs = inventory?.logs.filter(log => {
+        switch (inventoryType) {
+            case "products":
+                return log.product !== undefined;
+            case "materials":
+                return log.material !== undefined;
+            case "wastes":
+                return log.waste !== undefined;
+            default:
+                return false;
+        }
+    });
+
+    const getIcon = (action: "add" | "reduce" | "delete") => {
+        switch (action) {
+            case "add":
+                return <Add />
+            case "reduce":
+                return <Remove />
+            case "delete":
+                return <DeleteOutline />
+        }
+    }
+
+    const getMessage = (row: IInventoryLog) => {
+        let message = "";
+            
+        let inventoryItem = "";
+        switch (inventoryType) {
+            case "products":
+                inventoryItem = row.product || "";
+                break;
+            case "materials":
+                inventoryItem = row.material || "";
+                break;
+            case "wastes":
+                inventoryItem = row.waste || "";
+                break;
+            default:
+                break;
+        }
+    
+        let actionSource = "";
+
+        if (row.user) {
+            actionSource = "User " + row.user;
+        } else if (row.dailylog) {
+            actionSource = "Daily log from " + format(new Date(row.dailylog), 'dd.MM.yyyy');
+        } else if (row.order) {
+            actionSource = "Order ID " + row.order;
+        }
+    
+        switch (row.action) {
+            case "add":
+                message = `${actionSource} added ${row.quantity}m3 ${inventoryItem} to inventory.`;
+                break;
+            case "reduce":
+                message = `${actionSource} reduced ${row.quantity}m3 ${inventoryItem} from inventory.`;
+                break;
+            case "delete":
+                message = `${actionSource} removed ${inventoryItem} from inventory.`;
+                break;
+            default:
+                break;
+        }
+    
+        return message;
+    };
 
     const productColumns = React.useMemo<GridColDef<IProductWQuantity>[]>(
             () => [
@@ -287,6 +359,52 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
             [t],
         );
 
+        const logsColumns = React.useMemo<GridColDef<IInventoryLog>[]>(
+            () => [
+                {
+                    field: "name",
+                    headerName: "Inventory logs",
+                    flex: 1,
+                    sortable: false,
+                    renderCell: ({ row }) => {
+                        const message = getMessage(row);
+                        const icon = getIcon(row.action);
+
+                        return (
+                            <Stack direction="row" spacing={1} alignItems="center">
+                                {icon}
+                                <Typography variant="body1" whiteSpace="break-spaces">
+                                    {message}
+                                </Typography>
+                            </Stack>
+                        );
+                    },
+                },
+                {
+                    field: "timestamp",
+                    headerName: "Time",
+                    sortable: false,
+                    align: "right",
+                    headerAlign: "right",
+                    renderCell: ({ row }) => {
+                        const date = new Date(row.timestamp);
+                        return (
+                            <Stack>
+                                <Typography variant="body1" align="right">
+                                    {format(date, 'dd.MM.yyyy')}
+                                </Typography>
+                                <Typography variant="caption" align="right">
+                                    {format(date, 'HH:mm:ss')}   
+                                </Typography>
+                            </Stack>
+                        );
+                    },
+                },
+            ],
+            [t, inventoryType],
+        );
+
+
 
         if (isLoading) {
             return (
@@ -297,146 +415,177 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
         return (
             <>
             <Grid container spacing={2}>
-                <Grid item xs={12} lg={3}>
-                <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
-                        <CardHeader title={t("inventory.filter.title")} />
-                        <CardContent sx={{ pt: 0 }}>
+                <Grid item xs={12}>
+                        <Paper sx={{ padding: 2 }}>
                             <Box
                                 component="form"
-                                sx={{ display: "flex", flexDirection: "column", alignItems: "end"}}
+                                sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}
                                 autoComplete="off"
                             >
-                                <Autocomplete
-                                    fullWidth
-                                    disableClearable
-                                    {...sawmillsAutocompleteProps}
-                                    size="small"
-                                    value={inventory?.sawmill}
-                                    getOptionLabel={(item) => { 
-                                        return item.name;
-                                    }}
-                                    isOptionEqualToValue={(option, value) => {
-                                        return option.id === value.id;
-                                    }}
-                                    onChange={(_,value) => value ? handleShowChange(value.id) : null}
-                                    renderInput={(params) => 
-                                        <TextField 
-                                            {...params}
-                                            variant="outlined"
-                                            label="Sawmill"
-                                            margin="normal"
-                                        />              
-                                    }
-                                />
-                                <Autocomplete
-                                    fullWidth
-                                    disableClearable
-                                    size="small"
-                                    options={['materials', 'wastes', 'products']}
-                                    value={inventoryType}
-                                    getOptionLabel={(item) => { 
-                                        return item.charAt(0).toUpperCase() + item.slice(1);
-                                    }}
-                                    isOptionEqualToValue={(option, value) => {
-                                        return option === value;
-                                    }}
-                                    // @ts-ignore
-                                    onChange={(_,value) => setInventoryType(value)}
-                                    renderInput={(params) => 
-                                        <TextField 
-                                            {...params}
-                                            variant="outlined"
-                                            label="Type"
-                                            margin="normal"
-                                        />              
-                                    }
-                                />
+                                <Stack display="flex" direction="row">
+                                    <Autocomplete
+                                        disableClearable
+                                        {...sawmillsAutocompleteProps}
+                                        size="small"
+                                        value={inventory?.sawmill}
+                                        getOptionLabel={(item) => { 
+                                            return item.name;
+                                        }}
+                                        isOptionEqualToValue={(option, value) => {
+                                            return option.id === value.id;
+                                        }}
+                                        onChange={(_,value) => value ? handleShowChange(value.id) : null}
+                                        renderInput={(params) => 
+                                            <TextField 
+                                                {...params}
+                                                variant="outlined"
+                                                label="Sawmill"
+                                                sx={{ width: 200}}
+                                            />              
+                                        }
+                                    />
+                                    <Autocomplete
+                                        disableClearable
+                                        size="small"
+                                        options={['materials', 'wastes', 'products']}
+                                        value={inventoryType}
+                                        getOptionLabel={(item) => { 
+                                            return item.charAt(0).toUpperCase() + item.slice(1);
+                                        }}
+                                        isOptionEqualToValue={(option, value) => {
+                                            return option === value;
+                                        }}
+                                        // @ts-ignore
+                                        onChange={(_,value) => setInventoryType(value)}
+                                        renderInput={(params) => 
+                                            <TextField 
+                                                {...params}
+                                                variant="outlined"
+                                                label="Type"
+                                                sx={{ width: 130, marginLeft: 1 }}
+                                            />              
+                                        }
+                                    />
+                                </Stack>
                                 {inventoryType === "products" && 
-                                    <ListButton sx={{ marginTop: 2 }} resource="manage-products">{t("products.manage").toUpperCase()}</ListButton>
+                                    <ListButton resource="manage-products">{t("products.manage").toUpperCase()}</ListButton>
                                 }
                                 {inventoryType === "materials" && 
-                                    <ListButton sx={{ marginTop: 2 }} resource="manage-materials">{t("materials.manage").toUpperCase()}</ListButton>
+                                    <ListButton resource="manage-materials">{t("materials.manage").toUpperCase()}</ListButton>
                                 }
                                 {inventoryType === "wastes" && 
-                                    <ListButton sx={{ marginTop: 2 }} resource="manage-wastes">{t("wastes.manage").toUpperCase()}</ListButton>
+                                    <ListButton resource="manage-wastes">{t("wastes.manage").toUpperCase()}</ListButton>
                                 }
                             </Box>
-                        </CardContent>
-                    </Card>
+                        </Paper>
                 </Grid>
-                <Grid item xs={12} lg={9}>
+                <Grid item xs={12} lg={8}>
                 {inventoryType === 'products' &&
-                <Grid item xs={12}>
-                    <List
-                        title={"Products at " + inventory?.sawmill.name}
-                        headerButtons={
-                            <CreateButton>Add product</CreateButton>
-                        }
-                        headerButtonProps={{
-                            onClick: () => showAddModal()
-                        }}
-                    >
-                        <DataGrid
-                            loading={showLoading}
-                            disableColumnMenu
-                            autoHeight
-                            columns={productColumns}
-                            rows={inventory?.products || []}
-                            hideFooter
-                            rowHeight={80}
-                            localeText={{ noRowsLabel: t("products.noProducts") }}
-                        />
-                    </List>
-                </Grid>
+                <List
+                    title={"Products at " + inventory?.sawmill.name}
+                    headerButtons={
+                        <CreateButton>Add product</CreateButton>
+                    }
+                    headerButtonProps={{
+                        onClick: () => showAddModal()
+                    }}
+                >
+                    <DataGrid
+                        loading={showLoading}
+                        disableColumnMenu
+                        autoHeight
+                        columns={productColumns}
+                        rows={inventory?.products || []}
+                        hideFooter
+                        rowHeight={80}
+                        localeText={{ noRowsLabel: t("products.noProducts") }}
+                    />
+                </List>
                 }
                 {inventoryType === 'materials' &&
-                <Grid item xs={12}>
-                    <List
-                        title={"Materials at " + inventory?.sawmill.name}
-                        headerButtons={
-                            <CreateButton>Add material</CreateButton>
-                        }
-                        headerButtonProps={{
-                            onClick: () => showAddModal()
-                        }}
-                    >
-                        <DataGrid
-                            loading={showLoading}
-                            disableColumnMenu
-                            autoHeight
-                            columns={materialColumns}
-                            rows={inventory?.materials || []}
-                            hideFooter
-                            rowHeight={80}
-                            localeText={{ noRowsLabel: t("materials.noMaterials") }}
-                        />
-                    </List>
-                </Grid>
+                <List
+                    title={"Materials at " + inventory?.sawmill.name}
+                    headerButtons={
+                        <CreateButton>Add material</CreateButton>
+                    }
+                    headerButtonProps={{
+                        onClick: () => showAddModal()
+                    }}
+                >
+                    <DataGrid
+                        loading={showLoading}
+                        disableColumnMenu
+                        autoHeight
+                        columns={materialColumns}
+                        rows={inventory?.materials || []}
+                        hideFooter
+                        rowHeight={80}
+                        localeText={{ noRowsLabel: t("materials.noMaterials") }}
+                    />
+                </List>
                 }
                 {inventoryType === 'wastes' &&
-                <Grid item xs={12}>
-                    <List
-                        title={"Wastes at " + inventory?.sawmill.name}
-                        headerButtons={
-                            <CreateButton>Add waste</CreateButton>
-                        }
-                        headerButtonProps={{
-                            onClick: () => showAddModal()
-                        }}
-                    >
+                <List
+                    title={"Wastes at " + inventory?.sawmill.name}
+                    headerButtons={
+                        <CreateButton>Add waste</CreateButton>
+                    }
+                    headerButtonProps={{
+                        onClick: () => showAddModal()
+                    }}
+                >
+                    <DataGrid
+                        loading={showLoading}
+                        disableColumnMenu
+                        autoHeight
+                        columns={wasteColumns}
+                        rows={inventory?.wastes || []}
+                        hideFooter
+                        rowHeight={80}
+                        localeText={{ noRowsLabel: t("wastes.noWastes") }}
+                    />
+                </List>
+                }
+                </Grid>
+                <Grid item xs={12} lg={4}>
+                    <Paper>
                         <DataGrid
                             loading={showLoading}
                             disableColumnMenu
                             autoHeight
-                            columns={wasteColumns}
-                            rows={inventory?.wastes || []}
+                            columns={logsColumns}
+                            rows={filteredLogs || []}
                             hideFooter
-                            rowHeight={80}
+                            rowHeight={50}
                             localeText={{ noRowsLabel: t("wastes.noWastes") }}
+                            sx={{
+                                [`.${gridClasses.cell}.success`]: {
+                                    backgroundColor: "#edf7ed",
+                                    color: '#1e4620',
+                                  },
+                                [`.${gridClasses.cell}.warning`]: {
+                                backgroundColor: '#fff4e5',
+                                color: '#663c00',
+                                },
+                                [`.${gridClasses.cell}.error`]: {
+                                    backgroundColor: '#fdeded',
+                                    color: '#814c4b',
+                                },
+                            }}
+                            getCellClassName={(params) => {
+                                switch (params.row.action) {
+                                    case "add": 
+                                        return "success";
+                                    case "reduce": 
+                                        return "warning";
+                                    case "delete":
+                                        return "error";
+                                    default:
+                                        return "";
+                                }
+                            }}
                         />
-                    </List>
-                </Grid>
-                }
+                    </Paper>
                 </Grid>
             </Grid>
             <EditInventoryItemModal
