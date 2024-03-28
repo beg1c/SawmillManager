@@ -9,9 +9,17 @@ use App\Http\Requests\DailyLogStoreRequest;
 use App\Http\Requests\DailyLogUpdateRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use App\Services\InventoryService;
 
 class DailyLogController extends Controller
 {
+    protected $inventoryService;
+
+    public function __construct(InventoryService $inventoryService)
+    {
+        $this->inventoryService = $inventoryService;
+    }
+
     public function index()
     {
         $sortField = request()->query('sort', 'date');
@@ -159,6 +167,12 @@ class DailyLogController extends Controller
         $existingItemIds = $dailyLog->{$relation}->pluck('id');
 
         $itemsToDelete = $existingItemIds->diff($itemIdsInRequest);
+
+        foreach ($itemsToDelete as $itemId) {
+            $quantity = $dailyLog->{$relation}()->where('daily_log_' . substr($relation, 0, -1) . '.' . substr($relation, 0, -1) . '_id', $itemId)->first()->pivot->quantity;
+            $this->inventoryService->updateInventoryItem($relation, $itemId, -$quantity, $dailyLog->sawmill->id, "daily_log", $dailyLog->id, null);
+        }
+
         $dailyLog->{$relation}()->detach($itemsToDelete);
 
         foreach ($items as $item) {
@@ -168,9 +182,13 @@ class DailyLogController extends Controller
             $existingItem = $dailyLog->{$relation}()->where($relation . '.id', $itemId)->first();
 
             if ($existingItem && !empty($quantity)) {
+                $oldQuantity = $existingItem->pivot->quantity;
+                $quantityDifference = $quantity - $oldQuantity;
                 $existingItem->pivot->update(['quantity' => $quantity]);
+                $this->inventoryService->updateInventoryItem($relation, $itemId, $quantityDifference, $dailyLog->sawmill->id, "daily_log", $dailyLog->id, null);
             } elseif (!empty($quantity)) {
                 $dailyLog->{$relation}()->attach($itemId, ['quantity' => $quantity]);
+                $this->inventoryService->updateInventoryItem($relation, $itemId, $quantity, $dailyLog->sawmill->id, "daily_log", $dailyLog->id, null);
             }
         }
     }

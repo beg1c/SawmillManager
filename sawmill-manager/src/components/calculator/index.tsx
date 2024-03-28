@@ -169,7 +169,7 @@ export const CalculatorDrawer: React.FC<useModalReturnType> = ({
                                 <TableCell align="center">{Number(lumber.length.toFixed(2))} cm</TableCell>
                                 <TableCell align="center">{Number(lumber.quantity.toFixed(2))} pcs</TableCell>
                                 <TableCell component="th" scope="row" align="center" sx={{ fontWeight: 600 }}>
-                                    {Number(lumber.volume.toFixed(5))} m³
+                                    {Number(lumber.volume.toFixed(3))} m³
                                 </TableCell>
                                 <TableCell align="center"><Button size="small" onClick={() => handleRemoveLumber(index)}><Clear color="error"/></Button></TableCell>
                                 </TableRow>
@@ -181,7 +181,7 @@ export const CalculatorDrawer: React.FC<useModalReturnType> = ({
                                     <TableCell align="center"></TableCell>
                                     <TableCell align="center"></TableCell>
                                     <TableCell align="center">{calculatedLumber.reduce((acc, curr) => acc + curr.quantity, 0).toFixed(0)} pcs</TableCell>
-                                    <TableCell align="center">{Number(calculatedLumber.reduce((acc, curr) => acc + curr.volume, 0).toFixed(5))} m³</TableCell>
+                                    <TableCell align="center">{Number(calculatedLumber.reduce((acc, curr) => acc + curr.volume, 0).toFixed(3))} m³</TableCell>
                                     <TableCell align="center"></TableCell>
                                 </TableRow>
                             </TableHead>
@@ -258,7 +258,7 @@ export const CalculatorDrawer: React.FC<useModalReturnType> = ({
                                 <TableCell align="center">{Number(log.length.toFixed(2))} cm</TableCell>
                                 <TableCell align="center">{Number(log.quantity.toFixed(2))} pcs</TableCell>
                                 <TableCell component="th" scope="row" align="center" sx={{ fontWeight: 600 }}>
-                                    {Number(log.volume.toFixed(5))} m³
+                                    {Number(log.volume.toFixed(3))} m³
                                 </TableCell>
                                 <TableCell align="center"><Button size="small" onClick={() => handleRemoveLog(index)}><Clear color="error"/></Button></TableCell>
                                 </TableRow>
@@ -270,7 +270,7 @@ export const CalculatorDrawer: React.FC<useModalReturnType> = ({
                                     <TableCell align="center"></TableCell>
                                     <TableCell align="center"></TableCell>
                                     <TableCell align="center">{calculatedLogs.reduce((acc, curr) => acc + curr.quantity, 0).toFixed(0)} pcs</TableCell>
-                                    <TableCell align="center">{Number(calculatedLogs.reduce((acc, curr) => acc + curr.volume, 0).toFixed(5))} m³</TableCell>
+                                    <TableCell align="center">{Number(calculatedLogs.reduce((acc, curr) => acc + curr.volume, 0).toFixed(3))} m³</TableCell>
                                 </TableRow>
                             </TableHead>
                         </Table>

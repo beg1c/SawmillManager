@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('context');
             $table->string('action');
             $table->decimal('quantity', 10, 2);
-            $table->unsignedBigInteger('inventory_id');
+            $table->unsignedBigInteger('inventory_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('daily_log_id')->nullable();
             $table->unsignedBigInteger('order_id')->nullable();

@@ -47,9 +47,9 @@ class InventoryController extends Controller
         }
 
         if (!$request->input('quantity')) {
-            return $this->inventoryService->deleteInventoryItem($request->input('type'), $request->input('item_id'), $sawmill_id);
+            return $this->inventoryService->deleteInventoryItem($request->input('type'), $request->input('item_id'), $sawmill_id, "user");
         }
 
-        return $this->inventoryService->updateInventoryItem($request->input('type'), $request->input('item_id'), $request->input('quantity'), $sawmill_id);
+        return $this->inventoryService->updateInventoryItem($request->input('type'), $request->input('item_id'), $request->input('quantity'), $sawmill_id, "user");
     }
 }

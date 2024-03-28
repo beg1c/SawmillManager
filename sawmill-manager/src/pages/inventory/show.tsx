@@ -52,6 +52,21 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
         setShowLoading(false);
     }, [inventory]);
 
+    const handleDelete = (inventoryId: number | undefined, type: "products" | "materials" | "wastes", id: number) => {
+        if (inventoryId) {
+            mutateUpdate({
+                resource: "inventory",
+                id: inventoryId, 
+                values: {
+                  type: type,
+                  item_id: id,
+                },
+                mutationMode: "undoable",
+                undoableTimeout: 5000,
+            });
+        }
+    }
+
 
     const filteredLogs = inventory?.logs.filter(log => {
         switch (inventoryType) {
@@ -102,7 +117,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
         } else if (row.dailylog) {
             actionSource = "Daily log from " + format(new Date(row.dailylog), 'dd.MM.yyyy');
         } else if (row.order) {
-            actionSource = "Order ID " + row.order;
+            actionSource = "Dispatched order #" + row.order;
         }
     
         switch (row.action) {
@@ -181,18 +196,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                 key={3}
                                 label={t("buttons.delete")}
                                 icon={<Close color="error" />}
-                                onClick={() => {
-                                    mutateUpdate({
-                                        resource: "inventory",
-                                        id: inventory?.id!, 
-                                        values: {
-                                          type: inventoryType,
-                                          item_id: row.id,
-                                        },
-                                        mutationMode: "undoable",
-                                        undoableTimeout: 5000,
-                                    });
-                                }}
+                                onClick={() => handleDelete(inventory?.id, inventoryType, row.id)}
                             />,
                         ];
                     },
@@ -262,16 +266,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                 key={3}
                                 label={t("buttons.delete")}
                                 icon={<Close color="error" />}
-                                onClick={() => {
-                                    mutateUpdate({
-                                        resource: "inventory",
-                                        id: inventory?.id!, 
-                                        values: {
-                                          type: inventoryType,
-                                          item_id: row.id,
-                                        },
-                                    });
-                                }}
+                                onClick={() => handleDelete(inventory?.id, inventoryType, row.id)}
                                 />,
                         ];
                     },
@@ -341,16 +336,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                 key={3}
                                 label={t("buttons.delete")}
                                 icon={<Close color="error" />}
-                                onClick={() => {
-                                    mutateUpdate({
-                                        resource: "inventory",
-                                        id: inventory?.id!, 
-                                        values: {
-                                          type: inventoryType,
-                                          item_id: row.id,
-                                        },
-                                    });
-                                }}
+                                onClick={() => handleDelete(inventory?.id, inventoryType, row.id)}
                                 />,
                         ];
                     },
@@ -556,7 +542,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                             columns={logsColumns}
                             rows={filteredLogs || []}
                             hideFooter
-                            rowHeight={50}
+                            rowHeight={80}
                             localeText={{ noRowsLabel: t("wastes.noWastes") }}
                             sx={{
                                 [`.${gridClasses.cell}.success`]: {
@@ -583,6 +569,14 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                     default:
                                         return "";
                                 }
+                            }}
+                            initialState={{
+                                sorting: {
+                                  sortModel: [{ field: 'timestamp', sort: 'desc' }],
+                                },
+                                pagination: {
+                                    paginationModel: { pageSize: 8, page: 0 },
+                                },
                             }}
                         />
                     </Paper>

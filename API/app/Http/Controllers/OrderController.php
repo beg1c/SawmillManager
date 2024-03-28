@@ -9,9 +9,17 @@ use App\Http\Requests\OrderStatusRequest;
 use App\Models\Order;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use App\Services\InventoryService;
 
 class OrderController extends Controller
 {
+    protected $inventoryService;
+
+    public function __construct(InventoryService $inventoryService)
+    {
+        $this->inventoryService = $inventoryService;
+    }
+
     public function index()
     {
         $sortField = request()->query('sort', 'ordered_at');
@@ -121,6 +129,13 @@ class OrderController extends Controller
         $dispatched_at = date('Y-m-d H:i:s', strtotime($request['dispatched_at']));
 
         if ($status === 'Dispatched') {
+            foreach ($order->products as $product) {
+                $productId = $product->id;
+                $quantity = $product->pivot->quantity;
+
+                $this->inventoryService->updateInventoryItem("products", $productId, $quantity, $order->sawmill->id, "order", null, $order->id);
+            }
+
             if (!isset($order->ready_at)) {
                 $order->update([
                     'ready_at' => $dispatched_at,
