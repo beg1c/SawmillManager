@@ -20,6 +20,7 @@ class InventoryResource extends JsonResource
             'products' => ProductResource::collection($this->products),
             'materials' => MaterialResource::collection($this->materials),
             'wastes' => WasteResource::collection($this->wastes),
+            'logs' => InventoryLogResource::collection($this->logs),
         ];
     }
 }

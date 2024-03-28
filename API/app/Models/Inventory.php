@@ -29,4 +29,9 @@ class Inventory extends Model
     {
         return $this->belongsToMany(Waste::class)->withPivot(['quantity']);
     }
+
+    public function logs()
+    {
+        return $this->hasMany(InventoryLog::class);
+    }
 }
