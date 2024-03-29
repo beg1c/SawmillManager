@@ -209,10 +209,13 @@ class OrderController extends Controller
             }
         }
 
+        $discountFraction = $request['discount'] / 100;
+        $discountedAmount = $amount * (1 - $discountFraction);
+
         $order->customer()->associate($request['customer.id']);
         $order->sawmill()->associate($request['sawmill.id']);
         $order->update([
-            'amount' => $amount,
+            'amount' => $discountedAmount,
         ]);
 
         return new OrderResource($order);

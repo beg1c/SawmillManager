@@ -35,6 +35,7 @@ class Order extends Model
         'ready_at',
         'dispatched_at',
         'status',
+        'discount',
     ];
 
 }

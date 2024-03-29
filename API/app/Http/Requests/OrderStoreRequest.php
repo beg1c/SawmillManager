@@ -29,7 +29,8 @@ class OrderStoreRequest extends FormRequest
             'products.*.id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|numeric|min:0',
             'sawmill.id' => 'required|exists:sawmills,id',
-            'customer.id' => 'required|exists:customers,id'
+            'customer.id' => 'required|exists:customers,id',
+            'discount' => "numeric",
         ];
     }
 }
