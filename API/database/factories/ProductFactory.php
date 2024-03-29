@@ -21,6 +21,7 @@ class ProductFactory extends Factory
             'description' => fake()->sentence(),
             'unit_of_measure'=> 'm3',
             'price' => fake()->randomFloat(2, 0, 400),
+            'vat' => fake()->numberBetween(10, 30),
             'photo' => fake()->randomElement(['product1.jpg',
                                                 'product2.jpg',
                                                 'product3.jpg',

@@ -21,6 +21,7 @@ class WasteFactory extends Factory
             'description' => fake()->sentence(),
             'unit_of_measure'=> 'm3',
             'price' => fake()->randomFloat(2, 0, 400),
+            'vat' => fake()->numberBetween(10, 30),
         ];
     }
 }

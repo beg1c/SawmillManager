@@ -105,6 +105,7 @@ class ProductController extends Controller
             'price' => $request['price'],
             'unit_of_measure' => $request['unit_of_measure'],
             'photo' => $photoName,
+            'vat' => $request['vat'],
         ]);
 
         return new ProductResource($product);
@@ -118,6 +119,7 @@ class ProductController extends Controller
             'description' => $request['description'],
             'price' => $request['price'],
             'unit_of_measure' => $request['unit_of_measure'],
+            'vat' => $request['vat'],
         ]);
 
         if ($photoName !== null) {

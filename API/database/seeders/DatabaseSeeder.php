@@ -52,7 +52,11 @@ class DatabaseSeeder extends Seeder
 
             $products = Product::inRandomOrder()->take(rand(1, 5))->get();
             foreach ($products as $product) {
-                $order->products()->attach($product, ['quantity' => rand(1000, 100000) / 1000]);
+                $order->products()->attach($product, [
+                    'quantity' => rand(1000, 100000) / 1000,
+                    'historic_price' => $product->price,
+                    'historic_vat' => $product->vat
+                ]);
             }
         });
 

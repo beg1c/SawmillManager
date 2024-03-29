@@ -7,6 +7,7 @@ use App\Http\Resources\OrderResource;
 use App\Http\Requests\OrderStoreRequest;
 use App\Http\Requests\OrderStatusRequest;
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use App\Services\InventoryService;
@@ -195,9 +196,16 @@ class OrderController extends Controller
             $productId = $product['id'];
             $quantity = $product['quantity'];
 
+            $productModel = Product::findOrFail($productId);
+
             if (!empty($quantity)) {
-                $order->products()->attach($productId, ['quantity' => $quantity]);
-                $amount += $quantity * $product['price'];
+                $order->products()->attach($productId, [
+                    'quantity' => $quantity,
+                    'historic_price' => $productModel->price,
+                    'historic_vat' => $productModel->vat
+                ]);
+
+                $amount += $quantity * $productModel->price;
             }
         }
 

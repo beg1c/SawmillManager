@@ -27,7 +27,8 @@ class ProductStoreRequest extends FormRequest
             'description' => 'string|max:100',
             'price' => 'required|numeric',
             'unit_of_measure' => 'required|string|in:m3',
-            'photo' => ['nullable', new Base64Image]
+            'photo' => ['nullable', new Base64Image],
+            'vat' => 'required|numeric',
         ];
     }
 }

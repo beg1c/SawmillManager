@@ -104,6 +104,7 @@ class WasteController extends Controller
             'price' => $request['price'],
             'unit_of_measure' => $request['unit_of_measure'],
             'photo' => $photoName,
+            'vat' => $request['vat'],
         ]);
 
         return new WasteResource($waste);
@@ -117,6 +118,7 @@ class WasteController extends Controller
             'description' => $request['description'],
             'price' => $request['price'],
             'unit_of_measure' => $request['unit_of_measure'],
+            'vat' => $request['vat'],
         ]);
 
         if ($photoName !== null) {
