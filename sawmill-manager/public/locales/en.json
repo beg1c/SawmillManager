@@ -157,9 +157,11 @@
             "fields": {
                 "items": "Items",
                 "quantity": "Quantity",
-                "price": "Price",
+                "netPrice": "Net price",
+                "grossPrice": "Gross price",
                 "unit_of_measure": "Unit of measure",
-                "total": "Total"
+                "total": "Total",
+                "vat": "VAT"
             },
             "mainTotal": "TOTAL"
         }
@@ -258,7 +260,9 @@
             "name": "Name",
             "description": "Description",
             "isActive": "Active",
-            "price": "Price",
+            "netPrice": "Net price",
+            "grossPrice": "Gross price",
+            "vat": "VAT",
             "unit_of_measure": "Unit of measure",
             "quantity": "Quantity",
             "value": "Value",
@@ -322,7 +326,9 @@
             "name": "Name",
             "description": "Description",
             "isActive": "Active",
-            "price": "Price",
+            "netPrice": "Net price",
+            "grossPrice": "Gross price",
+            "vat": "VAT",
             "unit_of_measure": "Unit of measure",
             "quantity": "Quantity",
             "value": "Value",

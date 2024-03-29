@@ -19,7 +19,7 @@ import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import { IOrder, IProductWQuantity } from "../../interfaces/interfaces";
 import { Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Step, StepLabel, Stepper } from "@mui/material";
 import dayjs from "dayjs";
-import { BusinessOutlined, EventBusyOutlined, HomeOutlined, InventoryRounded, LocalShippingOutlined, Person2Outlined, PhoneOutlined, SellOutlined, TextSnippetOutlined } from "@mui/icons-material";
+import { BusinessOutlined, EventBusyOutlined, HomeOutlined, InventoryRounded, LocalShippingOutlined, PaymentsOutlined, Person2Outlined, PhoneOutlined, SellOutlined, TextSnippetOutlined } from "@mui/icons-material";
 import { RotateLoader } from "react-spinners";
 
 interface StepperEvent {
@@ -37,9 +37,10 @@ type OrderInfoTextProps = {
     icon: React.ReactNode;
     label?: string;
     text?: string;
-  };
+    strikeThrough?: string;
+};
 
-const OrderInfoText: React.FC<OrderInfoTextProps> = ({ icon, label, text }) => (
+const OrderInfoText: React.FC<OrderInfoTextProps> = ({ icon, label, text, strikeThrough }) => (
     <Stack
         direction="row"
         alignItems="center"
@@ -51,9 +52,12 @@ const OrderInfoText: React.FC<OrderInfoTextProps> = ({ icon, label, text }) => (
             {icon}
             <Typography variant="body1">{label}</Typography>
         </Stack>
-        <Typography variant="body1">{text}</Typography>
+        <Typography variant="body1">
+            {strikeThrough && <><span style={{ textDecoration: 'line-through' }}>{strikeThrough}</span> {text}</>}
+            {!strikeThrough && text}
+        </Typography>
     </Stack>
-  );
+);
 
 export const OrderShow: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
@@ -75,6 +79,17 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
             });
         }
     }, [queryResult.data]);
+
+    const [amountBeforeDiscount, setAmountBeforeDiscount] = useState<number>(0);
+
+    useEffect(() => {
+        if (record && record.products && record.discount !== 0) {
+            const total = record.products.reduce((accumulator: number, product: IProductWQuantity) => {
+                return accumulator + product.price * product.quantity * (1 + product.vat / 100);
+            }, 0);
+            setAmountBeforeDiscount(total);
+        }
+    }, [record]);
     
     const handleMutate = (status: StatusUpdate) => {
         if (record && record.id) {
@@ -141,19 +156,35 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                 },
             },
             {
+                field: "price",
+                headerName: t("orders.products.fields.netPrice"),
+                width: 100,
+                type: "number",
+                sortable: false,
+                valueGetter: (params) => {return params.row.price + " €"}
+            },
+            {
+                field: "vat",
+                headerName: t("orders.products.fields.vat"),
+                width: 100,
+                type: "number",
+                sortable: false,
+                valueGetter: (params) => {return params.row.vat + " %"}
+            },
+            {
+                field: "gross",
+                headerName: t("orders.products.fields.grossPrice"),
+                width: 100,
+                type: "number",
+                sortable: false,
+                valueGetter: (params) => {return ((1 + params.row.vat / 100) * params.row.price).toFixed(2) + " €"}
+            },
+            {
                 field: "quantity",
                 headerName: t("orders.products.fields.quantity"),
                 width: 150,
                 sortable: false,
                 valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params.row.unit_of_measure},
-            },
-            {
-                field: "price",
-                headerName: t("orders.products.fields.price"),
-                width: 100,
-                type: "number",
-                sortable: false,
-                valueGetter: (params) => {return params.row.price + " €"}
             },
             {
                 field: "total",
@@ -162,7 +193,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                 type: "number",
                 flex: 1,
                 sortable: false,
-                valueGetter: (params) => {return (params.row.price * params.row.quantity).toFixed(2) + " €"},
+                valueGetter: (params) => {return (params.row.price * params.row.quantity * (1 + params.row.vat / 100)).toFixed(2) + " €"},
             },
         ],
         [t],
@@ -327,12 +358,31 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                             label="Notes"
                             text={order?.notes}
                         />
-                            <Divider style={{backgroundColor: palette.text.disabled}}/>
+                        {order?.discount===0 &&
+                        <>
+                        <Divider style={{backgroundColor: palette.text.disabled}}/>
                         <OrderInfoText
-                            icon={<SellOutlined color="primary" />}
+                            icon={<PaymentsOutlined color="primary" />}
                             label="Total"
                             text={order?.amount + ' €'} 
                         />
+                        </>}
+                        {order?.discount!==0 &&
+                        <>
+                        <Divider style={{backgroundColor: palette.text.disabled}}/>
+                        <OrderInfoText
+                            icon={<SellOutlined color="primary" />}
+                            label="Discount"
+                            text={order?.discount + '%'} 
+                        />
+                        <Divider style={{backgroundColor: palette.text.disabled}}/>
+                        <OrderInfoText
+                            icon={<PaymentsOutlined color="primary" />}
+                            label="Total"
+                            text={' ' + order?.amount + '€'} 
+                            strikeThrough={amountBeforeDiscount.toFixed(2) + '€'}
+                        />
+                        </>}
                     </Stack>
                 </Paper>
             </Grid>

@@ -29,6 +29,7 @@ export interface IProduct {
     unit_of_measure: string;
     price: number;
     photo?: string;
+    vat: number;
 }
 
 export interface IProductWQuantity extends IProduct {
@@ -55,6 +56,7 @@ export interface IWaste {
     unit_of_measure: string;
     price?: number;
     photo?: string;
+    vat: number;
 }
 
 export interface IWasteWQuantity extends IWaste {
@@ -128,7 +130,8 @@ export interface ICustomerFilterVariables {
 
 export interface IOrder {
     id: number;
-    amount?: integer;
+    amount?: number;
+    discount?: number;
     notes?: string;
     deadline?: string;
     ordered_at: string;

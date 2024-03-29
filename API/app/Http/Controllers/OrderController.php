@@ -205,7 +205,7 @@ class OrderController extends Controller
                     'historic_vat' => $productModel->vat
                 ]);
 
-                $amount += $quantity * $productModel->price;
+                $amount += $quantity * ($productModel->price * (1 + $productModel->vat / 100));
             }
         }
 

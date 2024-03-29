@@ -14,7 +14,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import { ICustomer, IOrder, IProduct, IProductWQuantity, ISawmill } from "../../interfaces/interfaces";
 import { Controller, FieldValues, SubmitHandler } from "react-hook-form";
-import { Button, InputAdornment, TextField, Typography } from "@mui/material";
+import { Button, Divider, InputAdornment, TextField, Typography, styled } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { format, isValid, parseISO } from "date-fns";
@@ -26,7 +26,21 @@ const createEmptyProduct = () : IProductWQuantity => ({
     unit_of_measure: '',
     price: 0,
     quantity: 0,
+    vat: 0,
 });
+
+const StyledTextField = styled(TextField)({
+    "& .MuiInputLabel-root": {
+      right: 0,
+      textAlign: "right"
+    },
+    "& .MuiInputLabel-shrink": {
+      position: "absolute",
+      right: "0",
+      left: "0",
+      width: "500px",    
+    },
+  });
 
 export const CreateOrder: React.FC<
     UseModalFormReturnType<IOrder, HttpError>
@@ -62,6 +76,7 @@ export const CreateOrder: React.FC<
     };
 
     const [selectedProducts, setSelectedProducts] = useState<IProductWQuantity[]>([createEmptyProduct()]);
+    const [discount, setDiscount] = useState<number>(0);
 
     const handleProductChange = (product: IProduct, quantity: number, index: number) => {
         const productIndex = selectedProducts.findIndex(p => p.id === product.id);
@@ -79,7 +94,7 @@ export const CreateOrder: React.FC<
     };
 
     const amount = selectedProducts.reduce((accumulator, currentValue) => {
-        return accumulator + currentValue.price * currentValue.quantity;
+        return accumulator + (currentValue.price * currentValue.quantity * (1 + currentValue.vat / 100));
     }, 0);
   
     const handleAddSelect = () => {
@@ -224,76 +239,140 @@ export const CreateOrder: React.FC<
                                     <FormControl 
                                         key={index} 
                                         fullWidth 
-                                        style={{ display: "inline-flex", flexDirection: "row"}}
+                                        style={{ display: "flex", flexDirection: "column"}}
                                     >
-                                        <Autocomplete
-                                            fullWidth
-                                            defaultValue={product}
-                                            {...productsAutocompleteProps}
-                                            size="small"
-                                            getOptionLabel={(item) => { 
-                                                return item.name;
-                                            }}
-                                            isOptionEqualToValue={(option, value) => option.id === value.id}
-                                            onChange={(_,value) => value ? handleProductChange(value, 1, index) : null}
-                                            getOptionDisabled={(option) =>
-                                                selectedProducts.some(product => product.id === option.id)    
-                                            }
-                                            renderInput={(params) => 
-                                                <TextField 
-                                                    {...params}  
-                                                    variant="outlined"
-                                                />              
-                                            }
-                                        />
-                                        <TextField
-                                            id="price"
-                                            label="Price"
-                                            size="small"
-                                            value={product.quantity ? (product.price * product.quantity).toFixed(2) : '0.00'}
-                                            style={{
-                                                width: "170px",
-                                                marginLeft: "3px",
-                                                marginRight: "3px",
-                                            }}
-                                            InputProps={{
-                                                readOnly: true,
-                                                startAdornment: <InputAdornment position="start">€</InputAdornment>,
-                                            }}
-                                        />
-                                        <TextField
-                                            InputProps={
-                                                { inputProps: { min: 1, max: 999 } }
-                                            }
-                                            InputLabelProps={{ shrink: true }}
-                                            id="quantity"
-                                            label="Quantity"
-                                            size="small"
-                                            type="number"
-                                            onChange={(event) => handleProductChange(product, parseFloat(event.target.value), index)}
-                                            defaultValue={1}
-                                            style={{
-                                                width: "120px",
-                                            }}
-                                        />
-                                        <IconButton onClick={() => handleDeleteSelect(product.id)} aria-label="delete">
-                                            <Close />
-                                        </IconButton>
+                                        <Stack display="flex" direction="row">
+                                            <Autocomplete
+                                                fullWidth
+                                                defaultValue={product}
+                                                {...productsAutocompleteProps}
+                                                size="small"
+                                                getOptionLabel={(item) => { 
+                                                    return item.name;
+                                                }}
+                                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                                onChange={(_,value) => value ? handleProductChange(value, 1, index) : null}
+                                                getOptionDisabled={(option) =>
+                                                    selectedProducts.some(product => product.id === option.id)    
+                                                }
+                                                renderInput={(params) => 
+                                                    <TextField 
+                                                        {...params}  
+                                                        variant="outlined"
+                                                        label={"Product " + (index + 1)} 
+                                                    />              
+                                                }
+                                            />
+                                            <TextField
+                                                InputProps={{ 
+                                                    inputProps: { min: 1, max: 999 },
+                                                    startAdornment: <InputAdornment position="start">m3</InputAdornment>,
+                                                }}
+                                                InputLabelProps={{ shrink: true }}
+                                                id="quantity"
+                                                label="Quantity"
+                                                size="small"
+                                                type="number"
+                                                onChange={(event) => handleProductChange(product, parseFloat(event.target.value), index)}
+                                                defaultValue={1}
+                                                style={{
+                                                    width: "220px",
+                                                    marginLeft: 5,
+                                                }}
+                                            />
+                                            <IconButton onClick={() => handleDeleteSelect(product.id)} aria-label="delete">
+                                                <Close />
+                                            </IconButton>
+                                        </Stack>
+                                        <Stack display="flex" direction="row" marginTop={1} marginBottom={2}>
+                                            <StyledTextField   
+                                                variant="standard"                              
+                                                id="price"
+                                                label="Net price"
+                                                size="small"
+                                                value={product.quantity ? (product.price * product.quantity).toFixed(2) : '0.00'}
+                                                InputProps={{
+                                                    readOnly: true,
+                                                    endAdornment: <InputAdornment position="end">€</InputAdornment>,
+                                                    inputProps: {
+                                                        style: { textAlign: "right" }
+                                                    }
+                                                }}
+                                            />
+                                            <StyledTextField   
+                                                variant="standard"                              
+                                                id="price"
+                                                label="VAT"
+                                                size="small"
+                                                value={product.quantity ? product.vat : '0.00'}
+                                                InputProps={{
+                                                    readOnly: true,
+                                                    endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                                    inputProps: {
+                                                        style: { textAlign: "right" }
+                                                    }
+                                                }}
+                                            />
+                                            <StyledTextField  
+                                                variant="standard"                              
+                                                id="gross"
+                                                label="Gross price"
+                                                size="small"
+                                                value={product.quantity ? (product.price * product.quantity * (1 + product.vat / 100)).toFixed(2) : '0.00'}
+                                                InputProps={{
+                                                    readOnly: true,
+                                                    endAdornment: <InputAdornment position="end">€</InputAdornment>,
+                                                    inputProps: {
+                                                        style: { textAlign: "right" }
+                                                    }
+                                                }}
+                                            />       
+                                        </Stack>
                                     </FormControl>
                                 ))}
                                 <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
                                     <Button onClick={handleAddSelect} variant="contained" color="primary" sx={{width:"100px"}}>
                                         <Add />
                                     </Button>
-                                    <Typography 
-                                        sx={{
-                                            fontWeight: "700",
-                                            fontSize: "16px",
-                                            color: "text.primary",
-                                        }}
-                                    >
-                                        Total: {amount ? amount.toFixed(2) : '0.00'} €
-                                    </Typography>
+                                    <Stack display="flex" direction="row" alignItems="center">
+                                        <StyledTextField  
+                                            InputLabelProps={{ shrink: true }}
+                                            variant="standard" 
+                                            {...register("discount")}
+                                            label="Discount"
+                                            size="small"
+                                            type="number"
+                                            style={{
+                                                width: "120px",
+                                            }}
+                                            value={discount}
+                                            InputProps={{
+                                                endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                                inputProps: {
+                                                    style: { textAlign: "right" }
+                                                }
+                                            }}
+                                            onChange={(event) => event.target.value ? setDiscount(parseFloat(event.target.value)) : setDiscount(0)}
+                                        />
+                                        <StyledTextField
+                                            variant="standard" 
+                                            id="total"
+                                            label="Total"
+                                            size="small"
+                                            style={{
+                                                width: "120px",
+                                            }}
+                                            value={amount ? (amount * (1 - discount / 100)).toFixed(2) : '0.00'}
+                                            InputProps={{
+                                                readOnly: true,
+                                                endAdornment: <InputAdornment position="end">€</InputAdornment>,
+                                                inputProps: {
+                                                    style: { textAlign: "right" }
+                                                }
+                                            }}
+                                        />
+                                    </Stack>
+                                    
                                 </Box>
                                 <FormControl>
                                     <FormLabel

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslate, HttpError, useModal } from "@refinedev/core";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { Edit } from "@refinedev/mui";
@@ -73,6 +73,35 @@ export const EditWaste: React.FC<
         
         onFinish(extendedValues);
     };
+
+    const calculateGrossPrice = (netPrice: number | undefined, vat: number | undefined): number | undefined => {
+        if (netPrice !== undefined && vat !== undefined) {
+            return netPrice * (1 + vat / 100);
+        }
+        return undefined;
+    };
+
+    const handleNetPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newNetPrice = parseFloat(event.target.value);
+        setNetPrice(newNetPrice);
+        setGrossPrice(calculateGrossPrice(newNetPrice, vat));
+    };
+
+    const handleVatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newVat = parseFloat(event.target.value);
+        setVat(newVat);
+        setGrossPrice(calculateGrossPrice(netPrice, newVat));
+    };
+
+    const [netPrice, setNetPrice] = useState<number | undefined>(waste?.price || 0);
+    const [vat, setVat] = useState<number | undefined>(waste?.vat || 0);
+    const [grossPrice, setGrossPrice] = useState<number | undefined>(calculateGrossPrice(netPrice, vat));
+
+    useEffect(() => {
+        setNetPrice(waste?.price);
+        setVat(waste?.vat);
+        setGrossPrice(calculateGrossPrice(waste?.price, waste?.vat));
+    }, [waste]);
 
     return (
         <>
@@ -215,13 +244,42 @@ export const EditWaste: React.FC<
                                         </FormHelperText>
                                     )}
                                 </FormControl>
+                                <FormControl>
+                                    <FormLabel required>
+                                        {t("products.fields.unit_of_measure")}
+                                    </FormLabel>
+                                    <Controller
+                                        control={control}
+                                        name="unit_of_measure"
+                                        defaultValue='m3'
+                                        render={() => (
+                                            <Autocomplete
+                                            disabled     
+                                            id="unit_of_measure"
+                                            {...register("unit_of_measure")}                                              
+                                            options={['m3']}
+                                            defaultValue='m3'
+                                            renderInput={(params) => 
+                                                <TextField {...params} 
+                                                    size="small"
+                                                    sx={{
+                                                        marginleft: 1
+                                                    }}
+                                                />
+                                            }
+                                        />
+                                        )}
+                                    >  
+                                    </Controller>
+                                </FormControl>
                                 <Stack
                                     display="flex" 
                                     flexDirection="row"
+                                    justifyContent="space-between"
                                 >
                                     <FormControl>
                                         <FormLabel required>
-                                            {t("wastes.fields.price")}
+                                            {t("wastes.fields.netPrice")}
                                         </FormLabel>
                                         <OutlinedInput
                                             id="price"
@@ -232,13 +290,13 @@ export const EditWaste: React.FC<
                                                 ),
                                             })}
                                             type="number"
+                                            onChange={handleNetPriceChange}
                                             inputProps={{ 
                                                 min: 0 
                                             }}
                                             size="small"
                                             sx={{
-                                                width: 120,
-                                                marginRight: 1
+                                                width: 110,
                                             }}
                                             startAdornment={
                                                 <InputAdornment position="start">
@@ -255,31 +313,66 @@ export const EditWaste: React.FC<
                                     </FormControl>
                                     <FormControl>
                                         <FormLabel required>
-                                            {t("wastes.fields.unit_of_measure")}
+                                            {t("wastes.fields.vat")}
                                         </FormLabel>
-                                        <Controller
-                                            control={control}
-                                            name="unit_of_measure"
-                                            defaultValue='m3'
-                                            render={() => (
-                                                <Autocomplete
-                                                disabled     
-                                                id="unit_of_measure"
-                                                {...register("unit_of_measure")}                                              
-                                                options={['m3']}
-                                                defaultValue='m3'
-                                                renderInput={(params) => 
-                                                    <TextField {...params} 
-                                                        size="small"
-                                                        sx={{
-                                                            marginleft: 1
-                                                        }}
-                                                    />
-                                                }
-                                            />
-                                            )}
-                                        >  
-                                        </Controller>
+                                        <OutlinedInput
+                                            id="vat"
+                                            {...register("vat", {
+                                                required: t(
+                                                    "errors.required.vat",
+                                                    { field: "Vat" },
+                                                ),
+                                            })}
+                                            type="number"
+                                            onChange={handleVatChange}
+                                            inputProps={{ 
+                                                min: 0 
+                                            }}
+                                            size="small"
+                                            sx={{
+                                                width: 110,
+                                            }}
+                                            startAdornment={
+                                                <InputAdornment position="start">
+                                                    %
+                                                </InputAdornment>
+                                            }
+                                        />
+                                        {errors.price && (
+                                            <FormHelperText error>
+                                                {// @ts-ignore
+                                                }{errors.price.message}
+                                            </FormHelperText>
+                                        )}
+                                    </FormControl>
+                                    <FormControl>
+                                        <FormLabel>
+                                            {t("wastes.fields.grossPrice")}
+                                        </FormLabel>
+                                        <OutlinedInput
+                                            readOnly
+                                            id="gross"
+                                            type="number"
+                                            value={grossPrice?.toFixed(2)}
+                                            inputProps={{ 
+                                                min: 0 
+                                            }}
+                                            size="small"
+                                            sx={{
+                                                width: 110,
+                                            }}
+                                            startAdornment={
+                                                <InputAdornment position="start">
+                                                    €
+                                                </InputAdornment>
+                                            }
+                                        />
+                                        {errors.price && (
+                                            <FormHelperText error>
+                                                {// @ts-ignore
+                                                }{errors.price.message}
+                                            </FormHelperText>
+                                        )}
                                     </FormControl>
                                 </Stack>
                             </Stack>
