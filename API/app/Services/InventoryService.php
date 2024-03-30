@@ -63,7 +63,9 @@ class InventoryService
 
         $action = $newQuantity > $currentQuantity ? 'add' : 'reduce';
 
-        $this->logInventory($context, $action, $quantityDifference, $inventory, $type, $user, $dailyLog_id, $order_id, $model);
+        if ($quantityDifference != 0) {
+            $this->logInventory($context, $action, $quantityDifference, $inventory, $type, $user, $dailyLog_id, $order_id, $model);
+        }
 
         return new InventoryResource($inventory);
     }

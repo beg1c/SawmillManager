@@ -13,7 +13,7 @@ import { useState } from "react";
 interface EditInventoryItemProps extends useModalReturnType {
     item: IMaterialWQuantity | IProductWQuantity | IWasteWQuantity | undefined;
     type: "products" | "materials" | "wastes";
-    inventoryId: number | undefined;
+    sawmillId: number | undefined;
 }
 
 export const EditInventoryItemModal: React.FC<EditInventoryItemProps> = ({
@@ -21,7 +21,7 @@ export const EditInventoryItemModal: React.FC<EditInventoryItemProps> = ({
     close,
     item,
     type,
-    inventoryId
+    sawmillId
 }) => {
     const t = useTranslate();
     const { mutate: mutateUpdate } = useUpdate();
@@ -32,10 +32,10 @@ export const EditInventoryItemModal: React.FC<EditInventoryItemProps> = ({
     };
 
     const extendedMutateUpdate = () => {
-        if (item && inventoryId) {
+        if (item && sawmillId) {
             mutateUpdate({
                 resource: "inventory",
-                id: inventoryId, 
+                id: sawmillId, 
                 values: {
                     type: type,
                     item_id: item.id,
@@ -74,7 +74,7 @@ export const EditInventoryItemModal: React.FC<EditInventoryItemProps> = ({
                         required
                         type="number"
                         id="quantity"
-                        defaultValue={item?.quantity}
+                        defaultValue={Number(item?.quantity)}
                         onChange={handleQuantityChange}
                         margin="normal"
                         fullWidth

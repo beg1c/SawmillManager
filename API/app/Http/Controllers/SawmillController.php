@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Resources\SawmillResource;
 use App\Http\Requests\SawmillStoreRequest;
 use App\Models\Sawmill;
+use App\Models\Inventory;
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,6 +30,20 @@ class SawmillController extends Controller
         }
 
         $sawmill = Sawmill::create($request->all());
+
+        $inventory = new Inventory();
+        $inventory->save();
+        $inventory->sawmill()->associate($sawmill);
+        $inventory->save();
+
+        $executives = User::whereHas('role', function ($query) {
+            $query->where('role_name', 'executive');
+        })->get();
+
+        foreach ($executives as $executive) {
+            $executive->sawmills()->attach($sawmill);
+        }
+
         return new SawmillResource($sawmill);
     }
 

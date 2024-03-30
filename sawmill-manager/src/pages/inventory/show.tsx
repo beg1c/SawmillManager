@@ -614,7 +614,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                 {...showEditModalProps}
                 item={editItem}
                 type={inventoryType}
-                inventoryId={inventory?.id}
+                sawmillId={inventory?.sawmill.id}
             />
             <AddInventoryItemModal 
                 {...showAddModalProps}

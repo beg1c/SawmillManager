@@ -26,7 +26,6 @@ export const AddInventoryItemModal: React.FC<AddInventoryItemProps> = ({
     const { mutate: mutateUpdate } = useUpdate();
     const [quantity, setQuantity] = useState<number>();
     const [selectedItem, setSelectedItem] = useState<IMaterial | IProduct | IWaste>();
-    const [autoCompleteOptions, setAutoCompleteOptions] = useState<IMaterial[] | IProduct[] | IWaste[]>([]);
 
     const [quantityError, setQuantityError] = useState<string | null>(null);
     const [itemError, setItemError] = useState<string | null>(null);
@@ -49,31 +48,28 @@ export const AddInventoryItemModal: React.FC<AddInventoryItemProps> = ({
         setSelectedItem(item);
     }
 
-    useEffect(() => {
+    const getAutoCompleteOptions = () => {
         switch (type) {
             case "products":
                 const filteredProducts = productsAutocompleteProps.options.filter(product => {
                     return !inventory?.products.some(inventoryProduct => inventoryProduct.id === product.id);
                 });
-                setAutoCompleteOptions(filteredProducts);
-                break;
+                return filteredProducts;
             case "materials":
                 const filteredMaterials = materialsAutocompleteProps.options.filter(product => {
                     return !inventory?.materials.some(inventoryProduct => inventoryProduct.id === product.id);
                 });
-                setAutoCompleteOptions(filteredMaterials);
+                return filteredMaterials;
             break;
             case "wastes":
                 const filteredWastes = wastesAutocompleteProps.options.filter(product => {
                     return !inventory?.wastes.some(inventoryProduct => inventoryProduct.id === product.id);
                 });
-                setAutoCompleteOptions(filteredWastes);
-            break;
+                return filteredWastes;
             default:
-                setAutoCompleteOptions([]);
-                break;
+                return [];
         }
-    }, [type, inventory, productsAutocompleteProps, materialsAutocompleteProps, wastesAutocompleteProps]);
+    }
 
     const extendedMutateUpdate = () => {
         if (!selectedItem) {
@@ -85,7 +81,7 @@ export const AddInventoryItemModal: React.FC<AddInventoryItemProps> = ({
         if (selectedItem && inventory && quantity) {
             mutateUpdate({
                 resource: "inventory",
-                id: inventory.id, 
+                id: inventory.sawmill.id, 
                 values: {
                     type: type,
                     item_id: selectedItem.id,
@@ -118,7 +114,7 @@ export const AddInventoryItemModal: React.FC<AddInventoryItemProps> = ({
                     sx={{ display: "flex", flexDirection: "column" }}
                 >
                     <Autocomplete
-                        options={autoCompleteOptions}
+                        options={getAutoCompleteOptions()}
                         getOptionLabel={(item) => { 
                             return item.name;
                         }}

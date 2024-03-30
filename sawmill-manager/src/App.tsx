@@ -44,7 +44,6 @@ import { WasteList } from "./pages/waste";
 import { DailyLogList, DailyLogShow } from "./pages/dailyLogs";
 import { DashboardPage } from "./pages/dashboard";
 import { InventoryList, InventoryShow } from "./pages/inventory";
-import { IIdentity } from "./interfaces/interfaces";
 import { Fab } from "@mui/material";
 import { CalculatorDrawer } from "./components/calculator";
 const apiUrl = import.meta.env.VITE_APP_API_URL;
