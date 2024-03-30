@@ -53,7 +53,7 @@ export const CreateDailyLogModal: React.FC<
                                 color: "text.primary",
                             }}
                         >
-                            {t('logs.fields.sawmills')}
+                            {t('logs.fields.sawmill')}
                         </FormLabel>
                         <Controller
                             control={control}

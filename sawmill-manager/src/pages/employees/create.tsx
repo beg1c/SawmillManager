@@ -162,6 +162,7 @@ export const EmployeeCreate: React.FC<IResourceComponentsProps> = () => {
                                             src={croppedBase64}
                                         />
                                     </label>
+                                    <Typography variant="h6">{t("employees.images.change_image")}</Typography>
                                 </Stack>
                             </Grid>
                             <Grid item xs={12} md={8}>
@@ -368,6 +369,7 @@ export const EmployeeCreate: React.FC<IResourceComponentsProps> = () => {
                                             defaultValue={null as any}
                                             render={({ field }) => (
                                                 <Autocomplete
+                                                    disableClearable
                                                     size="small"
                                                     {...rolesAutocompleteProps}
                                                     {...field}
@@ -465,12 +467,6 @@ export const EmployeeCreate: React.FC<IResourceComponentsProps> = () => {
                                                 />
                                             )}
                                         />
-                                        {errors.role && (
-                                            <FormHelperText error>
-                                                {// @ts-ignore 
-                                                }{errors.sawmill.message}
-                                            </FormHelperText>
-                                        )}
                                     </FormControl>
                                 </Grid>
                             </Grid>

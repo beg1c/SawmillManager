@@ -429,6 +429,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                             defaultValue={null as any}
                                             render={({ field }) => (
                                                 <Autocomplete
+                                                    disableClearable
                                                     size="small"
                                                     disabled={!can?.can}
                                                     {...rolesAutocompleteProps}

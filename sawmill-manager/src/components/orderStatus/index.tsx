@@ -4,7 +4,7 @@ import Chip from "@mui/material/Chip";
 import type { ChipProps } from "@mui/material/Chip";
 
 type OrderStatusProps = {
-    status?: "Pending" | "Ready"  | "Dispatched" | "Cancelled";
+    status?: "Pending" | "Ready"  | "Dispatched" | "Canceled";
 };
 
 export const OrderStatus: React.FC<OrderStatusProps> = ({ status }) => {
@@ -23,7 +23,7 @@ export const OrderStatus: React.FC<OrderStatusProps> = ({ status }) => {
         case "Dispatched":
             color = palette.mode === "dark" ? "default" : "secondary";
             break;
-        case "Cancelled":
+        case "Canceled":
             color = "error";
             break;
     }

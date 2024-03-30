@@ -35,7 +35,7 @@ export const adapter = new StringAdapter(`
 
   p, manager, employees, (list)|(show)
   p, manager, equipment, (list)|(show)|(create)|(delete)|(edit)
-  p, manager, customers, (list)|(show)|(create)|(delete)|(edit)
+  p, manager, customers, (list)|(show)|(create)|(edit)
   p, manager, orders, (list)|(show)|(create)|(delete)|(edit)
   p, manager, products, (list)|(show)|(create)|(delete)|(edit)
   p, manager, sawmills, (list)|(show)

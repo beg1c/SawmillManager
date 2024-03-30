@@ -12,7 +12,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import { IDailyLog, IWaste, IWasteWQuantity } from "../../interfaces/interfaces";
 import { FieldValues, SubmitHandler } from "react-hook-form";
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, InputAdornment, TextField, Typography } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
 
 const createEmptyWaste = () : IWasteWQuantity => ({
@@ -21,6 +21,7 @@ const createEmptyWaste = () : IWasteWQuantity => ({
     unit_of_measure: '',
     price: 0,
     quantity: 0,
+    vat: 0,
 });
 
 export const AddWastes: React.FC<
@@ -77,8 +78,17 @@ export const AddWastes: React.FC<
       };
 
     const handleDeleteSelect = (id: number) => {
-      const updatedSelects = selectedWastes?.filter(waste => waste.id !== id);
-      setSelectedWastes(updatedSelects);
+        if (selectedWastes?.length === 1) {
+            setSelectedWastes([createEmptyWaste()]);
+        } else {
+            const updatedSelects = selectedWastes?.filter(waste => waste.id !== id);
+            if (updatedSelects?.length === 0) {
+                const lastWaste = selectedWastes[selectedWastes.length - 1];
+                setSelectedWastes([lastWaste]);
+            } else {
+                setSelectedWastes(updatedSelects);
+            }
+        }
     };
 
     const { autocompleteProps: wastesAutocompleteProps} = useAutocomplete<IWaste>({
@@ -102,12 +112,17 @@ export const AddWastes: React.FC<
                     </Typography>
                 }
                 footerButtons={
+                    <Stack display="flex" direction="row" width="100%" justifyContent="space-between" paddingX={{ xs: 1, md: 6, }}>
+                    <Button onClick={handleAddSelect} variant="contained" color="primary" sx={{ width:"90px" }}>
+                        <Add />
+                    </Button>
                     <SaveButton 
                         {...saveButtonProps}
                         onClick={
                             handleSubmit(extendedOnFinish)
                         }
                     />
+                    </Stack>
                 }
                 headerProps={{
                     avatar: (
@@ -119,7 +134,7 @@ export const AddWastes: React.FC<
                                 mb: "5px",
                             }}
                         >
-                        <CloseOutlined />
+                            <CloseOutlined />
                         </IconButton>
                     ),
                     action: null,
@@ -147,18 +162,17 @@ export const AddWastes: React.FC<
                                         style={{ display: "inline-flex", flexDirection: "row"}}
                                     >
                                         <Autocomplete
-                                            disableClearable
                                             fullWidth
                                             {...wastesAutocompleteProps}
                                             size="small"
-                                            value={waste}
+                                            value={waste?.id > 0 ? waste : null}
                                             getOptionLabel={(item) => { 
                                                 return item.name;
                                             }}
                                             isOptionEqualToValue={(option, value) => {
                                                 return option.id === value.id;
                                             }}
-                                            onChange={(_,value) => value ? handleWasteChange(value, 1, index) : null}
+                                            onChange={(_,value) => value ? handleWasteChange(value, 1, index) : ""}
                                             getOptionDisabled={(option) =>
                                                 selectedWastes.some(waste => waste.id === option.id)    
                                             }
@@ -166,23 +180,22 @@ export const AddWastes: React.FC<
                                                 <TextField 
                                                     {...params}
                                                     variant="outlined"
-                                                    label="Waste"
+                                                    label={"Waste " + (index + 1)}
                                                 />              
                                             }
                                         />
                                         <TextField
-                                            InputProps={
-                                                { inputProps: { min: 1, max: 999 } }
-                                            }
-                                            InputLabelProps={{ shrink: true }}
+                                            InputProps={{ 
+                                                endAdornment: <InputAdornment position="end">m3</InputAdornment>,
+                                            }}
                                             id="quantity"
                                             label="Quantity"
                                             size="small"
                                             type="number"
-                                            value={waste?.quantity ? waste.quantity : 0}
-                                            onChange={(event) => handleWasteChange(waste, parseInt(event.target.value), index)}
+                                            value={waste?.quantity ? Number(waste.quantity) : ""}
+                                            onChange={(event) => handleWasteChange(waste, parseFloat(event.target.value), index)}
                                             style={{
-                                                width: "120px",
+                                                width: "200px",
                                                 marginLeft: "3px",  
                                             }}
                                         />
@@ -194,11 +207,6 @@ export const AddWastes: React.FC<
                                         </IconButton>
                                     </FormControl>
                                 ))}
-                                <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
-                                    <Button onClick={handleAddSelect} variant="contained" color="primary" sx={{width:"100px"}}>
-                                        <Add />
-                                    </Button>
-                                </Box>
                             </Stack>
                         </form>
                     </Box>

@@ -23,6 +23,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { RotateLoader } from "react-spinners";
 import { useState } from "react";
 import ImageCrop from "../../components/imageCrop";
+import { HandymanRounded } from "@mui/icons-material";
 
 
 export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
@@ -146,7 +147,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     }}
                                     alt="Equipment photo"
                                     src={croppedBase64 || equipment?.photo}
-                                >{t("images.add")}</Avatar>
+                                ><HandymanRounded sx={{ fontSize: 64 }}/></Avatar>
                             </label>
                             <Typography variant="h6">{t("equipment.images.change_image")}</Typography>
                         </Stack>
@@ -231,6 +232,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     size="small"
                                     margin="none"
                                     variant="outlined"
+                                    type="number"
                                     defaultValue={equipment?.production_year}
                                 />
                                 {errors.production_year && (
@@ -357,6 +359,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                 size="small"
                                 margin="none"
                                 variant="outlined"
+                                type="number"
                                 defaultValue={equipment?.last_service_working_hours}
                             />
                             {errors.last_service_working_hours && (

@@ -24,7 +24,7 @@ class Order extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->withPivot(['quantity']);
+        return $this->belongsToMany(Product::class)->withPivot(['quantity', 'historic_price', 'historic_vat']);
     }
 
     protected $fillable = [
@@ -36,6 +36,7 @@ class Order extends Model
         'dispatched_at',
         'status',
         'discount',
+        'canceled_at',
     ];
 
 }

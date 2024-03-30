@@ -134,7 +134,7 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
                                 currency: "EUR",
                                 style: "currency",
                             }}
-                            value={row.amount}
+                            value={row.amount ? row.amount : ""}
                             sx={{ fontSize: "14px" }}
                         />
                     );

@@ -171,7 +171,7 @@
             "Pending": "Pending",
             "Ready": "Ready",
             "Dispatched": "Dispatched",
-            "Cancelled": "Cancelled"
+            "Canceled": "Canceled"
         }
     },
     "sawmills": {
@@ -219,7 +219,9 @@
             "description": "Description",
             "notes": "Notes",
             "production_year": "Production year",
+            "no_production_year": "No production year",
             "last_service_working_hours": "Last service hours",
+            "no_last_service_working_hours": "Not provided",
             "last_service_date": "Last service",
             "no_last_service_date": "No service date",
             "sawmill": "Sawmill",
@@ -437,7 +439,7 @@
         "undo": "Undo",
         "import": "Import",
         "ready": "Ready",
-        "dispatched": "Dispatched",
+        "dispatched": "Dispatch",
         "export": "Export",
         "clone": "Clone",
         "accept": "Accept",

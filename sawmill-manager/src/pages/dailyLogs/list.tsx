@@ -114,7 +114,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                                 <Stack sx={{ padding: "2px" }}>
                                     {row.materials?.length ? 
                                         row.materials.map((material) => (
-                                            <li key={material.id}>{material.quantity + 'x ' + material.name}</li>
+                                            <li key={material.id}>{Number(material.quantity).toFixed(2) + 'm3 ' + material.name}</li>
                                         ))
                                     :
                                         <li>{t("materials.noMaterials")}</li>
@@ -148,7 +148,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                                 <Stack sx={{ padding: "2px" }}>
                                     {row.products?.length ? 
                                         row.products.map((product) => (
-                                            <li key={product.id}>{product.quantity + 'x ' + product.name}</li>
+                                            <li key={product.id}>{Number(product.quantity).toFixed(2) + 'm3 ' + product.name}</li>
                                         ))
                                     :
                                         <li>{t("products.noProducts")}</li>
@@ -182,7 +182,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                                 <Stack sx={{ padding: "2px" }}>
                                     {row.wastes?.length ? 
                                         row.wastes.map((waste) => (
-                                            <li key={waste.id}>{waste.quantity + 'x ' + waste.name}</li>
+                                            <li key={waste.id}>{Number(waste.quantity).toFixed(2) + 'm3 ' + waste.name}</li>
                                         ))
                                     :
                                         <li>{t("wastes.noWastes")}</li>

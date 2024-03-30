@@ -102,15 +102,19 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                 {
                     field: "quantity",
                     headerName: t("logs.fields.quantity"),
-                    width: 100,
+                    headerAlign: "right",
+                    align: "right",
+                    flex: 1,
                     sortable: false,
-                    valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
+                    valueGetter: (params) => {return Number(params?.row?.quantity).toFixed(3) + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
                     headerName: t("logs.fields.value"),
-                    minWidth: 50,
+                    flex: 1,
                     sortable: false,
+                    headerAlign: "right",
+                    align: "right",
                     valueGetter: (params) => {
                         return (params?.row?.price * params?.row?.quantity).toFixed(2) + ' €'
                     },
@@ -149,15 +153,18 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                 {
                     field: "quantity",
                     headerName: t("logs.fields.quantity"),
-                    width: 100,
+                    headerAlign: "right",
+                    align: "right",
+                    flex: 1,
                     sortable: false,
-                    valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
+                    valueGetter: (params) => {return Number(params?.row?.quantity).toFixed(3) + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
                     headerName: t("logs.fields.value"),
-                    width: 100,
                     sortable: false,
+                    headerAlign: "right",
+                    align: "right",
                     flex: 1,
                     valueGetter: (params) => {
                         if (params?.row?.price){
@@ -199,15 +206,19 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                 {
                     field: "quantity",
                     headerName: t("logs.fields.quantity"),
-                    width: 100,
+                    headerAlign: "right",
+                    align: "right",
+                    flex: 1,
                     sortable: false,
-                    valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
+                    valueGetter: (params) => {return Number(params?.row?.quantity).toFixed(3) + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
                     headerName: t("logs.fields.value"),
-                    width: 100,
+                    flex: 1,
                     sortable: false,
+                    headerAlign: "right",
+                    align: "right",
                     valueGetter: (params) => {
                         if (params?.row?.price){
                             return (params?.row?.price * params?.row?.quantity).toFixed(2) + ' €'
@@ -260,15 +271,6 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 display='flex'
                                 alignItems='center'
                             >  
-                                {can?.can &&
-                                <DeleteButton 
-                                    hideText={true}
-                                    sx={{ marginRight: 1 }}
-                                    size="large"
-                                    onSuccess={() => {  
-                                        push("/dailylogs");
-                                    }}        
-                                />}
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                                     <DatePicker
                                         readOnly
@@ -281,6 +283,14 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                         }} 
                                     />
                                 </LocalizationProvider>
+                                {can?.can &&
+                                <DeleteButton 
+                                    hideText={true}
+                                    size="large"
+                                    onSuccess={() => {  
+                                        push("/dailylogs");
+                                    }}        
+                                />}
                             </Box> 
                         </Paper>
                     </Grid>

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 
 class InventoryItemStoreRequest extends FormRequest
 {
@@ -23,7 +24,28 @@ class InventoryItemStoreRequest extends FormRequest
     {
         return [
             'type' => 'required|in:products,materials,wastes',
-            'item_id' => 'required|exists:products,id|exists:materials,id|exists:wastes,id',
+            'item_id' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $type = request()->input('type');
+
+                    $table = match ($type) {
+                        'products' => 'products',
+                        'materials' => 'materials',
+                        'wastes' => 'wastes',
+                        default => null,
+                    };
+
+                    if ($table === null) {
+                        $fail("Item does not exist as provided type is invalid.");
+                        return;
+                    }
+
+                    if (!DB::table($table)->where('id', $value)->exists()) {
+                        $fail("The selected $attribute does not exist in $type.");
+                    }
+                },
+            ],
             'quantity' => 'numeric'
         ];
     }

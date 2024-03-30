@@ -168,6 +168,8 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     field: "quantity",
                     headerName: t("inventory.fields.quantity"),
                     sortable: false,
+                    headerAlign: "right",
+                    align: "right",
                     flex: 1,
                     valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
                 },
@@ -175,6 +177,9 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     field: "value",
                     headerName: t("inventory.fields.value"),
                     sortable: false,
+                    flex: 1,
+                    headerAlign: "right",
+                    align: "right",
                     valueGetter: (params) => {
                         return (params?.row?.price * params?.row?.quantity).toFixed(2) + ' €'
                     },
@@ -237,12 +242,17 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("inventory.fields.quantity"),
                     sortable: false,
                     flex: 1,
+                    headerAlign: "right",
+                    align: "right",
                     valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
                     headerName: t("inventory.fields.value"),
                     sortable: false,
+                    flex: 1,
+                    headerAlign: "right",
+                    align: "right",
                     valueGetter: (params) => {
                         if (params?.row.price) {
                             return (params?.row?.price * params?.row?.quantity).toFixed(2) + ' €'
@@ -307,12 +317,17 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("inventory.fields.quantity"),
                     sortable: false,
                     flex: 1,
+                    headerAlign: "right",
+                    align: "right",
                     valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
                 },
                 {
                     field: "value",
                     headerName: t("inventory.fields.value"),
                     sortable: false,
+                    flex: 1,
+                    headerAlign: "right",
+                    align: "right",
                     valueGetter: (params) => {
                         if (params?.row.price) {
                             return (params?.row?.price * params?.row?.quantity).toFixed(2) + ' €'
@@ -482,9 +497,13 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                         autoHeight
                         columns={productColumns}
                         rows={inventory?.products || []}
-                        hideFooter
                         rowHeight={80}
                         localeText={{ noRowsLabel: t("products.noProducts") }}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { pageSize: 8, page: 0 },
+                            },
+                        }}
                     />
                 </List>
                 }
@@ -507,6 +526,11 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                         hideFooter
                         rowHeight={80}
                         localeText={{ noRowsLabel: t("materials.noMaterials") }}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { pageSize: 8, page: 0 },
+                            },
+                        }}
                     />
                 </List>
                 }
@@ -529,6 +553,11 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                         hideFooter
                         rowHeight={80}
                         localeText={{ noRowsLabel: t("wastes.noWastes") }}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { pageSize: 8, page: 0 },
+                            },
+                        }}
                     />
                 </List>
                 }
@@ -541,7 +570,6 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                             autoHeight
                             columns={logsColumns}
                             rows={filteredLogs || []}
-                            hideFooter
                             rowHeight={80}
                             localeText={{ noRowsLabel: t("wastes.noWastes") }}
                             sx={{

@@ -12,7 +12,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import { IDailyLog, IMaterial, IMaterialWQuantity } from "../../interfaces/interfaces";
 import { FieldValues, SubmitHandler } from "react-hook-form";
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, InputAdornment, TextField, Typography } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
 
 const createEmptyMaterial = () : IMaterialWQuantity => ({
@@ -77,8 +77,17 @@ export const AddMaterials: React.FC<
       };
 
     const handleDeleteSelect = (id: number) => {
-      const updatedSelects = selectedMaterials?.filter(material => material.id !== id);
-      setSelectedMaterials(updatedSelects);
+        if (selectedMaterials?.length === 1) {
+            setSelectedMaterials([createEmptyMaterial()]);
+        } else {
+            const updatedSelects = selectedMaterials?.filter(material => material.id !== id);
+            if (updatedSelects?.length === 0) {
+                const lastMaterial = selectedMaterials[selectedMaterials.length - 1];
+                setSelectedMaterials([lastMaterial]);
+            } else {
+                setSelectedMaterials(updatedSelects);
+            }
+        }
     };
 
     const { autocompleteProps: materialsAutocompleteProps} = useAutocomplete<IMaterial>({
@@ -102,12 +111,17 @@ export const AddMaterials: React.FC<
                     </Typography>
                 }
                 footerButtons={
+                    <Stack display="flex" direction="row" width="100%" justifyContent="space-between" paddingX={{ xs: 1, md: 6, }}>
+                    <Button onClick={handleAddSelect} variant="contained" color="primary" sx={{ width:"90px" }}>
+                        <Add />
+                    </Button>
                     <SaveButton 
                         {...saveButtonProps}
                         onClick={
                             handleSubmit(extendedOnFinish)
                         }
                     />
+                    </Stack>
                 }
                 headerProps={{
                     avatar: (
@@ -119,7 +133,7 @@ export const AddMaterials: React.FC<
                                 mb: "5px",
                             }}
                         >
-                        <CloseOutlined />
+                            <CloseOutlined />
                         </IconButton>
                     ),
                     action: null,
@@ -147,18 +161,17 @@ export const AddMaterials: React.FC<
                                         style={{ display: "inline-flex", flexDirection: "row"}}
                                     >
                                         <Autocomplete
-                                            disableClearable
                                             fullWidth
                                             {...materialsAutocompleteProps}
                                             size="small"
-                                            value={material}
+                                            value={material?.id > 0 ? material : null}
                                             getOptionLabel={(item) => { 
                                                 return item.name;
                                             }}
                                             isOptionEqualToValue={(option, value) => {
                                                 return option.id === value.id;
                                             }}
-                                            onChange={(_,value) => value ? handleMaterialChange(value, 1, index) : null}
+                                            onChange={(_,value) => value ? handleMaterialChange(value, 1, index) : ""}
                                             getOptionDisabled={(option) =>
                                                 selectedMaterials.some(material => material.id === option.id)    
                                             }
@@ -166,23 +179,22 @@ export const AddMaterials: React.FC<
                                                 <TextField 
                                                     {...params}
                                                     variant="outlined"
-                                                    label="Material"
+                                                    label={"Material " + (index + 1)}
                                                 />              
                                             }
                                         />
                                         <TextField
-                                            InputProps={
-                                                { inputProps: { min: 1, max: 999 } }
-                                            }
-                                            InputLabelProps={{ shrink: true }}
+                                            InputProps={{ 
+                                                endAdornment: <InputAdornment position="end">m3</InputAdornment>,
+                                            }}
                                             id="quantity"
                                             label="Quantity"
                                             size="small"
                                             type="number"
-                                            value={material?.quantity ? material.quantity : 0}
-                                            onChange={(event) => handleMaterialChange(material, parseInt(event.target.value), index)}
+                                            value={material?.quantity ? Number(material.quantity) : ""}
+                                            onChange={(event) => handleMaterialChange(material, parseFloat(event.target.value), index)}
                                             style={{
-                                                width: "120px",
+                                                width: "200px",
                                                 marginLeft: "3px",  
                                             }}
                                         />
@@ -194,11 +206,6 @@ export const AddMaterials: React.FC<
                                         </IconButton>
                                     </FormControl>
                                 ))}
-                                <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
-                                    <Button onClick={handleAddSelect} variant="contained" color="primary" sx={{width:"100px"}}>
-                                        <Add />
-                                    </Button>
-                                </Box>
                             </Stack>
                         </form>
                     </Box>

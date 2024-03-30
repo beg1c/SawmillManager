@@ -125,9 +125,22 @@ class OrderController extends Controller
             ], 403);
         }
 
+        if ($order->canceled_at !== null) {
+            return response()->json([
+                "message" => "This order has been canceled."
+            ], 400);
+        }
+
+        if ($order->dispatched_at !== null) {
+            return response()->json([
+                "message" => "This order has been dispatched."
+            ], 400);
+        }
+
         $status = $request['status'];
         $ready_at = date('Y-m-d H:i:s', strtotime($request['ready_at']));
         $dispatched_at = date('Y-m-d H:i:s', strtotime($request['dispatched_at']));
+        $canceled_at = date('Y-m-d H:i:s', strtotime($request['canceled_at']));
 
         if ($status === 'Dispatched') {
             foreach ($order->products as $product) {
@@ -154,6 +167,12 @@ class OrderController extends Controller
         else if ($status === 'Ready') {
             $order->update([
                 'ready_at' => $ready_at,
+                'status' => $status,
+            ]);
+        }
+        else if ($status === 'Canceled') {
+            $order->update([
+                'canceled_at' => $canceled_at,
                 'status' => $status,
             ]);
         }

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import {
     CrudFilters,
     getDefaultFilter,
@@ -23,6 +23,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { ICustomer, ICustomerFilterVariables, IOrder } from "../../interfaces/interfaces";
 import { Close, Edit, Add, Visibility } from "@mui/icons-material";
 import { CreateCustomerModal, EditCustomerModal } from "../../components/customer";
+import { CreateOrder } from "../../components/order";
 
 
 export const CustomerList: React.FC<IResourceComponentsProps> = () => {
@@ -32,6 +33,8 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
         resource: "customers",
         action: "create",
     });
+
+    const [customer, setCustomer] = useState<ICustomer | undefined>();
 
     const { dataGridProps, search, filters } = useDataGrid<
         ICustomer,
@@ -98,6 +101,20 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
         },
     });
 
+    const createDrawerFormProps = useModalForm<
+        IOrder,
+        HttpError
+    >({
+        refineCoreProps: { 
+            action: "create",
+            resource: "orders",
+        },
+        warnWhenUnsavedChanges: false,
+    });
+
+    const {
+        modal: { show: showCreateDrawer },
+    } = createDrawerFormProps;
 
     const columns = React.useMemo<GridColDef<ICustomer>[]>(
         () => [
@@ -135,12 +152,15 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
                 type: "actions",
                 getActions: function render({ row }) {
                     return [
-                        // <GridActionsCellItem
-                        //     key={1}
-                        //     label={t("Create order")}
-                        //     icon={<Add color="success" />}
-                        //     onClick={() => showCreateDrawer()}
-                        //     showInMenu />,
+                        <GridActionsCellItem
+                            key={1}
+                            label={t("Create order")}
+                            icon={<Add color="success" />}
+                            onClick={() => {
+                                setCustomer(row);
+                                showCreateDrawer();
+                            }}
+                            showInMenu />,
                         <GridActionsCellItem
                             key={2}
                             label={t("buttons.edit")}
@@ -223,6 +243,7 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
             </Grid>
             <CreateCustomerModal {...createModalFormProps} />
             <EditCustomerModal {...editModalFormProps} />
+            <CreateOrder {...createDrawerFormProps}  customer={customer}/>
         </>
     );
 };

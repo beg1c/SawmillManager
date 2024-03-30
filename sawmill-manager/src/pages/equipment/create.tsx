@@ -15,12 +15,13 @@ import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { IEquipment, ISawmill } from "../../interfaces/interfaces";
 import { Controller, FieldValues, SubmitHandler } from "react-hook-form";
-import { Autocomplete, Input, useTheme } from "@mui/material";
+import { Autocomplete, Input, Typography, useTheme } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { format, isValid, parseISO } from "date-fns";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useState } from "react";
 import ImageCrop from "../../components/imageCrop";
+import { HandymanRounded } from "@mui/icons-material";
 
 
 export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
@@ -129,7 +130,8 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                     }}
                                     alt="Equipment photo"
                                     src={croppedBase64}
-                                >{t("images.add")}</Avatar>
+                                ><HandymanRounded sx={{ fontSize: 64 }}/></Avatar>
+                                <Typography variant="h6" align="center">{t("employees.images.change_image")}</Typography>
                             </label>
                         </Stack>
                     </Grid>
@@ -207,6 +209,7 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                     size="small"
                                     margin="none"
                                     variant="outlined"
+                                    type="number"
                                 />
                             </FormControl>
                             <FormControl>
@@ -317,6 +320,7 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                 size="small"
                                 margin="none"
                                 variant="outlined"
+                                type="number"
                             />
                         </FormControl>
                         <FormControl fullWidth>

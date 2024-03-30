@@ -58,7 +58,7 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
         <Grid item xs={12} lg={4} xl={3}>
             <Paper sx={{ p: 2 }}>
                 <Stack alignItems="center" spacing={1}> 
-                <Avatar src={employee?.avatar} sx={{ bgcolor: green[500], width: 200, height: 200 }} />
+                <Avatar src={employee?.avatar} sx={{ bgcolor: palette.primary.main, width: 200, height: 200 }} />
                     <Typography variant="h6">
                         {employee?.name}
                     </Typography>

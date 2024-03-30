@@ -23,6 +23,7 @@ class OrderResource extends JsonResource
             'ordered_at' => $this->ordered_at,
             'ready_at' => $this->ready_at,
             'dispatched_at' => $this->dispatched_at,
+            'canceled_at' => $this->canceled_at,
             'status' => $this->status,
             'products' => ProductResource::collection($this->products),
             'customer' => new CustomerResource($this->customer),

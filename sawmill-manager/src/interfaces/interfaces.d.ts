@@ -137,8 +137,9 @@ export interface IOrder {
     ordered_at: string;
     ready_at?: string;
     dispatched_at?: string;
+    canceled_at?: string;
     products: IProductWQuantity[];
-    status?: "Pending" | "Ready" | "Dispatched"  | "Cancelled";
+    status?: "Pending" | "Ready" | "Dispatched"  | "Canceled";
     customer: ICustomer;
     sawmill: ISawmill;
 }

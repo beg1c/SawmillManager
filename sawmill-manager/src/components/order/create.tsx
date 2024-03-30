@@ -14,7 +14,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import { ICustomer, IOrder, IProduct, IProductWQuantity, ISawmill } from "../../interfaces/interfaces";
 import { Controller, FieldValues, SubmitHandler } from "react-hook-form";
-import { Button, Divider, InputAdornment, TextField, Typography, styled } from "@mui/material";
+import { Button, InputAdornment, TextField, styled } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { format, isValid, parseISO } from "date-fns";
@@ -43,7 +43,7 @@ const StyledTextField = styled(TextField)({
   });
 
 export const CreateOrder: React.FC<
-    UseModalFormReturnType<IOrder, HttpError>
+    UseModalFormReturnType<IOrder, HttpError> & { customer?: ICustomer }
     > = ({
         register,
         control,
@@ -53,6 +53,7 @@ export const CreateOrder: React.FC<
         modal: { visible, close},
         saveButtonProps,
         reset,
+        customer,
     }) => {
 
     const t = useTranslate();
@@ -188,7 +189,7 @@ export const CreateOrder: React.FC<
                                         rules={{
                                             required: "Customer required",
                                         }}
-                                        defaultValue={null as any}
+                                        defaultValue={customer ? customer : null}
                                         render={({ field }) => (
                                             <Autocomplete
                                                 size="small"
@@ -210,6 +211,7 @@ export const CreateOrder: React.FC<
                                                         error={
                                                             !!errors.name
                                                         }
+                                                        placeholder="Customer"
                                                         required
                                                     />
                                                 )}
@@ -244,7 +246,7 @@ export const CreateOrder: React.FC<
                                         <Stack display="flex" direction="row">
                                             <Autocomplete
                                                 fullWidth
-                                                defaultValue={product}
+                                                value={product?.id > 0 ? product : null}
                                                 {...productsAutocompleteProps}
                                                 size="small"
                                                 getOptionLabel={(item) => { 
@@ -266,15 +268,14 @@ export const CreateOrder: React.FC<
                                             <TextField
                                                 InputProps={{ 
                                                     inputProps: { min: 1, max: 999 },
-                                                    startAdornment: <InputAdornment position="start">m3</InputAdornment>,
+                                                    endAdornment: <InputAdornment position="end">m3</InputAdornment>,
                                                 }}
-                                                InputLabelProps={{ shrink: true }}
                                                 id="quantity"
                                                 label="Quantity"
                                                 size="small"
                                                 type="number"
                                                 onChange={(event) => handleProductChange(product, parseFloat(event.target.value), index)}
-                                                defaultValue={1}
+                                                value={product.quantity ? product.quantity : ""}
                                                 style={{
                                                     width: "220px",
                                                     marginLeft: 5,
@@ -502,7 +503,7 @@ export const CreateOrder: React.FC<
                                         rules={{
                                             required: "Sawmill required",
                                         }}
-                                        defaultValue={null as any}
+                                        defaultValue={sawmillAutocompleteProps ? sawmillAutocompleteProps.options[0] : null}
                                         render={({ field }) => (
                                             <Autocomplete
                                                 size="small"
@@ -525,6 +526,7 @@ export const CreateOrder: React.FC<
                                                             !!errors.name
                                                         }
                                                         required
+                                                        placeholder="Sawmill"
                                                     />
                                                 )}
                                             />

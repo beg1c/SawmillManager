@@ -19,7 +19,7 @@ import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import { IOrder, IProductWQuantity } from "../../interfaces/interfaces";
 import { Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Step, StepLabel, Stepper } from "@mui/material";
 import dayjs from "dayjs";
-import { BusinessOutlined, EventBusyOutlined, HomeOutlined, InventoryRounded, LocalShippingOutlined, PaymentsOutlined, Person2Outlined, PhoneOutlined, SellOutlined, TextSnippetOutlined } from "@mui/icons-material";
+import { BusinessOutlined, CloseOutlined, EventBusyOutlined, HomeOutlined, InventoryRounded, LocalShippingOutlined, PaymentsOutlined, Person2Outlined, PhoneOutlined, SellOutlined, TextSnippetOutlined } from "@mui/icons-material";
 import { RotateLoader } from "react-spinners";
 
 interface StepperEvent {
@@ -28,9 +28,10 @@ interface StepperEvent {
 }
 
 interface StatusUpdate {
-    status: 'Ready' | 'Dispatched';
+    status: 'Ready' | 'Dispatched' | 'Canceled';
     ready_at?: string;
     dispatched_at?: string;
+    canceled_at?: string;
 }
 
 type OrderInfoTextProps = {
@@ -69,13 +70,19 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
 
     useEffect(() => {
         if (queryResult.data) {
+            const events = [
+                { status: "Pending", date: queryResult.data?.data.ordered_at },
+                { status: "Ready", date: queryResult.data?.data.ready_at },
+                { status: "Dispatched", date: queryResult.data?.data.dispatched_at },
+            ];
+    
+            if (queryResult.data?.data.canceled_at) {
+                events.push({ status: "Canceled", date: queryResult.data?.data.canceled_at });
+            }
+    
             setRecord({
                 ...queryResult.data?.data,
-                events: [
-                    { status: "Pending", date: queryResult.data?.data.ordered_at },
-                    { status: "Ready", date: queryResult.data?.data.ready_at },
-                    { status: "Dispatched", date: queryResult.data?.data.dispatched_at },
-                ],
+                events: events,
             });
         }
     }, [queryResult.data]);
@@ -108,12 +115,21 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                 },
                 {
                     onSuccess: (data: any) => {
+                        const events = [
+                            { status: "Ready", date: data?.data?.data.ready_at },
+                            { status: "Dispatched", date: data?.data?.data.dispatched_at },
+                        ];
+                
+                        if (data?.data?.data.canceled_at) {
+                            events.push({ status: "Canceled", date: data?.data?.data.canceled_at });
+                        }
+                
+
                         setRecord(prevRecord => ({
                             ...data?.data?.data,
                             events: [
                                 ...prevRecord?.events.slice(0, 1),
-                                { status: "Ready", date: data?.data?.data.ready_at }, // Fix this data.data.data.data.data.data.data 
-                                { status: "Dispatched", date: data?.data?.data.dispatched_at },
+                                ...events,
                             ],
                         }));
                     },
@@ -248,7 +264,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                         action={
                             <Stack direction="row" spacing={2}>
                                 <Button
-                                    disabled={!!record?.ready_at}
+                                    disabled={!!record?.ready_at || !!record?.canceled_at}
                                     variant="outlined"
                                     size="small"
                                     startIcon={<CheckOutlinedIcon />}
@@ -262,7 +278,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                                     {t("buttons.ready")}
                                 </Button>
                                 <Button
-                                    disabled={!!record?.dispatched_at}
+                                    disabled={!!record?.dispatched_at || !!record?.canceled_at}
                                     variant="outlined"
                                     size="small"
                                     color="secondary"
@@ -278,16 +294,23 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                                 >
                                     {t("buttons.dispatched")}
                                 </Button>
-                                {/* <Button
+                                <Button
+                                    disabled={!!record?.dispatched_at || !!record?.canceled_at}
                                     variant="outlined"
                                     size="small"
                                     color="error"
                                     startIcon={
-                                        <CloseOutlinedIcon sx={{ bg: "red" }} />
+                                        <CloseOutlined sx={{ bg: "red" }} />
+                                    }
+                                    onClick={() =>
+                                        handleMutate({
+                                            status: 'Canceled',
+                                            canceled_at: new Date().toISOString()
+                                        })
                                     }
                                 >
                                     {t("buttons.cancel")}
-                                </Button> */}
+                                </Button>
                             </Stack>
                         }
                     />
@@ -310,7 +333,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                                                     )}
                                             </Typography>
                                         }
-                                        error={event.status === "Cancelled"}
+                                        error={event.status === "Canceled"}
                                     >
                                         {event.status}
                                     </StepLabel>
@@ -344,7 +367,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                         <OrderInfoText
                             icon={<EventBusyOutlined color="primary" />}
                             label="Deadline"
-                            text={order?.deadline}
+                            text={order?.deadline ? order.deadline : "No deadline"}
                         />
                         <Divider style={{backgroundColor: palette.text.disabled}}/>
                         <OrderInfoText
@@ -352,13 +375,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                             label="Sawmill"
                             text={order?.sawmill?.name}
                         />
-                        <Divider style={{backgroundColor: palette.text.disabled}}/>
-                        <OrderInfoText
-                            icon={<TextSnippetOutlined color="primary" />}
-                            label="Notes"
-                            text={order?.notes}
-                        />
-                        {order?.discount===0 &&
+                        {!order?.discount || order?.discount==0 &&
                         <>
                         <Divider style={{backgroundColor: palette.text.disabled}}/>
                         <OrderInfoText
@@ -367,7 +384,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                             text={order?.amount + ' €'} 
                         />
                         </>}
-                        {order?.discount!==0 &&
+                        {order?.discount!=0 && 
                         <>
                         <Divider style={{backgroundColor: palette.text.disabled}}/>
                         <OrderInfoText
@@ -383,6 +400,12 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                             strikeThrough={amountBeforeDiscount.toFixed(2) + '€'}
                         />
                         </>}
+                        <Divider style={{backgroundColor: palette.text.disabled}}/>
+                        <OrderInfoText
+                            icon={<TextSnippetOutlined color="primary" />}
+                            label="Notes"
+                            text={order?.notes}
+                        />
                     </Stack>
                 </Paper>
             </Grid>
