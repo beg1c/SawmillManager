@@ -113,18 +113,11 @@ class DailyLogController extends Controller
             ], 403);
         }
 
-        if (isset($request['date'])) {
-            $dailyLog->update([
-                'date' => $request['date']
-            ]);
-        }
-
-        if (isset($request->sawmill->id)) {
-            $dailyLog->sawmill()->associate($request->sawmill->id);
-        }
-
         if ($request->filled('locked_at')) {
             $dailyLog->locked_at = $request->input('locked_at');
+            $this->updateInventoryItems($dailyLog);
+            $dailyLog->save();
+            return new DailyLogResource($dailyLog);
         }
 
         if (isset($request['products'])) {
@@ -188,11 +181,6 @@ class DailyLogController extends Controller
 
         $itemsToDelete = $existingItemIds->diff($itemIdsInRequest);
 
-        foreach ($itemsToDelete as $itemId) {
-            $quantity = $dailyLog->{$relation}()->where('daily_log_' . substr($relation, 0, -1) . '.' . substr($relation, 0, -1) . '_id', $itemId)->first()->pivot->quantity;
-            $this->inventoryService->updateInventoryItem($relation, $itemId, -$quantity, $dailyLog->sawmill->id, "daily_log", $dailyLog->id, null);
-        }
-
         $dailyLog->{$relation}()->detach($itemsToDelete);
 
         foreach ($items as $item) {
@@ -202,14 +190,28 @@ class DailyLogController extends Controller
             $existingItem = $dailyLog->{$relation}()->where($relation . '.id', $itemId)->first();
 
             if ($existingItem && !empty($quantity)) {
-                $oldQuantity = $existingItem->pivot->quantity;
-                $quantityDifference = $quantity - $oldQuantity;
                 $existingItem->pivot->update(['quantity' => $quantity]);
-                $this->inventoryService->updateInventoryItem($relation, $itemId, $quantityDifference, $dailyLog->sawmill->id, "daily_log", $dailyLog->id, null);
             } elseif (!empty($quantity)) {
                 $dailyLog->{$relation}()->attach($itemId, ['quantity' => $quantity]);
-                $this->inventoryService->updateInventoryItem($relation, $itemId, $quantity, $dailyLog->sawmill->id, "daily_log", $dailyLog->id, null);
             }
+        }
+    }
+
+    private function updateInventoryItems($dailyLog)
+    {
+        foreach ($dailyLog->products as $product) {
+            $quantity = $product->pivot->quantity;
+            $this->inventoryService->updateInventoryItem('products', $product->id, $quantity, $dailyLog->sawmill->id, "daily_log", $dailyLog->id, null);
+        }
+
+        foreach ($dailyLog->materials as $material) {
+            $quantity = $material->pivot->quantity;
+            $this->inventoryService->updateInventoryItem('materials', $material->id, $quantity, $dailyLog->sawmill->id, "daily_log", $dailyLog->id, null);
+        }
+
+        foreach ($dailyLog->wastes as $waste) {
+            $quantity = $waste->pivot->quantity;
+            $this->inventoryService->updateInventoryItem('wastes', $waste->id, $quantity, $dailyLog->sawmill->id, "daily_log", $dailyLog->id, null);
         }
     }
 }

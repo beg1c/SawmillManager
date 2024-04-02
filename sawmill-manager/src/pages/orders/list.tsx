@@ -5,6 +5,7 @@ import {
     getDefaultFilter,
     HttpError,
     IResourceComponentsProps,
+    useCan,
     useNavigation,
     useTranslate,
 } from "@refinedev/core";
@@ -36,6 +37,10 @@ import { CreateOrder } from "../../components/order";
 
 export const OrderList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
+    const { data: can } = useCan({
+        resource: "orders",
+        action: "create",
+    });
 
     const { dataGridProps, search, filters } = useDataGrid<
         IOrder,
@@ -107,6 +112,7 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
         { id: 1, name: 'Pending' },
         { id: 2, name: 'Ready' },
         { id: 3, name: 'Dispatched' },
+        { id: 3, name: 'Canceled' },
     ];
 
     const columns = React.useMemo<GridColDef<IOrder>[]>(
@@ -246,6 +252,9 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
                                                 const statuses = value.map(option => option.name);
                                                 field.onChange(statuses);
                                             }}
+                                            isOptionEqualToValue={(option, value) => {        
+                                                return value === undefined || option?.id?.toString() === (value?.id ?? value)?.toString()
+                                            }}  
                                             renderInput={(params) => (
                                                 <TextField
                                                 {...params}
@@ -353,7 +362,7 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
                 <Grid item xs={12} lg={9}>
                     <List
                         wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
-                        canCreate={true}
+                        canCreate={can?.can}
                         createButtonProps={{ 
                             onClick: () => showCreateDrawer() 
                         }}

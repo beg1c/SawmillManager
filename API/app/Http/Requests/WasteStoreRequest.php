@@ -24,7 +24,7 @@ class WasteStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:30',
-            'description' => 'string|max:100',
+            'description' => 'nullable|string|max:100',
             'price' => 'required|numeric',
             'unit_of_measure' => 'required|string|max:20',
             'photo' => ['nullable', new Base64Image],

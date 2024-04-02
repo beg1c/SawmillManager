@@ -71,7 +71,7 @@ export const EditMaterial: React.FC<
             extendedValues.photo = croppedBase64;
         }
         
-        onFinish(extendedValues);
+        onFinish(extendedValues).then(close);
     };
 
     return (

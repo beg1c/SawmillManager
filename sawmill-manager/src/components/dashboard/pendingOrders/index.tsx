@@ -56,7 +56,7 @@ export const PendingOrders = () => {
                             style: "currency",
                             notation: "standard",
                             }}
-                            value={row.amount}
+                            value={row.amount ? row.amount : 0}
                         />
                     );
                 },

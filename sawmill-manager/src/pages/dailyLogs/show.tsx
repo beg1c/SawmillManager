@@ -349,7 +349,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 can?.can ? <EditButton disabled={!!data?.data.locked_at} /> : null
                             }
                             headerButtonProps={{
-                                onClick: () => showMaterialsDrawer(dailyLog?.id)
+                                onClick: () => !data?.data.locked_at ? showMaterialsDrawer(dailyLog?.id) : null
                             }}
                         >
                             <DataGrid
@@ -370,7 +370,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 can?.can ? <EditButton disabled={!!data?.data.locked_at} /> : null
                             }
                             headerButtonProps={{
-                                onClick: () => showProductsDrawer(dailyLog?.id)
+                                onClick: () => !data?.data.locked_at ? showProductsDrawer(dailyLog?.id) : null
                             }}
                         >
                             <DataGrid
@@ -391,7 +391,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                 can?.can ? <EditButton disabled={!!data?.data.locked_at} /> : null
                             }
                             headerButtonProps={{
-                                onClick: () => showWastesDrawer(dailyLog?.id)
+                                onClick: () => !data?.data.locked_at ? showWastesDrawer(dailyLog?.id) : null
                             }}
                         >
                             <DataGrid

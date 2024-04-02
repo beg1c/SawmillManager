@@ -5,6 +5,8 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Stack, Typography } from "@mui/material";
 import { useMemo } from "react";
 import FullLoader from "../../fullLoader";
+import { LockOpenOutlined, LockOutlined } from "@mui/icons-material";
+import { format } from "date-fns";
 
 
 export const RecentDailyLogs = () => {
@@ -22,15 +24,18 @@ export const RecentDailyLogs = () => {
             width: 220,
             renderCell: function render({ row }) {
                 return (
-                    <Stack spacing="4px">
-                        <Typography>{row?.date?.toString()}</Typography>
+                    <Stack spacing={2} direction="row">
+                        {row.locked_at ? <LockOutlined color="primary"/> : <LockOpenOutlined color="error"/>}
+                        <Typography>{format(new Date(row.date), 'dd.MM.yyyy')}</Typography>
                     </Stack>
                     );
                 },
             },
             {
                 field: "sawmill",
-                width: 220,
+                flex: 1,
+                headerAlign: "right",
+                align: "right",
                 renderCell: function render({ row }) {
                     return (
                         <Stack spacing="4px">
@@ -54,6 +59,23 @@ export const RecentDailyLogs = () => {
             columns={columns}
             columnHeaderHeight={0}
             hideFooter={true}
+            sx={{
+                '& .MuiDataGrid-row:hover': {
+                    cursor: 'pointer'
+                },
+                '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': {
+                    width: '0.4em',
+                },
+                '& .MuiDataGrid-virtualScroller::-webkit-scrollbar-track': {
+                    background: '#f1f1f1',
+                },
+                '& .MuiDataGrid-virtualScroller::-webkit-scrollbar-thumb': {
+                    backgroundColor: '#888',
+                },
+                '& .MuiDataGrid-virtualScroller::-webkit-scrollbar-thumb:hover': {
+                    background: '#555',
+                },
+            }}
         />
     );
 }

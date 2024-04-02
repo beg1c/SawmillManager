@@ -25,6 +25,7 @@ import { IDailyLog, IDailyLogFilterVariables, ISawmill } from "../../interfaces/
 import { CustomTooltip } from "../../components/customTooltip";
 import { CreateDailyLogModal } from "../../components/dailyLog/createDailyLog";
 import { format } from "date-fns";
+import { LockOpenOutlined, LockOutlined } from "@mui/icons-material";
 
 export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
@@ -84,10 +85,15 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                 headerName: t("logs.fields.date"),
                 minWidth: 150,
                 flex: 1,
-                valueGetter: (params) => {
-                    const date = new Date(params?.row?.date);
-                    return format(date, 'dd.MM.yyyy');
-                }
+                renderCell: function render({ row }) {
+                    const date = new Date(row.date);
+                    return (
+                        <Stack spacing={2} direction="row">
+                            {row.locked_at ? <LockOutlined color="primary"/> : <LockOpenOutlined color="error"/>}
+                            <Typography>{format(date, 'dd.MM.yyyy')}</Typography>
+                        </Stack>
+                        );
+                    }
             },
             {
                 field: "sawmill",

@@ -64,14 +64,24 @@ class SawmillController extends Controller
 
     public function update(SawmillStoreRequest $request, $id)
     {
-        if (Gate::denies('manage-sawmills')) {
+        if (Gate::denies('edit-sawmills')) {
             return response()->json([
                 "message" => "You are not authorized to update sawmills."
             ], 403);
         }
 
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+
+        if (!in_array($id, $user_sawmill_ids)) {
+            return response()->json([
+                "message" => "You are not authorized to update that sawmill."
+            ], 403);
+        }
+
         $sawmill = Sawmill::findOrFail($id);
         $sawmill->update($request->all());
+
         return new SawmillResource($sawmill);
     }
 

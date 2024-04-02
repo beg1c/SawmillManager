@@ -1,10 +1,10 @@
-import { Autocomplete, Avatar, Box, Card, CardContent, CardHeader, Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, List as MUIList, TextField, Typography, ListItem, ListItemIcon, ListItemText, useTheme } from "@mui/material";
-import { IResourceComponentsProps, useModal, useNavigation, useShow, useUpdate } from "@refinedev/core";
+import { Autocomplete, Avatar, Box, Grid, Paper, Stack, TextField, Typography } from "@mui/material";
+import { IResourceComponentsProps, useCan, useModal, useNavigation, useShow, useUpdate } from "@refinedev/core";
 import { IInventory, IInventoryLog, IMaterialWQuantity, IProductWQuantity, ISawmill, IWasteWQuantity } from "../../interfaces/interfaces";
 import { useTranslation } from "react-i18next";
-import { DataGrid, GridActionsCellItem, GridCellParams, GridColDef, gridClasses } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef, gridClasses } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-import { Add, Close, CloseOutlined, DeleteOutline, Edit, ForestOutlined, LocalGroceryStoreOutlined, RecyclingOutlined, Remove } from "@mui/icons-material";
+import { Add, Close, DeleteOutline, Edit, ForestOutlined, LocalGroceryStoreOutlined, RecyclingOutlined, Remove } from "@mui/icons-material";
 import { CreateButton, List, ListButton, useAutocomplete } from "@refinedev/mui";
 import FullLoader from "../../components/fullLoader";
 import { EditInventoryItemModal } from "../../components/inventory/editInventoryItem";
@@ -19,6 +19,10 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
     const { data, isLoading } = queryResult;
     const { mutate: mutateUpdate } = useUpdate();
     const { showUrl, push } = useNavigation();
+    const { data: can } = useCan({
+        resource: "inventory",
+        action: "edit",
+    });
 
     const inventory = data?.data;
     const [inventoryType, setInventoryType] = useState<"products" | "materials" | "wastes">('products');
@@ -62,11 +66,10 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                   item_id: id,
                 },
                 mutationMode: "undoable",
-                undoableTimeout: 5000,
+                undoableTimeout: 10000,
             });
         }
     }
-
 
     const filteredLogs = inventory?.logs.filter(log => {
         switch (inventoryType) {
@@ -196,13 +199,13 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                 icon={<Edit />}
                                 color="primary"
                                 onClick={() => handleOpenEditModal(row)}
-                            />,
+                            showInMenu />,
                             <GridActionsCellItem
                                 key={3}
                                 label={t("buttons.delete")}
                                 icon={<Close color="error" />}
                                 onClick={() => handleDelete(inventory?.id, inventoryType, row.id)}
-                            />,
+                            showInMenu />,
                         ];
                     },
                 }
@@ -271,13 +274,13 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                 icon={<Edit />}
                                 color="primary"
                                 onClick={() => handleOpenEditModal(row)}
-                                />,
+                                showInMenu />,
                             <GridActionsCellItem
                                 key={3}
                                 label={t("buttons.delete")}
                                 icon={<Close color="error" />}
                                 onClick={() => handleDelete(inventory?.id, inventoryType, row.id)}
-                                />,
+                                showInMenu />,
                         ];
                     },
                 }
@@ -346,13 +349,13 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                 icon={<Edit />}
                                 color="primary"
                                 onClick={() => handleOpenEditModal(row)}
-                                />,
+                                showInMenu />,
                             <GridActionsCellItem
                                 key={3}
                                 label={t("buttons.delete")}
                                 icon={<Close color="error" />}
                                 onClick={() => handleDelete(inventory?.id, inventoryType, row.id)}
-                                />,
+                                showInMenu  />,
                         ];
                     },
                 }
@@ -405,8 +408,6 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
             [t, inventoryType],
         );
 
-
-
         if (isLoading) {
             return (
                 <FullLoader />
@@ -441,7 +442,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                                 {...params}
                                                 variant="outlined"
                                                 label="Sawmill"
-                                                sx={{ width: 200}}
+                                                sx={{ width: 200 }}
                                             />              
                                         }
                                     />
@@ -468,13 +469,13 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                         }
                                     />
                                 </Stack>
-                                {inventoryType === "products" && 
+                                {inventoryType === "products" && can?.can &&
                                     <ListButton resource="manage-products">{t("products.manage").toUpperCase()}</ListButton>
                                 }
-                                {inventoryType === "materials" && 
+                                {inventoryType === "materials" && can?.can && 
                                     <ListButton resource="manage-materials">{t("materials.manage").toUpperCase()}</ListButton>
                                 }
-                                {inventoryType === "wastes" && 
+                                {inventoryType === "wastes" && can?.can && 
                                     <ListButton resource="manage-wastes">{t("wastes.manage").toUpperCase()}</ListButton>
                                 }
                             </Box>
@@ -485,7 +486,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                 <List
                     title={"Products at " + inventory?.sawmill.name}
                     headerButtons={
-                        <CreateButton>Add product</CreateButton>
+                        can?.can ? <CreateButton>Add product</CreateButton> : null
                     }
                     headerButtonProps={{
                         onClick: () => showAddModal()
@@ -503,7 +504,13 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                             pagination: {
                                 paginationModel: { pageSize: 8, page: 0 },
                             },
+                            columns: {
+                                columnVisibilityModel: {
+                                  actions: can?.can ? can?.can : false,
+                                },
+                            },
                         }}
+                        pageSizeOptions={[8]}
                     />
                 </List>
                 }
@@ -511,7 +518,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                 <List
                     title={"Materials at " + inventory?.sawmill.name}
                     headerButtons={
-                        <CreateButton>Add material</CreateButton>
+                        can?.can ? <CreateButton>Add material</CreateButton> : null
                     }
                     headerButtonProps={{
                         onClick: () => showAddModal()
@@ -530,7 +537,13 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                             pagination: {
                                 paginationModel: { pageSize: 8, page: 0 },
                             },
+                            columns: {
+                                columnVisibilityModel: {
+                                  actions: can?.can ? can?.can : false,
+                                },
+                            },
                         }}
+                        pageSizeOptions={[8]}
                     />
                 </List>
                 }
@@ -538,7 +551,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                 <List
                     title={"Wastes at " + inventory?.sawmill.name}
                     headerButtons={
-                        <CreateButton>Add waste</CreateButton>
+                        can?.can ? <CreateButton>Add waste</CreateButton> : null
                     }
                     headerButtonProps={{
                         onClick: () => showAddModal()
@@ -557,7 +570,13 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                             pagination: {
                                 paginationModel: { pageSize: 8, page: 0 },
                             },
+                            columns: {
+                                columnVisibilityModel: {
+                                  actions: can?.can ? can?.can : false,
+                                },
+                            },
                         }}
+                        pageSizeOptions={[8]}
                     />
                 </List>
                 }
@@ -606,6 +625,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                                     paginationModel: { pageSize: 8, page: 0 },
                                 },
                             }}
+                            pageSizeOptions={[8]}
                         />
                     </Paper>
                 </Grid>

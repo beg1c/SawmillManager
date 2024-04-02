@@ -71,7 +71,7 @@ export const EditWaste: React.FC<
             extendedValues.photo = croppedBase64;
         }
         
-        onFinish(extendedValues);
+        onFinish(extendedValues).then(close);
     };
 
     const calculateGrossPrice = (netPrice: number | undefined, vat: number | undefined): number | undefined => {

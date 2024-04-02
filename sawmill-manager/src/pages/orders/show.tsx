@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
     IResourceComponentsProps,
+    useCan,
     useGo,
     useShow,
     useTranslate,
@@ -67,6 +68,10 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
     const { isLoading } = queryResult;
     const { palette } = useTheme(); 
     const [record, setRecord] = useState<Record<string, any> | null>(null)
+    const { data: can } = useCan({
+        resource: "orders",
+        action: "edit",
+    });
 
     useEffect(() => {
         if (queryResult.data) {
@@ -262,6 +267,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                             </IconButton>
                         }
                         action={
+                            can?.can ? 
                             <Stack direction="row" spacing={2}>
                                 <Button
                                     disabled={!!record?.ready_at || !!record?.canceled_at}
@@ -311,7 +317,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                                 >
                                     {t("buttons.cancel")}
                                 </Button>
-                            </Stack>
+                            </Stack> : null
                         }
                     />
                     <CardContent>

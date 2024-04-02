@@ -35,7 +35,7 @@ export const MostSoldProducts: React.FC<MostSoldProductsProps> = ({products}) =>
                     separator=": "
                     cursor={{fill: palette.background.paper}}
                     formatter={(value: number) => {
-                        return value + ' cubic meters';
+                        return Number(value).toFixed(2) + ' cubic meters';
                     }}
                 />
                 <Bar 
@@ -50,7 +50,7 @@ export const MostSoldProducts: React.FC<MostSoldProductsProps> = ({products}) =>
                         position="right"
                         fill={palette.text.primary}
                         formatter={(value: number) => {
-                            return value + 'm3';
+                            return Number(value).toFixed(0) + 'm3';
                         }}
                     />
                     <LabelList

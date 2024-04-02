@@ -6,6 +6,7 @@ import { Avatar, Stack, Typography, useTheme } from "@mui/material";
 import { useMemo } from "react";
 import { HandymanRounded } from "@mui/icons-material";
 import FullLoader from "../../fullLoader";
+import { format } from "date-fns";
 
 export const ClosestServices = () => {
     const { edit } = useNavigation();
@@ -58,7 +59,7 @@ export const ClosestServices = () => {
                             <Typography variant="caption" color="text.secondary">
                                 Next service
                             </Typography>
-                            <Typography>{row?.next_service_date?.toString()}</Typography>
+                            <Typography>{format(new Date(row.next_service_date), 'dd.MM.yyyy')}</Typography>
                         </Stack>
                     );
                 },

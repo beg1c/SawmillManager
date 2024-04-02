@@ -68,7 +68,7 @@ export const CreateMaterial: React.FC<
             extendedValues.photo = croppedBase64;
         }
         
-        onFinish(extendedValues);
+        onFinish(extendedValues).then(close);
     };
 
     return (

@@ -47,6 +47,10 @@ class AuthServiceProvider extends ServiceProvider
             return $user->role->role_name === 'executive';
         });
 
+        Gate::define('edit-sawmills', function ($user) {
+            return in_array($user->role->role_name, ['executive', 'manager']);
+        });
+
         // Users
         Gate::define('manage-users', function ($user) {
             return $user->role->role_name === 'executive';

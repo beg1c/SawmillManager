@@ -3,7 +3,6 @@ import { useTranslate, HttpError } from "@refinedev/core";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import Drawer from "@mui/material/Drawer";
-import FormLabel from "@mui/material/FormLabel";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";

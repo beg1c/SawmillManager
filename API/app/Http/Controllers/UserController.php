@@ -59,6 +59,8 @@ class UserController extends Controller
 
     public function update(UserStoreRequest $request, $id)
     {
+        $user = Auth::user();
+
         if (Gate::allows('manage-users')) {
             $avatarName = null;
             if ($request->has('avatar')) {
@@ -67,10 +69,18 @@ class UserController extends Controller
 
             return $this->updateUser($request, $avatarName, $id);
         }
+        else if ($id == $user->id) {
+            $avatarName = null;
+            if ($request->has('avatar')) {
+                $avatarName = $this->savePhoto($request->avatar);
+            }
+
+            return $this->updateSelf($request, $avatarName, $id);
+        }
 
         return response()->json([
             "message" => "You are not authorized to update users."
-        ]);
+        ], 403);
     }
 
     public function destroy($id)
@@ -143,7 +153,7 @@ class UserController extends Controller
             ]);
 
             $user->update([
-                'email' => $email,
+                'email' => $email['email'],
             ]);
         }
 
@@ -173,6 +183,41 @@ class UserController extends Controller
 
         $user->role()->associate($role);
         $user->save();
+
+        return new UserResource($user);
+    }
+
+    private function updateSelf($request, $avatarName, $id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->email != $request['email']) {
+            $email = $request->validate([
+                'email' => 'unique:users'
+            ]);
+
+            $user->update([
+                'email' => $email['email'],
+            ]);
+        }
+
+        $updateData = ([
+            'name' => $request['name'],
+            'contact_number' => $request['contact_number'],
+            'birthday' => $request['birthday'],
+        ]);
+
+        if ($avatarName !== null) {
+            $updateData['avatar'] = $avatarName;
+            if ($user->avatar !== null) {
+                $oldAvatar = public_path('avatars') . '/' . $user->avatar;
+                if(file_exists($oldAvatar)) {
+                    //unlink($oldAvatar);
+                }
+            }
+        }
+
+        $user->update($updateData);
 
         return new UserResource($user);
     }

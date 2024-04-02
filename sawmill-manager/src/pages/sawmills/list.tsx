@@ -13,7 +13,6 @@ import Grid from "@mui/material/Grid";
 import { ISawmill } from "../../interfaces/interfaces";
 import { Edit } from "@mui/icons-material";
 import { CreateSawmillModal, EditSawmillModal } from "../../components/sawmill";
-import LinearProgress from '@mui/material/LinearProgress';
 
 export const SawmillList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
@@ -104,9 +103,9 @@ export const SawmillList: React.FC<IResourceComponentsProps> = () => {
                         <GridActionsCellItem
                             key={2}
                             label={t("buttons.edit")}
-                            icon={<Edit />}
+                            icon={<Edit color="primary"/>}
                             onClick={() => showEditModal(row.id)}
-                            showInMenu />
+                        />
                     ];
                 },
             }
