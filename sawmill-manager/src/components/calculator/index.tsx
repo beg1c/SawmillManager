@@ -1,7 +1,7 @@
 import { ArrowForwardIos, Clear, Delete, } from "@mui/icons-material";
-import { Box, Button, Divider, Drawer, IconButton, InputAdornment, Stack, Tab, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Tabs, TextField, Typography } from "@mui/material";
+import { Box, Button, Chip, Divider, Drawer, IconButton, InputAdornment, Stack, Tab, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Tabs, TextField, Typography } from "@mui/material";
 import { useModalReturnType, useTranslate } from "@refinedev/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Lumber {
     width: number;
@@ -24,8 +24,14 @@ export const CalculatorDrawer: React.FC<useModalReturnType> = ({
 }) => {
     const t = useTranslate();
     const [value, setValue] = useState<"lumber" | "logs">('lumber');
-    const [calculatedLumber, setCalculatedLumber] = useState<Lumber[]>([]);
-    const [calculatedLogs, setCalculatedLogs] = useState<Logs[]>([]);
+    const [calculatedLumber, setCalculatedLumber] = useState<Lumber[]>(() => {
+        const savedCalculatedLumber = localStorage.getItem("calculatedLumber");
+        return savedCalculatedLumber ? JSON.parse(savedCalculatedLumber) : [];
+    });
+    const [calculatedLogs, setCalculatedLogs] = useState<Logs[]>(() => {
+        const savedCalculatedLogs = localStorage.getItem("calculatedLogs");
+        return savedCalculatedLogs ? JSON.parse(savedCalculatedLogs) : [];
+    });
 
     const handleChange = (event: React.SyntheticEvent, newValue: "lumber" | "logs") => {
       setValue(newValue);
@@ -68,6 +74,22 @@ export const CalculatorDrawer: React.FC<useModalReturnType> = ({
     const handleRemoveLog = (deleteIndex: number) => {
         setCalculatedLogs(prevLogs => prevLogs.filter((_, index) => index !== deleteIndex));
     };
+
+    const handleClearLumber = () => {
+        setCalculatedLumber([]);
+    }
+    
+    const handleClearLogs = () => {
+        setCalculatedLogs([]);
+    }
+
+    useEffect(() => {
+        localStorage.setItem("calculatedLumber", JSON.stringify(calculatedLumber));
+    }, [calculatedLumber]);
+
+    useEffect(() => {
+        localStorage.setItem("calculatedLogs", JSON.stringify(calculatedLogs));
+    }, [calculatedLogs]);
 
     return (
         <Drawer
@@ -182,7 +204,7 @@ export const CalculatorDrawer: React.FC<useModalReturnType> = ({
                                     <TableCell align="center"></TableCell>
                                     <TableCell align="center">{calculatedLumber.reduce((acc, curr) => acc + curr.quantity, 0).toFixed(0)} pcs</TableCell>
                                     <TableCell align="center">{Number(calculatedLumber.reduce((acc, curr) => acc + curr.volume, 0).toFixed(3))} m³</TableCell>
-                                    <TableCell align="center"></TableCell>
+                                    <TableCell align="center"><Chip label="Clear" color="error" variant="outlined" onClick={handleClearLumber}/></TableCell>
                                 </TableRow>
                             </TableHead>
                         </Table>
@@ -268,9 +290,9 @@ export const CalculatorDrawer: React.FC<useModalReturnType> = ({
                                 <TableRow>
                                     <TableCell align="center"></TableCell>
                                     <TableCell align="center"></TableCell>
-                                    <TableCell align="center"></TableCell>
                                     <TableCell align="center">{calculatedLogs.reduce((acc, curr) => acc + curr.quantity, 0).toFixed(0)} pcs</TableCell>
                                     <TableCell align="center">{Number(calculatedLogs.reduce((acc, curr) => acc + curr.volume, 0).toFixed(3))} m³</TableCell>
+                                    <TableCell align="center"><Chip label="Clear" color="error" variant="outlined" onClick={handleClearLogs}/></TableCell>
                                 </TableRow>
                             </TableHead>
                         </Table>
