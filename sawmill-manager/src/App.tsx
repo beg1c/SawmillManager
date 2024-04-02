@@ -38,7 +38,7 @@ import { SawmillList } from "./pages/sawmills/list";
 import { useTranslation } from "react-i18next";
 import { CustomerList } from "./pages/customers";
 import { OrderShow } from "./pages/orders";
-import { BadgeOutlined, BusinessOutlined, Calculate, CalculateOutlined, Dashboard, ForestOutlined, HomeRepairServiceOutlined, Inventory2Outlined, InventoryOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined, RecyclingOutlined, TextSnippet } from "@mui/icons-material";
+import { BadgeOutlined, BusinessOutlined, Calculate, Dashboard, HomeRepairServiceOutlined, Inventory2Outlined, ListAltOutlined, PeopleAltOutlined, TextSnippet } from "@mui/icons-material";
 import { MaterialList } from "./pages/materials";
 import { WasteList } from "./pages/waste";
 import { DailyLogList, DailyLogShow } from "./pages/dailyLogs";

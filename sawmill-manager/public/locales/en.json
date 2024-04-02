@@ -55,7 +55,7 @@
             "id": "ID",
             "name": "Name",
             "email": "Email",
-            "contact_number": "Contact number",
+            "contact_number": "Contact",
             "birthday": "Birthday",
             "role": "Role",
             "sawmills": "Sawmills",
@@ -89,8 +89,8 @@
         "fields": {
             "id": "ID",
             "name": "Name",
-            "contact_number": "Contact number",
-            "no_contact_number": "Number missing",
+            "contact_number": "Contact",
+            "no_contact_number": "No contact",
             "address": "Address",
             "no_address": "Address missing"
         },

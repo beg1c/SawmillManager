@@ -1,4 +1,4 @@
-import { Autocomplete, Avatar, Box, Grid, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Autocomplete, Avatar, Box, Grid, Paper, Stack, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { IResourceComponentsProps, useCan, useModal, useNavigation, useShow, useUpdate } from "@refinedev/core";
 import { IInventory, IInventoryLog, IMaterialWQuantity, IProductWQuantity, ISawmill, IWasteWQuantity } from "../../interfaces/interfaces";
 import { useTranslation } from "react-i18next";
@@ -23,6 +23,8 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
         resource: "inventory",
         action: "edit",
     });
+    const { breakpoints } = useTheme(); 
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const inventory = data?.data;
     const [inventoryType, setInventoryType] = useState<"products" | "materials" | "wastes">('products');
@@ -173,6 +175,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     sortable: false,
                     headerAlign: "right",
                     align: "right",
+                    minWidth: 130,
                     flex: 1,
                     valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params?.row?.unit_of_measure},
                 },
@@ -180,6 +183,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     field: "value",
                     headerName: t("inventory.fields.value"),
                     sortable: false,
+                    minWidth: 130,
                     flex: 1,
                     headerAlign: "right",
                     align: "right",
@@ -244,6 +248,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     field: "quantity",
                     headerName: t("inventory.fields.quantity"),
                     sortable: false,
+                    minWidth: 130,
                     flex: 1,
                     headerAlign: "right",
                     align: "right",
@@ -253,6 +258,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     field: "value",
                     headerName: t("inventory.fields.value"),
                     sortable: false,
+                    minWidth: 130,
                     flex: 1,
                     headerAlign: "right",
                     align: "right",
@@ -319,6 +325,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     field: "quantity",
                     headerName: t("inventory.fields.quantity"),
                     sortable: false,
+                    minWidth: 130,
                     flex: 1,
                     headerAlign: "right",
                     align: "right",
@@ -328,6 +335,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                     field: "value",
                     headerName: t("inventory.fields.value"),
                     sortable: false,
+                    minWidth: 130,
                     flex: 1,
                     headerAlign: "right",
                     align: "right",
@@ -416,15 +424,15 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
 
         return (
             <>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} marginBottom={isSmallScreen ? 7 : 0 }>
                 <Grid item xs={12}>
                         <Paper sx={{ padding: 2 }}>
                             <Box
                                 component="form"
-                                sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}
+                                sx={{ display: "flex", flexDirection: isSmallScreen ? 'column' : 'row', alignItems: "center", justifyContent: "space-between"}}
                                 autoComplete="off"
                             >
-                                <Stack display="flex" direction="row">
+                                <Stack display="flex" direction="row" marginBottom={ isSmallScreen ? 2 : 0}>
                                     <Autocomplete
                                         disableClearable
                                         {...sawmillsAutocompleteProps}
@@ -484,7 +492,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                 <Grid item xs={12} lg={8}>
                 {inventoryType === 'products' &&
                 <List
-                    title={"Products at " + inventory?.sawmill.name}
+                    title={"Products" }
                     headerButtons={
                         can?.can ? <CreateButton>Add product</CreateButton> : null
                     }
@@ -516,7 +524,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                 }
                 {inventoryType === 'materials' &&
                 <List
-                    title={"Materials at " + inventory?.sawmill.name}
+                    title={"Materials"}
                     headerButtons={
                         can?.can ? <CreateButton>Add material</CreateButton> : null
                     }
@@ -549,7 +557,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                 }
                 {inventoryType === 'wastes' &&
                 <List
-                    title={"Wastes at " + inventory?.sawmill.name}
+                    title={"Wastes"}
                     headerButtons={
                         can?.can ? <CreateButton>Add waste</CreateButton> : null
                     }
@@ -589,7 +597,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                             autoHeight
                             columns={logsColumns}
                             rows={filteredLogs || []}
-                            rowHeight={80}
+                            rowHeight={isSmallScreen ? 100 : 80}
                             localeText={{ noRowsLabel: "No inventory logs" }}
                             sx={{
                                 [`.${gridClasses.cell}.success`]: {

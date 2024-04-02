@@ -54,7 +54,7 @@ const OrderInfoText: React.FC<OrderInfoTextProps> = ({ icon, label, text, strike
             {icon}
             <Typography variant="body1">{label}</Typography>
         </Stack>
-        <Typography variant="body1">
+        <Typography variant="body1" width='50%' align="right">
             {strikeThrough && <><span style={{ textDecoration: 'line-through' }}>{strikeThrough}</span> {text}</>}
             {!strikeThrough && text}
         </Typography>
@@ -66,7 +66,8 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
     const { queryResult } = useShow<IOrder>();
     const order = queryResult?.data?.data;
     const { isLoading } = queryResult;
-    const { palette } = useTheme(); 
+    const { palette, breakpoints } = useTheme(); 
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
     const [record, setRecord] = useState<Record<string, any> | null>(null)
     const { data: can } = useCan({
         resource: "orders",
@@ -148,8 +149,6 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
     const go = useGo();
     const { mutate } = useUpdate();
 
-    const isSmallOrLess = useMediaQuery(theme.breakpoints.down("sm"));
-
     const columns = React.useMemo<GridColDef<IProductWQuantity>[]>(
         () => [
             {
@@ -179,7 +178,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
             {
                 field: "price",
                 headerName: t("orders.products.fields.netPrice"),
-                width: 100,
+                minWidth: 100,
                 type: "number",
                 sortable: false,
                 valueGetter: (params) => {return params.row.price + " €"}
@@ -187,7 +186,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
             {
                 field: "vat",
                 headerName: t("orders.products.fields.vat"),
-                width: 100,
+                minWidth: 100,
                 type: "number",
                 sortable: false,
                 valueGetter: (params) => {return params.row.vat + " %"}
@@ -195,7 +194,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
             {
                 field: "gross",
                 headerName: t("orders.products.fields.grossPrice"),
-                width: 100,
+                minWidth: 100,
                 type: "number",
                 sortable: false,
                 valueGetter: (params) => {return ((1 + params.row.vat / 100) * params.row.price).toFixed(2) + " €"}
@@ -203,14 +202,14 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
             {
                 field: "quantity",
                 headerName: t("orders.products.fields.quantity"),
-                width: 150,
+                minWidth: 100,
                 sortable: false,
                 valueGetter: (params) => {return Number(params?.row?.quantity) + ' ' + params.row.unit_of_measure},
             },
             {
                 field: "total",
                 headerName: t("orders.products.fields.total"),
-                width: 100,
+                minWidth: 100,
                 type: "number",
                 flex: 1,
                 sortable: false,
@@ -234,13 +233,14 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
     }
 
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} marginBottom={ isSmallScreen ? 4 : 0 }>
             <Grid item xs={12}>
                 <Card>
                     <CardHeader
                         sx={{
                             width: "100%",
                             display: "flex",
+                            justifyContent: "center",
                             flexWrap: "wrap",
                             gap: 2,
                         }}
@@ -268,7 +268,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                         }
                         action={
                             can?.can ? 
-                            <Stack direction="row" spacing={2}>
+                            <Stack display="flex" direction="row" spacing={2} justifyContent="space-between">
                                 <Button
                                     disabled={!!record?.ready_at || !!record?.canceled_at}
                                     variant="outlined"
@@ -326,7 +326,7 @@ export const OrderShow: React.FC<IResourceComponentsProps> = () => {
                             activeStep={record?.events.findIndex(
                                 (el: { status: any; }) => el.status === record?.status,
                             )}
-                            orientation={isSmallOrLess ? "vertical" : "horizontal"}
+                            orientation={isSmallScreen ? "vertical" : "horizontal"}
                         >
                             {record?.events.map((event: StepperEvent, index: number) => (
                                 <Step key={index}>

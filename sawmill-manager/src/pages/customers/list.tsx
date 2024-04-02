@@ -24,6 +24,7 @@ import { ICustomer, ICustomerFilterVariables, IOrder } from "../../interfaces/in
 import { Close, Edit, Add, Visibility } from "@mui/icons-material";
 import { CreateCustomerModal, EditCustomerModal } from "../../components/customer";
 import { CreateOrder } from "../../components/order";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 
 export const CustomerList: React.FC<IResourceComponentsProps> = () => {
@@ -33,6 +34,8 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
         resource: "customers",
         action: "create",
     });
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const [customer, setCustomer] = useState<ICustomer | undefined>();
 
@@ -132,13 +135,13 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
             {
                 field: "name",
                 headerName: t("customers.fields.name"),
-                minWidth: 150,
+                minWidth: 180,
                 flex: 1,
             },
             {
                 field: "address",
                 headerName: t("customers.fields.address"),
-                minWidth: 150,
+                minWidth: 200,
                 flex: 1,
                 valueGetter: (params) => {
                     return params.row.address !== null ? 
@@ -189,7 +192,7 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
     return (
         <>
             {/* <CreateOrder {...createDrawerFormProps} /> */}
-            <Grid container spacing={2}>
+            <Grid container spacing={2} marginBottom={isSmallScreen ? 4 : 0}>
                 <Grid item xs={12} lg={3}>
                     <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
                         <CardHeader title={t("customers.filter.title")}/>
@@ -237,7 +240,8 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
                             columns={columns}
                             filterModel={undefined}
                             autoHeight
-                            pageSizeOptions={[10, 20, 50, 100]} />
+                            pageSizeOptions={[10, 20, 50, 100]} 
+                        />
                     </List>
                 </Grid>
             </Grid>

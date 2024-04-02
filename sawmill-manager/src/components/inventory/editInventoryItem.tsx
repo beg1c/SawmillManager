@@ -9,6 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import { IMaterialWQuantity, IProductWQuantity, IWasteWQuantity } from "../../interfaces/interfaces";
 import { useState } from "react";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 interface EditInventoryItemProps extends useModalReturnType {
     item: IMaterialWQuantity | IProductWQuantity | IWasteWQuantity | undefined;
@@ -26,6 +27,8 @@ export const EditInventoryItemModal: React.FC<EditInventoryItemProps> = ({
     const t = useTranslate();
     const { mutate: mutateUpdate } = useUpdate();
     const [quantity, setQuantity] = useState<number>();
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const handleQuantityChange = (event: any) => {
         setQuantity(event.target.value);
@@ -52,7 +55,7 @@ export const EditInventoryItemModal: React.FC<EditInventoryItemProps> = ({
         <Dialog
             open={visible}
             onClose={close}
-            PaperProps={{ sx: { minWidth: 500 } }}
+            PaperProps={{ sx: { minWidth: isSmallScreen ? 300 : 500 } }}
         >
             <DialogTitle>Edit quantity</DialogTitle>
             <DialogContent>

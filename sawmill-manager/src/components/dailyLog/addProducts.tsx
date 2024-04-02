@@ -194,7 +194,7 @@ export const AddProducts: React.FC<
                                             value={product?.quantity ? Number(product.quantity) : ""}
                                             onChange={(event) => handleProductChange(product, parseFloat(event.target.value), index)}
                                             style={{
-                                                width: "200px",
+                                                width: "220px",
                                                 marginLeft: "3px",  
                                             }}
                                         />

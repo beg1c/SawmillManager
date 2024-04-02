@@ -17,15 +17,18 @@ import Paper from "@mui/material/Paper";
 import { IEquipment } from "../../interfaces/interfaces";
 import { Close, Edit, HandymanRounded } from "@mui/icons-material";
 import { format } from "date-fns";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 
     export const EquipmentList: React.FC<IResourceComponentsProps> = () => {
         const { edit } = useNavigation();
         const t = useTranslate();
         const { mutate: mutateDelete } = useDelete();
         const { data } = useCan({
-        resource: "equipment",
-        action: "create",
+            resource: "equipment",
+            action: "create",
         });
+        const { breakpoints } = useTheme();
+        const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
         const { dataGridProps } = useDataGrid<IEquipment>({
             initialPageSize: 10,
@@ -56,19 +59,19 @@ import { format } from "date-fns";
                     field: "type",
                     headerName: t("equipment.fields.type"),
                     flex: 1,
-                    minWidth: 100,
+                    minWidth: 120,
                 },
                 {
                     field: "name",
                     headerName: t("equipment.fields.name"),
                     flex: 2,
-                    minWidth: 150,
+                    minWidth: 250,
                 },
                 {
                 field: "production_year",
                 headerName: t("equipment.fields.production_year"),
                 flex: 1,
-                minWidth: 150,
+                minWidth: 180,
                 valueGetter: (params) => {
                     return params.row?.production_year ? params.row.production_year : t("equipment.fields.no_production_year")
                 }
@@ -77,7 +80,7 @@ import { format } from "date-fns";
                 field: "last_service_date",
                 headerName: t("equipment.fields.last_service_date"),
                 flex: 1,
-                minWidth: 100,
+                minWidth: 150,
                 valueGetter: (params) => {
                     if (params?.row?.last_service_date) {
                         const date = new Date(params?.row?.last_service_date);
@@ -91,7 +94,7 @@ import { format } from "date-fns";
                     field: "last_service_working_hours",
                     headerName: t("equipment.fields.last_service_working_hours"),
                     flex: 1,
-                    minWidth: 100,
+                    minWidth: 190,
                     valueGetter: (params) => {
                         return params.row?.production_year ? params.row.production_year : t("equipment.fields.no_last_service_working_hours")
                     }
@@ -100,7 +103,7 @@ import { format } from "date-fns";
                     field: "next_service_date",
                     headerName: t("equipment.fields.next_service_date"),
                     flex: 1,
-                    minWidth: 100,
+                    minWidth: 180,
                     valueGetter: (params) => {
                         if (params?.row?.next_service_date) {
                             const date = new Date(params?.row?.next_service_date);
@@ -142,7 +145,7 @@ import { format } from "date-fns";
         );
 
     return (
-        <Paper>
+        <Box marginBottom={ isSmallScreen ? 4 : 0 }>
             <List
                 canCreate={data?.can}
                 wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
@@ -157,6 +160,6 @@ import { format } from "date-fns";
                     pageSizeOptions={[10, 20, 50, 100]}
                 />
             </List>
-        </Paper>
+        </Box>
     );
 };

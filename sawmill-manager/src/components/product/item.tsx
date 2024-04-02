@@ -5,7 +5,6 @@ import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
@@ -16,7 +15,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import { IProduct } from "../../interfaces/interfaces";
 import { Avatar, Stack } from "@mui/material";
-import { Close, InventoryRounded } from "@mui/icons-material";
+import { InventoryRounded } from "@mui/icons-material";
 
 type ProductItem = {
     product: IProduct;
@@ -144,14 +143,13 @@ export const ProductItem: React.FC<ProductItem> = ({
                     display="flex"
                     justifyContent="space-between"
                 >
-                <Stack>
+                <Stack width='50%'>
                     <Tooltip title={name}>
                         <Typography
                             sx={{
                                 fontWeight: 800,
                                 fontSize: "18px",
                                 overflow: "hidden",
-                                whiteSpace: "nowrap",
                                 textOverflow: "ellipsis",
                             }}
                         >

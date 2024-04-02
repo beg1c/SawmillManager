@@ -16,7 +16,7 @@ import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { IEquipment, ISawmill } from "../../interfaces/interfaces";
 import { Controller, FieldValues, SubmitHandler } from "react-hook-form";
-import { Autocomplete, Input, Typography, useTheme } from "@mui/material";
+import { Autocomplete, Box, Input, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { format, parseISO } from "date-fns";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -28,7 +28,8 @@ import { HandymanRounded } from "@mui/icons-material";
 
 export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
-    const { palette } = useTheme();
+    const { palette, breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
     const {
         register,
         refineCore: { formLoading, onFinish, queryResult },
@@ -98,6 +99,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
 
     return (
         <>
+        <Box marginBottom={ isSmallScreen ? 7 : 0 }>
         <Edit 
             isLoading={formLoading} 
             saveButtonProps={{
@@ -119,7 +121,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                             justifyContent="center"
                             alignItems="center"
                         >
-                            <label htmlFor="avatar-input">
+                            <label htmlFor="avatar-input" style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
                                 <Input
                                     id="avatar-input"
                                     type="file"
@@ -305,6 +307,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     fontWeight: "700",
                                     fontSize: "14px",
                                     color: "text.primary",
+                                    marginTop: isSmallScreen ? '24px' : 0,
                                 }}
                             >
                                 {t("equipment.fields.next_service_date")}
@@ -431,6 +434,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                 </Grid>
             </form>
         </Edit>
+        </Box>
 
         {!!imageSrc && (
             <ImageCrop 

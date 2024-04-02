@@ -36,11 +36,11 @@ import { RotateLoader } from "react-spinners";
 import ImageCrop from "../../components/imageCrop";
 import { LockOutlined } from "@mui/icons-material";
 import { ChangePasswordModal } from "../../components/changePassword";
-import { Typography, useTheme } from "@mui/material";
+import { Typography, useMediaQuery, useTheme } from "@mui/material";
 
 export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
-    const { palette } = useTheme();
+    const { palette, breakpoints } = useTheme();
     const stepTitles = [
         t("employees.steps.content"),
         t("employees.steps.relations"),
@@ -49,6 +49,8 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
         resource: 'employees',
         action: 'edit'
     })
+
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const { mutate: mutateUpdate } = useUpdate();
     
@@ -294,7 +296,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                                     sx={{
                                                         bgcolor: palette.primary.main,
                                                         color: "white",
-                                                        width: "50%"
+                                                        width: isSmallScreen ? '100%' : '50%',
                                                     }}
                                                     onClick={() => showPasswordModal()}
                                                 >
@@ -381,6 +383,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                                                     const selectedDate = date ? format(date, 'yyyy-MM-dd') : null; 
                                                                     field.onChange(selectedDate);
                                                                 }}         
+                                                                format="dd.MM.yyyy"
                                                             />
                                                         </LocalizationProvider>
   
@@ -406,7 +409,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                     <>
                         <Grid container spacing={2}>
                             <Grid container item xs={12} md={12} gap={5}>
-                                <Grid item xs={8} md={6}>
+                                <Grid item xs={12} md={6}>
                                     <FormControl fullWidth>
                                         <FormLabel
                                             required
@@ -474,7 +477,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                         )}
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={4} md={5}>
+                                <Grid item xs={12} md={5}>
                                 <FormControl fullWidth>
                                         <FormLabel
                                             sx={{
@@ -545,6 +548,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
 
     return (
         <>
+        <Box marginBottom={ isSmallScreen ? 7 : 0 }>
         <Edit
             isLoading={formLoading}
             footerButtons={
@@ -598,6 +602,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                 {renderFormByStep(currentStep)}
             </Box>
         </Edit>
+        </Box>
 
         {!!imageSrc && (
             <ImageCrop 

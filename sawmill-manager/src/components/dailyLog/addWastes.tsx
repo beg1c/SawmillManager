@@ -194,7 +194,7 @@ export const AddWastes: React.FC<
                                             value={waste?.quantity ? Number(waste.quantity) : ""}
                                             onChange={(event) => handleWasteChange(waste, parseFloat(event.target.value), index)}
                                             style={{
-                                                width: "200px",
+                                                width: "220px",
                                                 marginLeft: "3px",  
                                             }}
                                         />

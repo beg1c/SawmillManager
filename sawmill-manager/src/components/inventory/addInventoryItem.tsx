@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import { IInventory, IMaterial, IProduct, ISawmill, IWaste } from "../../interfaces/interfaces";
-import { Autocomplete } from "@mui/material";
+import { Autocomplete, useMediaQuery, useTheme } from "@mui/material";
 
 interface AddInventoryItemProps extends useModalReturnType {
     inventory: IInventory | undefined;
@@ -26,6 +26,8 @@ export const AddInventoryItemModal: React.FC<AddInventoryItemProps> = ({
     const { mutate: mutateUpdate } = useUpdate();
     const [quantity, setQuantity] = useState<number>();
     const [selectedItem, setSelectedItem] = useState<IMaterial | IProduct | IWaste>();
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const [quantityError, setQuantityError] = useState<string | null>(null);
     const [itemError, setItemError] = useState<string | null>(null);
@@ -104,7 +106,7 @@ export const AddInventoryItemModal: React.FC<AddInventoryItemProps> = ({
         <Dialog
             open={visible}
             onClose={close}
-            PaperProps={{ sx: { minWidth: 500 } }}
+            PaperProps={{ sx: { minWidth: isSmallScreen ? 300 : 500 } }}
         >
             <DialogTitle>Add item</DialogTitle>
             <DialogContent>

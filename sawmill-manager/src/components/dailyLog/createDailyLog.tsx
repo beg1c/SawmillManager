@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { IDailyLog, ISawmill } from "../../interfaces/interfaces";
-import { Autocomplete, FormControl, FormHelperText, FormLabel } from "@mui/material";
+import { Autocomplete, FormControl, FormHelperText, FormLabel, useMediaQuery, useTheme } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -25,6 +25,8 @@ export const CreateDailyLogModal: React.FC<
     formState: { errors },
 }) => {
     const t = useTranslate();
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const { autocompleteProps: sawmillsAutocompleteProps } = useAutocomplete<ISawmill>({
         resource: "sawmills",
@@ -34,7 +36,7 @@ export const CreateDailyLogModal: React.FC<
         <Dialog
             open={visible}
             onClose={close}
-            PaperProps={{ sx: { minWidth: 500 } }}
+            PaperProps={{ sx: { minWidth: isSmallScreen ? 300 : 500 } }}
         >
             <DialogTitle>{t("logs.title.create")}</DialogTitle>
             <DialogContent>
@@ -145,7 +147,8 @@ export const CreateDailyLogModal: React.FC<
                                         onChange={(date: number | Date | null) => {
                                             const selectedDate = date ? format(date, 'yyyy-MM-dd') : null; 
                                             field.onChange(selectedDate);
-                                        }}         
+                                        }}
+                                        format="dd.MM.yyyy"         
                                     />
                                 </LocalizationProvider>
 

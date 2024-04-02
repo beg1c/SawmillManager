@@ -30,7 +30,7 @@ import { IEmployee, IRole, ISawmill } from "../../interfaces/interfaces";
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format, isValid, parseISO } from "date-fns";
-import { Alert } from "@mui/material";
+import { Alert, useMediaQuery, useTheme } from "@mui/material";
 import ImageCrop from "../../components/imageCrop";
 
 
@@ -40,6 +40,9 @@ export const EmployeeCreate: React.FC<IResourceComponentsProps> = () => {
         t("employees.steps.content"),
         t("employees.steps.relations"),
     ];
+
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const [croppedBase64, setCroppedBase64] = useState<string>();
     const [imageSrc, setImageSrc] = useState<string>();
@@ -320,7 +323,8 @@ export const EmployeeCreate: React.FC<IResourceComponentsProps> = () => {
                                                                 onChange={(date: number | Date | null) => {
                                                                     const selectedDate = date ? format(date, 'yyyy-MM-dd') : null; 
                                                                     field.onChange(selectedDate);
-                                                                }}         
+                                                                }}       
+                                                                format="dd.MM.yyyy"  
                                                             />
                                                         </LocalizationProvider>
   
@@ -346,7 +350,7 @@ export const EmployeeCreate: React.FC<IResourceComponentsProps> = () => {
                     <>
                         <Grid container spacing={2}>
                             <Grid container item xs={12} md={12} gap={5}>
-                                <Grid item xs={8} md={6}>
+                                <Grid item xs={12} md={6}>
                                     <FormControl fullWidth>
                                         <FormLabel
                                             required
@@ -413,7 +417,7 @@ export const EmployeeCreate: React.FC<IResourceComponentsProps> = () => {
                                         )}
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={4} md={5}>
+                                <Grid item xs={12} md={5}>
                                 <FormControl fullWidth>
                                         <FormLabel
                                             sx={{
@@ -478,6 +482,7 @@ export const EmployeeCreate: React.FC<IResourceComponentsProps> = () => {
 
     return (
         <>
+        <Box marginBottom={ isSmallScreen ? 7 : 0 }>
         <Create
             isLoading={formLoading}
             footerButtons={
@@ -531,6 +536,7 @@ export const EmployeeCreate: React.FC<IResourceComponentsProps> = () => {
                 {renderFormByStep(currentStep)}
             </Box>
         </Create>
+        </Box>
 
         {!!imageSrc && (
             <ImageCrop 

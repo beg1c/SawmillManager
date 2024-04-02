@@ -34,6 +34,8 @@ import { ICustomer, IOrder, IOrderFilterVariables, ISawmill } from "../../interf
 import { OrderStatus } from "../../components/orderStatus";
 import { CustomTooltip } from "../../components/customTooltip";
 import { CreateOrder } from "../../components/order";
+import { useMediaQuery, useTheme } from "@mui/material";
+import { format } from "date-fns";
 
 export const OrderList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
@@ -41,6 +43,8 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
         resource: "orders",
         action: "create",
     });
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const { dataGridProps, search, filters } = useDataGrid<
         IOrder,
@@ -149,19 +153,19 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
                 minWidth: 150,
             },
             {
-                field: "sawmill",
-                headerName: t("orders.fields.sawmill"),
-                valueGetter: ({ row }) => row.sawmill.name,
-                flex: 1,
-                minWidth: 150,
-                sortable: false,
-            },
-            {
                 field: "customer",
                 headerName: t("orders.fields.customer"),
                 valueGetter: ({ row }) => (row.customer?.name ?? ""),
                 flex: 1,
-                minWidth: 150,
+                minWidth: 170,
+                sortable: false,
+            },  
+            {
+                field: "sawmill",
+                headerName: t("orders.fields.sawmill"),
+                valueGetter: ({ row }) => row.sawmill.name,
+                flex: 1,
+                minWidth: 170,
                 sortable: false,
             },
             {
@@ -192,19 +196,16 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
                     );
                 },
                 flex: 1,
-                minWidth: 100,
+                minWidth: 130,
             },
             {
                 field: "ordered_at",
                 headerName: t("orders.fields.ordered_at"),
                 flex: 1,
-                minWidth: 170,
+                minWidth: 150,
                 renderCell: function render({ row }) {
                     return (
-                        <DateField
-                            value={row.ordered_at}
-                            sx={{ fontSize: "14px" }}
-                        />
+                        format(new Date(row.ordered_at), "dd.MM.yyyy")
                     );
                 },
             },
@@ -228,7 +229,7 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
 
     return (
         <>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} marginBottom={ isSmallScreen ? 4 : 0 }>
                 <Grid item xs={12} lg={3}>
                     <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
                         <CardHeader title={t("orders.filter.title")} />

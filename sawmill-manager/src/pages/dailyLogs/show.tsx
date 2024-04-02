@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, Stack, Typography, useTheme } from "@mui/material";
+import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { HttpError, IResourceComponentsProps, useCan, useDelete, useNavigation, useShow, useUpdate } from "@refinedev/core";
 import { IDailyLog, IMaterialWQuantity, IProductWQuantity, IWasteWQuantity } from "../../interfaces/interfaces";
 import { useTranslation } from "react-i18next";
@@ -21,7 +21,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
     const { data, isLoading } = queryResult;
     const dailyLog = data?.data;
     const { push } = useNavigation();
-    const { palette } = useTheme();
+    const { palette, breakpoints } = useTheme();
     const { data: can } = useCan({
         resource: 'dailylogs',
         action: 'delete'
@@ -30,6 +30,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
     const { mutate: mutateUpdate } = useUpdate();
     const [openLock, setOpenLock] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const productsDrawerFormProps = useModalForm<
         IDailyLog,
@@ -140,6 +141,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("logs.fields.quantity"),
                     headerAlign: "right",
                     align: "right",
+                    minWidth: 100,
                     flex: 1,
                     sortable: false,
                     valueGetter: (params) => {return Number(params?.row?.quantity).toFixed(3) + ' ' + params?.row?.unit_of_measure},
@@ -147,6 +149,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                 {
                     field: "value",
                     headerName: t("logs.fields.value"),
+                    minWidth: 100,
                     flex: 1,
                     sortable: false,
                     headerAlign: "right",
@@ -191,6 +194,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("logs.fields.quantity"),
                     headerAlign: "right",
                     align: "right",
+                    minWidth: 100,
                     flex: 1,
                     sortable: false,
                     valueGetter: (params) => {return Number(params?.row?.quantity).toFixed(3) + ' ' + params?.row?.unit_of_measure},
@@ -201,6 +205,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     sortable: false,
                     headerAlign: "right",
                     align: "right",
+                    minWidth: 100,
                     flex: 1,
                     valueGetter: (params) => {
                         if (params?.row?.price){
@@ -244,6 +249,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                     headerName: t("logs.fields.quantity"),
                     headerAlign: "right",
                     align: "right",
+                    minWidth: 100,
                     flex: 1,
                     sortable: false,
                     valueGetter: (params) => {return Number(params?.row?.quantity).toFixed(3) + ' ' + params?.row?.unit_of_measure},
@@ -251,6 +257,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                 {
                     field: "value",
                     headerName: t("logs.fields.value"),
+                    minWidth: 100,
                     flex: 1,
                     sortable: false,
                     headerAlign: "right",
@@ -280,14 +287,15 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
 
         return (
             <>
-                <Grid container spacing={2}>
+                <Grid container spacing={2} marginBottom={isSmallScreen ? 4 : 0}>
                     <Grid item xs={12}>
                         <Paper 
                             sx={{ 
                                 p: 2,
                                 display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center' 
+                                flexDirection: isSmallScreen ? 'column' : 'row',
+                                justifyContent: isSmallScreen ? 'space-evenly' : 'space-between',
+                                alignItems: isSmallScreen ? 'space-between' : 'center', 
                             }}
                         >
                             <Stack direction="row">
@@ -306,6 +314,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                             <Box 
                                 display='flex'
                                 alignItems='center'
+                                marginTop={isSmallScreen ? 2 : 0}
                             >  
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                                     <DatePicker
@@ -316,7 +325,9 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                             textField: { 
                                                 size: 'small',
                                             } 
-                                        }} 
+                                        }}
+                                        format="dd.MM.yyyy"
+                                        disabled
                                     />
                                 </LocalizationProvider>
                                 {can?.can &&

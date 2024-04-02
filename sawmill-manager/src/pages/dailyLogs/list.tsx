@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
     BaseRecord,
@@ -19,7 +18,7 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import { Autocomplete, Stack, Typography } from "@mui/material";
+import { Autocomplete, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { IDailyLog, IDailyLogFilterVariables, ISawmill } from "../../interfaces/interfaces";
 import { CustomTooltip } from "../../components/customTooltip";
@@ -34,6 +33,8 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
         action: 'create'
     })
     const { show } = useNavigation();
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const { dataGridProps, search } = useDataGrid<
         IDailyLog,
@@ -98,7 +99,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
             {
                 field: "sawmill",
                 headerName: t("logs.fields.sawmill"),
-                minWidth: 100,
+                minWidth: 150,
                 flex: 1,
                 sortable: false,
                 valueGetter: (params) => {
@@ -137,7 +138,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                     );
                 },
                 flex: 1,
-                minWidth: 100,
+                minWidth: 120,
             },
             {
                 field: "products",
@@ -171,7 +172,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                     );
                 },
                 flex: 1,
-                minWidth: 100,
+                minWidth: 120,
             },
             {
                 field: "wastes",
@@ -205,7 +206,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                     );
                 },
                 flex: 1,
-                minWidth: 100,
+                minWidth: 120,
             },
             {
                 field: "actions",
@@ -228,7 +229,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
     return (
         <>
             <CreateDailyLogModal {...createModalFormProps} />
-            <Grid container spacing={2}>
+            <Grid container spacing={2} marginBottom={isSmallScreen ? 4 : 0}>
                 <Grid item xs={12} lg={3}>
                 <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
                         <CardHeader title={t("logs.filter.title")} />

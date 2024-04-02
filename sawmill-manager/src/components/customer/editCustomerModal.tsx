@@ -9,6 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { ICustomer } from "../../interfaces/interfaces";
+import { useMediaQuery, useTheme } from "@mui/material";
 
     
 export const EditCustomerModal: React.FC<
@@ -20,8 +21,9 @@ export const EditCustomerModal: React.FC<
     register,
     formState: { errors },
 }) => {
-    
     const t = useTranslate();
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     if (formLoading) {
         return null;
@@ -31,7 +33,7 @@ export const EditCustomerModal: React.FC<
         <Dialog
             open={visible}
             onClose={close}
-            PaperProps={{ sx: { minWidth: 500 } }}
+            PaperProps={{ sx: { minWidth: isSmallScreen ? 300 : 500 } }}
         >
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>

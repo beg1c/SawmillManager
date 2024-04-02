@@ -1,12 +1,12 @@
-import { Avatar, Box, Grid, Paper, Stack, Typography, useTheme } from "@mui/material";
+import { Avatar, Box, Grid, IconButton, Paper, Stack, Typography, useTheme } from "@mui/material";
 import { green } from "@mui/material/colors";
-import { IResourceComponentsProps, useGetIdentity, useGo, useLogout, useShow } from "@refinedev/core";
+import { IResourceComponentsProps, useGetIdentity, useGo, useLogout, useNavigation, useShow } from "@refinedev/core";
 import {
   DeleteButton,
   EditButton,
 } from "@refinedev/mui";
 import { IEmployee } from "../../interfaces/interfaces";
-import { CalendarMonth, LocalPhoneOutlined, MailOutlined, PersonOutlined, WorkOutline } from "@mui/icons-material";
+import { ArrowBackOutlined, CalendarMonth, LocalPhoneOutlined, MailOutlined, PersonOutlined, WorkOutline } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { RotateLoader } from "react-spinners";
 
@@ -39,6 +39,7 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
   const go = useGo();
   const { data: user } = useGetIdentity<IEmployee>();
   const { mutate: logout } = useLogout();
+  const { push } = useNavigation();
 
   if (isLoading) {
     return (
@@ -57,6 +58,9 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
     <Grid container spacing={2}>
         <Grid item xs={12} lg={4} xl={3}>
             <Paper sx={{ p: 2 }}>
+                <IconButton onClick={() => push("/employees")} >
+                    <ArrowBackOutlined />
+                </IconButton>
                 <Stack alignItems="center" spacing={1}> 
                 <Avatar src={employee?.avatar} sx={{ bgcolor: palette.primary.main, width: 200, height: 200 }} />
                     <Typography variant="h6">
@@ -65,7 +69,7 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
                 </Stack>
                 <br />
                 <Grid container spacing={2} alignItems="flex-end">
-                  <Grid item xs={6}>
+                  <Grid item sm={6} xs={12}>
                     <Stack spacing={1}>
                         <EmployeeInfoText
                             icon={<MailOutlined />}
@@ -93,7 +97,7 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
                         />
                     </Stack>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item sm={6} xs={12}>
                   <Box display="flex" alignItems="flex-end" justifyContent="flex-end">
                     <EditButton 
                       accessControl={{ enabled: true, hideIfUnauthorized: true }}

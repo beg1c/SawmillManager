@@ -194,7 +194,7 @@ export const AddMaterials: React.FC<
                                             value={material?.quantity ? Number(material.quantity) : ""}
                                             onChange={(event) => handleMaterialChange(material, parseFloat(event.target.value), index)}
                                             style={{
-                                                width: "200px",
+                                                width: "220px",
                                                 marginLeft: "3px",  
                                             }}
                                         />

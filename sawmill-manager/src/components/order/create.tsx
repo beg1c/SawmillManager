@@ -405,6 +405,7 @@ export const CreateOrder: React.FC<
                                                         const selectedDate = date ? format(date, 'yyyy-MM-dd') : null; 
                                                         field.onChange(selectedDate);
                                                     }}         
+                                                    format="dd.MM.yyyy"
                                                 />
                                             </LocalizationProvider>
 
@@ -447,6 +448,7 @@ export const CreateOrder: React.FC<
                                                         const selectedDate = date ? format(date, 'yyyy-MM-dd') : null; 
                                                         field.onChange(selectedDate);
                                                     }}         
+                                                    format="dd.MM.yyyy"
                                                 />
                                             </LocalizationProvider>
 

@@ -1,5 +1,5 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { IResourceComponentsProps, useCan, useTranslate } from "@refinedev/core";
+import { IResourceComponentsProps, useCan, useNavigation, useTranslate } from "@refinedev/core";
 import {
   List,
   ShowButton,
@@ -7,6 +7,8 @@ import {
 } from "@refinedev/mui";
 import React from "react";
 import { IEmployee } from "../../interfaces/interfaces";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
+import { format } from "date-fns";
 
 export const EmployeeList: React.FC<IResourceComponentsProps> = () => {
   const t = useTranslate();
@@ -14,6 +16,9 @@ export const EmployeeList: React.FC<IResourceComponentsProps> = () => {
     resource: "employees",
     action: "create",
   });
+  const { breakpoints } = useTheme();
+  const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
+  const { show } = useNavigation();
 
   const { dataGridProps } = useDataGrid<IEmployee>({
     syncWithLocation: true,
@@ -32,31 +37,34 @@ export const EmployeeList: React.FC<IResourceComponentsProps> = () => {
         field: "name",
         flex: 1,
         headerName: t("employees.fields.name"),
-        minWidth: 50,
+        minWidth: 180,
       },
       {
         field: "email",
         flex: 1,
         headerName: t("employees.fields.email"),
-        minWidth: 50,
+        minWidth: 250,
       },
       {
         field: "contact_number",
         flex: 1,
         headerName: t("employees.fields.contact_number"),
-        minWidth: 50,
+        minWidth: 150,
       },
       {
         field: "birthday",
         flex: 1,
         headerName: t("employees.fields.birthday"),
-        minWidth: 50,
+        minWidth: 150,
+        valueGetter: (params) => {
+          return params.row?.birthday ? format(new Date(params.row?.birthday), "dd.MM.yyyy") : ""
+        }
       },
       {
         field: "roles.role_name",
         flex: 1,
         headerName: t("employees.fields.role"),
-        minWidth: 50,
+        minWidth: 150,
         valueGetter: (params) => {
           const translation = "roles." + params.row.role.role_name;
           return t(translation);
@@ -81,16 +89,29 @@ export const EmployeeList: React.FC<IResourceComponentsProps> = () => {
   );
 
   return (
-    <List
-      canCreate={data?.can}
+    <Box
+      marginBottom={isSmallScreen ? 4 : 0}
     >
-      <DataGrid 
-        disableColumnFilter
-        {...dataGridProps} 
-        columns={columns} 
-        pageSizeOptions={[10, 25, 50, 100]}
-        autoHeight 
-      />
-    </List>
+      <List
+        canCreate={data?.can}
+      >
+        <DataGrid 
+          disableColumnFilter
+          {...dataGridProps} 
+          columns={columns} 
+          pageSizeOptions={[10, 25, 50, 100]}
+          autoHeight 
+          onRowClick={({ id }) => {
+              show("employees", id);
+          }}
+          sx={{
+              ...dataGridProps.sx,
+              "& .MuiDataGrid-row": {
+                  cursor: "pointer",
+              },
+          }}
+        />
+      </List>
+    </Box>
   );
 };
