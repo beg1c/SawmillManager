@@ -21,6 +21,7 @@ class DailyLogResource extends JsonResource
             'products' => ProductResource::collection($this->products),
             'materials' => MaterialResource::collection($this->materials),
             'wastes' => WasteResource::collection($this->wastes),
+            'locked_at' => $this->locked_at,
         ];
     }
 }

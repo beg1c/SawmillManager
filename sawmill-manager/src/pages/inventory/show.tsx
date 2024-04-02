@@ -571,7 +571,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
                             columns={logsColumns}
                             rows={filteredLogs || []}
                             rowHeight={80}
-                            localeText={{ noRowsLabel: t("wastes.noWastes") }}
+                            localeText={{ noRowsLabel: "No inventory logs" }}
                             sx={{
                                 [`.${gridClasses.cell}.success`]: {
                                     backgroundColor: "#edf7ed",

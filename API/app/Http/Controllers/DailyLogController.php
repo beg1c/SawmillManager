@@ -98,6 +98,12 @@ class DailyLogController extends Controller
 
         $dailyLog = DailyLog::findorfail($id);
 
+        if ($dailyLog->locked_at !== null) {
+            return response()->json([
+                "message" => "The daily log is locked and cannot be updated."
+            ], 403);
+        }
+
         $user = Auth::user();
         $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
 
@@ -115,6 +121,10 @@ class DailyLogController extends Controller
 
         if (isset($request->sawmill->id)) {
             $dailyLog->sawmill()->associate($request->sawmill->id);
+        }
+
+        if ($request->filled('locked_at')) {
+            $dailyLog->locked_at = $request->input('locked_at');
         }
 
         if (isset($request['products'])) {
@@ -144,6 +154,12 @@ class DailyLogController extends Controller
 
         $dailyLog = DailyLog::findOrFail($id);
 
+        if ($dailyLog->locked_at !== null) {
+            return response()->json([
+                "message" => "The daily log is locked and cannot be deleted."
+            ], 403);
+        }
+
         $user = Auth::user();
         $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
 
@@ -152,6 +168,10 @@ class DailyLogController extends Controller
                 'message' => 'You are not allowed to delete logs for that sawmill.'
             ], 403);
         }
+
+        $this->syncItems($dailyLog, 'materials', []);
+        $this->syncItems($dailyLog, 'products', []);
+        $this->syncItems($dailyLog, 'wastes', []);
 
         $dailyLog->delete();
 

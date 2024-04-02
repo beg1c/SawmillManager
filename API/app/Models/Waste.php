@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Waste extends Model
 {
     use HasFactory;
-    use SoftDeltes;
+    use SoftDeletes;
 
     public function inventories()
     {

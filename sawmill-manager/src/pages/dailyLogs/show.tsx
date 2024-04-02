@@ -1,14 +1,14 @@
-import { Avatar, Box, Grid, IconButton, Paper, Stack, Typography, useTheme } from "@mui/material";
-import { HttpError, IResourceComponentsProps, useCan, useNavigation, useShow } from "@refinedev/core";
+import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Paper, Stack, Typography, useTheme } from "@mui/material";
+import { HttpError, IResourceComponentsProps, useCan, useDelete, useNavigation, useShow, useUpdate } from "@refinedev/core";
 import { IDailyLog, IMaterialWQuantity, IProductWQuantity, IWasteWQuantity } from "../../interfaces/interfaces";
 import { useTranslation } from "react-i18next";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { isValid, parseISO } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import React from "react";
-import { ArrowBackOutlined, ForestOutlined, LocalGroceryStoreOutlined, RecyclingOutlined } from "@mui/icons-material";
-import { DeleteButton, EditButton, List } from "@refinedev/mui";
+import React, { useState } from "react";
+import { ArrowBackOutlined, DeleteOutlined, ForestOutlined, LocalGroceryStoreOutlined, LockOutlined, RecyclingOutlined } from "@mui/icons-material";
+import { EditButton, List } from "@refinedev/mui";
 import { AddProducts } from "../../components/dailyLog";
 import { useModalForm } from "@refinedev/react-hook-form";
 import { AddMaterials } from "../../components/dailyLog/addMaterials";
@@ -26,6 +26,10 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
         resource: 'dailylogs',
         action: 'delete'
     })
+    const { mutate: mutateDelete } = useDelete();
+    const { mutate: mutateUpdate } = useUpdate();
+    const [openLock, setOpenLock] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
 
     const productsDrawerFormProps = useModalForm<
         IDailyLog,
@@ -71,6 +75,38 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
     const {
         modal: { show: showWastesDrawer },
     } = wastesDrawerFormProps;
+
+    const handleDelete = () => {
+        if (data) {
+            mutateDelete({
+                resource: "dailylogs",
+                id: data?.data.id,
+            },
+            {
+                onSuccess: () => {
+                    push("/dailylogs");
+                },
+            });
+        }
+    }
+
+    const handleLock = () => {        
+        if (data) {
+            mutateUpdate({
+                resource: "dailylogs",
+                id: data?.data.id,
+                values: {
+                    ...data?.data,
+                    locked_at: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+                }
+            },
+            {
+                onSuccess: () => {
+                    setOpenLock(false);
+                },
+            });
+        }
+    }
 
     const productColumns = React.useMemo<GridColDef<IProductWQuantity>[]>(
             () => [
@@ -284,13 +320,25 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                                     />
                                 </LocalizationProvider>
                                 {can?.can &&
-                                <DeleteButton 
-                                    hideText={true}
-                                    size="large"
-                                    onSuccess={() => {  
-                                        push("/dailylogs");
-                                    }}        
-                                />}
+                                <Stack 
+                                    display="flex" 
+                                    direction="row" 
+                                    marginLeft={1}
+                                >
+                                    <Button 
+                                        color="error" 
+                                        onClick={() => setOpenDelete(true)}
+                                        disabled={!!data?.data.locked_at}
+                                    >
+                                        <DeleteOutlined />
+                                    </Button>
+                                    <Button 
+                                        onClick={() => setOpenLock(true)}
+                                        disabled={!!data?.data.locked_at}
+                                    >
+                                        <LockOutlined />
+                                    </Button>
+                                </Stack>}
                             </Box> 
                         </Paper>
                     </Grid>
@@ -298,7 +346,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                         <List
                             title={t("logs.input.materials")}
                             headerButtons={
-                                can?.can ? <EditButton /> : null
+                                can?.can ? <EditButton disabled={!!data?.data.locked_at} /> : null
                             }
                             headerButtonProps={{
                                 onClick: () => showMaterialsDrawer(dailyLog?.id)
@@ -319,7 +367,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                         <List
                             title={t("logs.output.products")}
                             headerButtons={
-                                can?.can ? <EditButton /> : null
+                                can?.can ? <EditButton disabled={!!data?.data.locked_at} /> : null
                             }
                             headerButtonProps={{
                                 onClick: () => showProductsDrawer(dailyLog?.id)
@@ -340,7 +388,7 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                         <List
                             title={t("logs.output.wastes")}
                             headerButtons={
-                                can?.can ? <EditButton /> : null
+                                can?.can ? <EditButton disabled={!!data?.data.locked_at} /> : null
                             }
                             headerButtonProps={{
                                 onClick: () => showWastesDrawer(dailyLog?.id)
@@ -361,6 +409,48 @@ export const DailyLogShow: React.FC<IResourceComponentsProps> = () => {
                 <AddProducts {...productsDrawerFormProps}/>
                 <AddMaterials {...materialsDrawerFormProps}/>
                 <AddWastes {...wastesDrawerFormProps}/>
+                <Dialog
+                    open={openLock}
+                    onClose={() => setOpenLock(false)}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle>
+                        Lock daily log
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Are you sure you want to lock this daily log?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setOpenLock(false)}>No</Button>
+                        <Button onClick={handleLock} autoFocus>
+                            Yes
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog
+                    open={openDelete}
+                    onClose={() => setOpenDelete(false)}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle>
+                        Delete daily log
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Are you sure you want to delete this daily log?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setOpenDelete(false)}>No</Button>
+                        <Button color="error" onClick={handleDelete} autoFocus>
+                            Yes
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </>
         )
 };

@@ -93,6 +93,7 @@ export interface IDailyLog {
     materials?: IMaterialWQuantity[];
     products?: IProductWQuantity[];
     wastes?: IWasteWQuantity[];
+    locked_at?: Date;
 }
 
 export interface IDailyLogFilterVariables {

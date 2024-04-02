@@ -33,6 +33,7 @@ class DailyLogUpdateRequest extends FormRequest
             'wastes' => 'array',
             'wastes.*.id' => 'exists:wastes,id',
             'wastes.*.quantity' => 'numeric|min:0',
+            'locked_at' => 'nullable|date',
         ];
     }
 }
