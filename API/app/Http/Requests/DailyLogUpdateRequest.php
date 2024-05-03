@@ -26,13 +26,14 @@ class DailyLogUpdateRequest extends FormRequest
             'sawmill.id' => 'integer|exists:sawmills,id',
             'products' => 'array',
             'products.*.id' => 'exists:products,id',
-            'products.*.quantity' => 'integer|min:1',
+            'products.*.quantity' => 'numeric|min:0',
             'materials' => 'array',
             'materials.*.id' => 'exists:materials,id',
-            'materials.*.quantity' => 'integer|min:1',
+            'materials.*.quantity' => 'numeric|min:0',
             'wastes' => 'array',
             'wastes.*.id' => 'exists:wastes,id',
-            'wastes.*.quantity' => 'integer|min:1',
+            'wastes.*.quantity' => 'numeric|min:0',
+            'locked_at' => 'nullable|date',
         ];
     }
 }

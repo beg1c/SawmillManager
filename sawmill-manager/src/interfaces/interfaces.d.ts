@@ -29,6 +29,7 @@ export interface IProduct {
     unit_of_measure: string;
     price: number;
     photo?: string;
+    vat: number;
 }
 
 export interface IProductWQuantity extends IProduct {
@@ -55,18 +56,34 @@ export interface IWaste {
     unit_of_measure: string;
     price?: number;
     photo?: string;
+    vat: number;
 }
 
 export interface IWasteWQuantity extends IWaste {
     quantity: number;
 }
 
-export interface IInventory<T extends IProductWQuantity | IWasteWQuantity | IMaterialWQuantity> {
+export interface IInventory {
     id: number;
     sawmill: ISawmill;
-    materials?: T extends IMaterialWQuantity ? T[] : never;
-    products?: T extends IProductWQuantity ? T[] : never;
-    wastes?: T extends IWasteWQuantity ? T[] : never;
+    materials: IMaterialWQuantity[];
+    products: IProductWQuantity[];
+    wastes: IWasteWQuantity[];
+    logs: IInventoryLog[];
+}
+
+export interface IInventoryLog {
+    id: number;
+    context: "user" | "order" | "daily_log";
+    action: "add" | "reduce" | "delete";
+    quantity: number;
+    timestamp: string;
+    user?: string;
+    dailylog?: string;
+    order?: string;
+    product?: string;
+    material?: string;
+    waste?: string;
 }
 
 export interface IDailyLog {
@@ -76,6 +93,7 @@ export interface IDailyLog {
     materials?: IMaterialWQuantity[];
     products?: IProductWQuantity[];
     wastes?: IWasteWQuantity[];
+    locked_at?: Date;
 }
 
 export interface IDailyLogFilterVariables {
@@ -89,11 +107,11 @@ export interface IEquipment {
     description?: string;
     notes?: string;
     production_year?: number;
-    last_service_date?: string;
+    last_service_date?: Date;
     last_service_working_hours?: string;
     sawmill?: ISawmill;
     photo: string;
-    next_service_date: string;
+    next_service_date: Date;
 }
 
 export interface ICustomer {
@@ -113,14 +131,16 @@ export interface ICustomerFilterVariables {
 
 export interface IOrder {
     id: number;
-    amount?: integer;
+    amount?: number;
+    discount?: number;
     notes?: string;
     deadline?: string;
     ordered_at: string;
     ready_at?: string;
     dispatched_at?: string;
+    canceled_at?: string;
     products: IProductWQuantity[];
-    status?: "Pending" | "Ready" | "Dispatched"  | "Cancelled";
+    status?: "Pending" | "Ready" | "Dispatched"  | "Canceled";
     customer: ICustomer;
     sawmill: ISawmill;
 }

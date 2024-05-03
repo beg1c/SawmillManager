@@ -1,7 +1,8 @@
-import { useTheme } from "@mui/material";
+import { useMediaQuery, useTheme } from "@mui/material";
 import { IDailyProductivity } from "../../../interfaces/interfaces";
 import React from "react";
 import { Bar, BarChart, LabelList, Legend, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import FullLoader from "../../fullLoader";
 
 
 interface DailyProductivityProps {
@@ -9,10 +10,11 @@ interface DailyProductivityProps {
 }
 
 export const DailyProductivity: React.FC<DailyProductivityProps> = ({dailyProductivity}) => {
-    const { palette } = useTheme();
+    const { palette, breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
-    if (dailyProductivity.length === 0) {
-        return <div>Loading...</div>;
+    if (!dailyProductivity.length) {
+        return <FullLoader />;
     }
 
     return (    
@@ -20,7 +22,7 @@ export const DailyProductivity: React.FC<DailyProductivityProps> = ({dailyProduc
             <BarChart
                 width={500}
                 height={300}
-                data={testData}
+                data={isSmallScreen ? testData.slice(0, 3) : testData}
                 margin={{
                     top: 20,
                     right: 30,
@@ -59,7 +61,7 @@ export const DailyProductivity: React.FC<DailyProductivityProps> = ({dailyProduc
                     dataKey="product_quantity" 
                     name="Product output"
                     stackId="a" 
-                    fill={palette.primary.dark}
+                    fill={palette.primary.light}
                     activeBar={<Rectangle fill={palette.primary.main} />}
                 >
                     <LabelList

@@ -1,8 +1,8 @@
 import { useTheme } from "@mui/material";
 import { ICustomerWTotalSpent } from "../../../interfaces/interfaces";
 import React from "react";
-import { Bar, BarChart, LabelList, Legend, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-
+import { Bar, BarChart, LabelList, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import FullLoader from "../../fullLoader";
 
 interface BiggestCustomersProps {
     customers: ICustomerWTotalSpent[];
@@ -11,9 +11,8 @@ interface BiggestCustomersProps {
 export const BiggestCustomers: React.FC<BiggestCustomersProps> = ({customers}) => {
     const { palette } = useTheme();
 
-
-    if (customers.length === 0) {
-        return <div>Loading...</div>;
+    if (!customers.length) {
+        return <FullLoader />
     }
 
     return (    

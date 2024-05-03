@@ -15,7 +15,7 @@ class ProductController extends Controller
     {
         $sortField = request()->query('sort', 'id');
         $sortDirection = request()->query('order', 'asc');
-        $pageSize = request()->query('pageSize', 10);
+        $pageSize = request()->query('pageSize');
         $searchQuery = request()->query('q');
 
         $products = Product::orderBy($sortField, $sortDirection);
@@ -27,25 +27,29 @@ class ProductController extends Controller
                     ->orWhere('unit_of_measure', 'like', '%' . $searchQuery . '%');
         }
 
-        $products = $products->paginate($pageSize, ['*'], 'current');
+        if ($pageSize) {
+            $products = $products->paginate($pageSize, ['*'], 'current');
+        } else {
+            $products = $products->get();
+        }
 
         return ProductResource::collection($products);
     }
 
     public function store(ProductStoreRequest $request)
     {
+        if (Gate::denies('manage-products')) {
+            return response()->json([
+                "message" => "You are not authorized to create products."
+            ], 403);
+        }
+
         $photoName = null;
         if ($request->has('photo')) {
             $photoname = $this->savePhoto($request->photo);
         }
 
-        if (Gate::allows('manage-products')) {
-            return $this->createProduct($request, $photoName);
-        }
-
-        return response()->json([
-            "message" => "You are not authorized to create products."
-        ], 403);
+        return $this->createProduct($request, $photoName);
     }
 
     public function show($id)
@@ -56,17 +60,31 @@ class ProductController extends Controller
 
     public function update(ProductStoreRequest $request, $id)
     {
+        if (Gate::denies('manage-products')) {
+            return response()->json([
+                "message" => "You are not authorized to update products."
+            ], 403);
+        }
+
         $photoName = null;
         if ($request->has('photo')) {
             $photoName = $this->savePhoto($request->photo);
         }
 
+        return $this->updateProduct($request, $photoName, $id);
+    }
+
+    public function destroy($id) {
         if (Gate::allows('manage-products')) {
-            return $this->updateProduct($request, $photoName, $id);
+            $product = Product::findOrFail($id);
+            $product->delete();
+            return response()->json([
+                "message" => "Product deleted."
+            ]);
         }
 
         return response()->json([
-            "message" => "You are not authorized to update products."
+            "message" => "You are not authorized to delete products."
         ], 403);
     }
 
@@ -87,6 +105,7 @@ class ProductController extends Controller
             'price' => $request['price'],
             'unit_of_measure' => $request['unit_of_measure'],
             'photo' => $photoName,
+            'vat' => $request['vat'],
         ]);
 
         return new ProductResource($product);
@@ -100,6 +119,7 @@ class ProductController extends Controller
             'description' => $request['description'],
             'price' => $request['price'],
             'unit_of_measure' => $request['unit_of_measure'],
+            'vat' => $request['vat'],
         ]);
 
         if ($photoName !== null) {

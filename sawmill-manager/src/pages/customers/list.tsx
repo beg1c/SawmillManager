@@ -1,14 +1,14 @@
 
-import React from "react";
+import React, { useState } from "react";
 import {
     CrudFilters,
     getDefaultFilter,
     HttpError,
     IResourceComponentsProps,
     useCan,
-    useDelete, useModal, useTranslate
+    useDelete, useTranslate
 } from "@refinedev/core";
-import { List, useDataGrid, useThemedLayoutContext } from "@refinedev/mui";
+import { List, useDataGrid } from "@refinedev/mui";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import Box from "@mui/material/Box";
@@ -23,6 +23,9 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { ICustomer, ICustomerFilterVariables, IOrder } from "../../interfaces/interfaces";
 import { Close, Edit, Add, Visibility } from "@mui/icons-material";
 import { CreateCustomerModal, EditCustomerModal } from "../../components/customer";
+import { CreateOrder } from "../../components/order";
+import { useMediaQuery, useTheme } from "@mui/material";
+
 
 export const CustomerList: React.FC<IResourceComponentsProps> = () => {
     const { mutate: mutateDelete } = useDelete();
@@ -31,6 +34,10 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
         resource: "customers",
         action: "create",
     });
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
+
+    const [customer, setCustomer] = useState<ICustomer | undefined>();
 
     const { dataGridProps, search, filters } = useDataGrid<
         ICustomer,
@@ -68,7 +75,7 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
         HttpError
     >({
         refineCoreProps: { action: "create" },
-        syncWithLocation: true,
+        warnWhenUnsavedChanges: false,
     });
 
     const {
@@ -79,12 +86,38 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
         ICustomer, HttpError
     >({
         refineCoreProps: { action: "edit" },
-        syncWithLocation: true,
+        warnWhenUnsavedChanges: false,
     });
 
     const {
         modal: { show: showEditModal },
     } = editModalFormProps;
+
+    
+    const { register, handleSubmit } = useForm<
+        ICustomer,
+        HttpError,
+        ICustomerFilterVariables
+    >({
+        defaultValues: {
+            q: getDefaultFilter("q", filters, "eq"),
+        },
+    });
+
+    const createDrawerFormProps = useModalForm<
+        IOrder,
+        HttpError
+    >({
+        refineCoreProps: { 
+            action: "create",
+            resource: "orders",
+        },
+        warnWhenUnsavedChanges: false,
+    });
+
+    const {
+        modal: { show: showCreateDrawer },
+    } = createDrawerFormProps;
 
     const columns = React.useMemo<GridColDef<ICustomer>[]>(
         () => [
@@ -102,13 +135,13 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
             {
                 field: "name",
                 headerName: t("customers.fields.name"),
-                minWidth: 150,
+                minWidth: 180,
                 flex: 1,
             },
             {
                 field: "address",
                 headerName: t("customers.fields.address"),
-                minWidth: 150,
+                minWidth: 200,
                 flex: 1,
                 valueGetter: (params) => {
                     return params.row.address !== null ? 
@@ -122,12 +155,15 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
                 type: "actions",
                 getActions: function render({ row }) {
                     return [
-                        // <GridActionsCellItem
-                        //     key={1}
-                        //     label={t("Create order")}
-                        //     icon={<Add color="success" />}
-                        //     onClick={() => showCreateDrawer()}
-                        //     showInMenu />,
+                        <GridActionsCellItem
+                            key={1}
+                            label={t("Create order")}
+                            icon={<Add color="success" />}
+                            onClick={() => {
+                                setCustomer(row);
+                                showCreateDrawer();
+                            }}
+                            showInMenu />,
                         <GridActionsCellItem
                             key={2}
                             label={t("buttons.edit")}
@@ -153,20 +189,10 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
         [t]
     );
 
-    const { register, handleSubmit, control } = useForm<
-        ICustomer,
-        HttpError,
-        ICustomerFilterVariables
-    >({
-        defaultValues: {
-            q: getDefaultFilter("q", filters, "eq"),
-        },
-    });
-
     return (
         <>
             {/* <CreateOrder {...createDrawerFormProps} /> */}
-            <Grid container spacing={2}>
+            <Grid container spacing={2} marginBottom={isSmallScreen ? 4 : 0}>
                 <Grid item xs={12} lg={3}>
                     <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
                         <CardHeader title={t("customers.filter.title")}/>
@@ -214,12 +240,14 @@ export const CustomerList: React.FC<IResourceComponentsProps> = () => {
                             columns={columns}
                             filterModel={undefined}
                             autoHeight
-                            pageSizeOptions={[10, 20, 50, 100]} />
+                            pageSizeOptions={[10, 20, 50, 100]} 
+                        />
                     </List>
                 </Grid>
             </Grid>
             <CreateCustomerModal {...createModalFormProps} />
             <EditCustomerModal {...editModalFormProps} />
+            <CreateOrder {...createDrawerFormProps}  customer={customer}/>
         </>
     );
 };

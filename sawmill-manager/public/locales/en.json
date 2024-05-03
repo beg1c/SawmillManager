@@ -43,6 +43,7 @@
             "backHome": "Back Home"
         }
     },
+    
     "employees": {
         "employees": "Employees",
         "titles": {
@@ -54,7 +55,7 @@
             "id": "ID",
             "name": "Name",
             "email": "Email",
-            "contact_number": "Contact number",
+            "contact_number": "Contact",
             "birthday": "Birthday",
             "role": "Role",
             "sawmills": "Sawmills",
@@ -88,8 +89,8 @@
         "fields": {
             "id": "ID",
             "name": "Name",
-            "contact_number": "Contact number",
-            "no_contact_number": "Number missing",
+            "contact_number": "Contact",
+            "no_contact_number": "No contact",
             "address": "Address",
             "no_address": "Address missing"
         },
@@ -156,9 +157,11 @@
             "fields": {
                 "items": "Items",
                 "quantity": "Quantity",
-                "price": "Price",
+                "netPrice": "Net price",
+                "grossPrice": "Gross price",
                 "unit_of_measure": "Unit of measure",
-                "total": "Total"
+                "total": "Total",
+                "vat": "VAT"
             },
             "mainTotal": "TOTAL"
         }
@@ -168,7 +171,7 @@
             "Pending": "Pending",
             "Ready": "Ready",
             "Dispatched": "Dispatched",
-            "Cancelled": "Cancelled"
+            "Canceled": "Canceled"
         }
     },
     "sawmills": {
@@ -216,8 +219,10 @@
             "description": "Description",
             "notes": "Notes",
             "production_year": "Production year",
-            "last_service_working_hours": "Service working hours",
-            "last_service_date": "Service date",
+            "no_production_year": "No production year",
+            "last_service_working_hours": "Last service hours",
+            "no_last_service_working_hours": "Not provided",
+            "last_service_date": "Last service",
             "no_last_service_date": "No service date",
             "sawmill": "Sawmill",
             "next_service_date": "Next service",
@@ -245,7 +250,7 @@
         "products": "Products",
         "manage": "Manage products",
         "product": "Product",
-        "noProducts": "No Products",
+        "noProducts": "No products",
         "productSearch": "Search for product",
         "titles": {
             "list": "Products",
@@ -257,7 +262,9 @@
             "name": "Name",
             "description": "Description",
             "isActive": "Active",
-            "price": "Price",
+            "netPrice": "Net price",
+            "grossPrice": "Gross price",
+            "vat": "VAT",
             "unit_of_measure": "Unit of measure",
             "quantity": "Quantity",
             "value": "Value",
@@ -277,7 +284,7 @@
         "materials": "Materials",
         "manage": "Manage materials",
         "product": "Material",
-        "noMaterials": "No Materials",
+        "noMaterials": "No materials",
         "materialSearch": "Search for material",
         "titles": {
             "list": "Materials",
@@ -299,6 +306,7 @@
             }
         },
         "filter": {
+            "submit": "Submit",
             "sawmill": {
               "label": "Sawmill"
             }
@@ -308,7 +316,7 @@
         "wastes": "Wastes",
         "manage": "Manage wastes",
         "waste": "Waste",
-        "noWastes": "No Wastes",
+        "noWastes": "No wastes",
         "wasteSearch": "Search for waste",
         "titles": {
             "list": "Wastes",
@@ -320,7 +328,9 @@
             "name": "Name",
             "description": "Description",
             "isActive": "Active",
-            "price": "Price",
+            "netPrice": "Net price",
+            "grossPrice": "Gross price",
+            "vat": "VAT",
             "unit_of_measure": "Unit of measure",
             "quantity": "Quantity",
             "value": "Value",
@@ -330,6 +340,7 @@
             }
         },
         "filter": {
+            "submit": "Submit",
             "sawmill": {
               "label": "Sawmill"
             }
@@ -352,8 +363,12 @@
             "wastesAmount": "{{amount}} wastes",
             "date": "Date",
             "sawmill": "Sawmill",
+            "sawmills": "Sawmills",
             "materials": "Materials",
             "products": "Products",
+            "addMaterials": "Add materials",
+            "addWastes": "Add wastes",
+            "addProducts": "Add products",
             "wastes": "Wastes",
             "quantity": "Quantity",
             "value": "Value"
@@ -364,6 +379,18 @@
         "output": {
             "products": "Output products",
             "wastes": "Output wastes"
+        }
+    },
+    "inventory": {
+        "fields": {
+            "products": "Products",
+            "materials": "Materials",
+            "wastes": "Wastes",
+            "quantity": "Quantity",
+            "value": "Value"
+        },
+        "filter": {
+            "title": "Filters"
         }
     },
     "dashboard": {
@@ -412,7 +439,7 @@
         "undo": "Undo",
         "import": "Import",
         "ready": "Ready",
-        "dispatched": "Dispatched",
+        "dispatched": "Dispatch",
         "export": "Export",
         "clone": "Clone",
         "accept": "Accept",

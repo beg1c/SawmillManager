@@ -13,9 +13,9 @@ import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { ISawmill } from "../../interfaces/interfaces";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Stack } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { format } from "date-fns";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 
 export const CreateSawmillModal: React.FC<
@@ -27,14 +27,15 @@ export const CreateSawmillModal: React.FC<
     register,
     formState: { errors },
 }) => {
-
     const t = useTranslate();
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     return (
         <Dialog
             open={visible}
             onClose={close}
-            PaperProps={{ sx: { minWidth: 500 } }}
+            PaperProps={{ sx: { minWidth: isSmallScreen ? 300 : 500 } }}
         >
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>
@@ -44,6 +45,7 @@ export const CreateSawmillModal: React.FC<
                     sx={{ display: "flex", flexDirection: "column" }}
                 >
                     <TextField
+                        required
                         id="name"
                         {...register("name", {
                             required: "Sawmill name is required",
@@ -75,7 +77,7 @@ export const CreateSawmillModal: React.FC<
                                 defaultValue={null}
                                 render={({field}) => (
                                     <TimePicker
-                                        sx={{ marginRight: 1 }}
+                                        sx={{ marginRight: isSmallScreen ? 0 : 1, width: isSmallScreen ? '100%' : 'auto' }}
                                         ampm={false}
                                         views={['hours', 'minutes']}
                                         label="Open from" 
@@ -93,7 +95,7 @@ export const CreateSawmillModal: React.FC<
                                 defaultValue={null}
                                 render={({field}) => (
                                     <TimePicker
-                                        sx={{ marginLeft: 1 }}
+                                        sx={{ marginLeft: isSmallScreen ? 0 : 1, width: isSmallScreen ? '100%' : 'auto', marginTop: isSmallScreen ? 2 : 0 }}
                                         ampm={false}
                                         views={['hours', 'minutes']}
                                         label="Open until" 

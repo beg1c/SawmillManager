@@ -53,14 +53,14 @@ class AuthController extends Controller
             ], 401);
         }
 
-        if (!Hash::check($changeData['current_password'], $user->password)) {
+        if (!Hash::check($request['current_password'], $user->password)) {
             return response()->json([
                 'message' => 'Invalid current password.'
             ], 401);
         }
 
         $user->update([
-            'password' => Hash::make($changeData['new_password'])
+            'password' => Hash::make($request['new_password'])
         ]);
 
         return response()->json([

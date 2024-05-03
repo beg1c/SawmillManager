@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
     BaseRecord,
@@ -6,6 +5,7 @@ import {
     HttpError,
     IResourceComponentsProps,
     useCan,
+    useNavigation,
     useTranslate
 } from "@refinedev/core";
 import { List, ShowButton, useAutocomplete, useDataGrid } from "@refinedev/mui";
@@ -18,11 +18,13 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import { Autocomplete, Stack, Typography } from "@mui/material";
+import { Autocomplete, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { IDailyLog, IDailyLogFilterVariables, ISawmill } from "../../interfaces/interfaces";
 import { CustomTooltip } from "../../components/customTooltip";
 import { CreateDailyLogModal } from "../../components/dailyLog/createDailyLog";
+import { format } from "date-fns";
+import { LockOpenOutlined, LockOutlined } from "@mui/icons-material";
 
 export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
@@ -30,6 +32,9 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
         resource: 'dailylogs',
         action: 'create'
     })
+    const { show } = useNavigation();
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const { dataGridProps, search } = useDataGrid<
         IDailyLog,
@@ -67,7 +72,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
         HttpError
     >({
         refineCoreProps: { action: "create" },
-        syncWithLocation: true,
+        warnWhenUnsavedChanges: false,
     });
 
     const {
@@ -81,14 +86,24 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                 headerName: t("logs.fields.date"),
                 minWidth: 150,
                 flex: 1,
+                renderCell: function render({ row }) {
+                    const date = new Date(row.date);
+                    return (
+                        <Stack spacing={2} direction="row">
+                            {row.locked_at ? <LockOutlined color="primary"/> : <LockOpenOutlined color="error"/>}
+                            <Typography>{format(date, 'dd.MM.yyyy')}</Typography>
+                        </Stack>
+                        );
+                    }
             },
             {
                 field: "sawmill",
                 headerName: t("logs.fields.sawmill"),
-                minWidth: 100,
+                minWidth: 150,
                 flex: 1,
+                sortable: false,
                 valueGetter: (params) => {
-                    return params?.row?.sawmill.name;
+                    return params?.row?.sawmill?.name;
                 }
             },
             {
@@ -104,9 +119,13 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             placement="top"
                             title={
                                 <Stack sx={{ padding: "2px" }}>
-                                    {row.materials?.map((material) => (
-                                        <li key={material.id}>{material.quantity + 'x ' + material.name}</li>
-                                    ))}
+                                    {row.materials?.length ? 
+                                        row.materials.map((material) => (
+                                            <li key={material.id}>{Number(material.quantity).toFixed(2) + 'm3 ' + material.name}</li>
+                                        ))
+                                    :
+                                        <li>{t("materials.noMaterials")}</li>
+                                    }
                                 </Stack>
                             }
                         >
@@ -119,7 +138,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                     );
                 },
                 flex: 1,
-                minWidth: 100,
+                minWidth: 120,
             },
             {
                 field: "products",
@@ -134,9 +153,13 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             placement="top"
                             title={
                                 <Stack sx={{ padding: "2px" }}>
-                                    {row.products?.map((product) => (
-                                        <li key={product.id}>{product.quantity + 'x ' + product.name}</li>
-                                    ))}
+                                    {row.products?.length ? 
+                                        row.products.map((product) => (
+                                            <li key={product.id}>{Number(product.quantity).toFixed(2) + 'm3 ' + product.name}</li>
+                                        ))
+                                    :
+                                        <li>{t("products.noProducts")}</li>
+                                    }
                                 </Stack>
                             }
                         >
@@ -149,7 +172,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                     );
                 },
                 flex: 1,
-                minWidth: 100,
+                minWidth: 120,
             },
             {
                 field: "wastes",
@@ -164,9 +187,13 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             placement="top"
                             title={
                                 <Stack sx={{ padding: "2px" }}>
-                                    {row.wastes?.map((waste) => (
-                                        <li key={waste.id}>{waste.quantity + 'x ' + waste.name}</li>
-                                    ))}
+                                    {row.wastes?.length ? 
+                                        row.wastes.map((waste) => (
+                                            <li key={waste.id}>{Number(waste.quantity).toFixed(2) + 'm3 ' + waste.name}</li>
+                                        ))
+                                    :
+                                        <li>{t("wastes.noWastes")}</li>
+                                    }
                                 </Stack>
                             }
                         >
@@ -179,7 +206,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                     );
                 },
                 flex: 1,
-                minWidth: 100,
+                minWidth: 120,
             },
             {
                 field: "actions",
@@ -202,7 +229,7 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
     return (
         <>
             <CreateDailyLogModal {...createModalFormProps} />
-            <Grid container spacing={2}>
+            <Grid container spacing={2} marginBottom={isSmallScreen ? 4 : 0}>
                 <Grid item xs={12} lg={3}>
                 <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
                         <CardHeader title={t("logs.filter.title")} />
@@ -272,8 +299,17 @@ export const DailyLogList: React.FC<IResourceComponentsProps> = () => {
                             {...dataGridProps}
                             columns={columns}
                             filterModel={undefined}
+                            onRowClick={({ id }) => {
+                                show("dailylogs", id);
+                            }}
                             autoHeight
                             pageSizeOptions={[10, 20, 50, 100]} 
+                            sx={{
+                                ...dataGridProps.sx,
+                                "& .MuiDataGrid-row": {
+                                    cursor: "pointer",
+                                },
+                            }}
                         />
                     </List>
                 </Grid>

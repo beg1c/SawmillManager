@@ -14,14 +14,14 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { IEquipment, ISawmill } from "../../interfaces/interfaces";
-import { green } from "@mui/material/colors";
 import { Controller, FieldValues, SubmitHandler } from "react-hook-form";
-import { Autocomplete, Input } from "@mui/material";
+import { Autocomplete, Box, Input, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { format, isValid, parseISO } from "date-fns";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useState } from "react";
 import ImageCrop from "../../components/imageCrop";
+import { HandymanRounded } from "@mui/icons-material";
 
 
 export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
@@ -33,6 +33,8 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
         control,
         handleSubmit,
     } = useForm<IEquipment, HttpError, IEquipment>();
+    const { palette, breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const [croppedBase64, setCroppedBase64] = useState<string>();
     const [imageSrc, setImageSrc] = useState<string>();
@@ -74,13 +76,13 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
         onFinish(extendedValues);
     };
 
-
     const { autocompleteProps: sawmillsAutocompleteProps} = useAutocomplete<ISawmill>({
         resource: "sawmills",
     });
 
     return (
         <>
+        <Box marginBottom={ isSmallScreen ? 7 : 0}>
         <Create 
             isLoading={formLoading} 
             saveButtonProps={{
@@ -99,10 +101,11 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                     <Grid mb={1} item xs={12} md={4}>
                         <Stack
                             gap={1}
+                            display="flex"
                             justifyContent="center"
                             alignItems="center"
                         >
-                            <label htmlFor="avatar-input">
+                            <label htmlFor="avatar-input" style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
                                 <Input
                                     id="avatar-input"
                                     type="file"
@@ -116,8 +119,9 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                     type="hidden"
                                 />
                                 <Avatar
+                                    
                                     sx={{
-                                        bgcolor: green[500],
+                                        bgcolor: palette.primary.main,
                                         cursor: "pointer",
                                         width: {
                                             xs: 180,
@@ -130,7 +134,8 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                     }}
                                     alt="Equipment photo"
                                     src={croppedBase64}
-                                >{t("images.add")}</Avatar>
+                                ><HandymanRounded sx={{ fontSize: 64 }}/></Avatar>
+                                <Typography variant="h6" align="center">{t("employees.images.change_image")}</Typography>
                             </label>
                         </Stack>
                     </Grid>
@@ -179,7 +184,7 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                 <TextField
                                     {...register("name", {
                                         required: t("errors.required.field", {
-                                            field: "name",
+                                            field: "Name",
                                         }),
                                     })}
                                     size="small"
@@ -208,13 +213,50 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                     size="small"
                                     margin="none"
                                     variant="outlined"
+                                    type="number"
                                 />
-                                {errors.production_year && (
-                                    <FormHelperText error>
-                                        {errors.production_year.message}
-                                    </FormHelperText>
-                                )}
                             </FormControl>
+                            <FormControl>
+                                <FormLabel
+                                    sx={{
+                                        marginBottom: "8px",
+                                        fontWeight: "700",
+                                        fontSize: "14px",
+                                        color: "text.primary",
+                                    }}
+                                >
+                                    {t("equipment.fields.last_service_date")}
+                                </FormLabel>
+                                <Controller
+                                    control={control}
+                                    name="last_service_date"
+                                    defaultValue={null as any}
+                                    render={({field}) => (
+                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                        <DatePicker
+                                            value={field.value ? parseISO(field.value.toString()) : null}
+                                            slotProps={{
+                                                textField: { 
+                                                    size: 'small',
+                                                } 
+                                            }}
+                                            onChange={(date) => {
+                                                const selectedDate = date ? format(date, 'yyyy-MM-dd') : null; 
+                                                field.onChange(selectedDate);
+                                            }}         
+                                        />
+                                    </LocalizationProvider>
+
+                                    )}
+                                >
+                                </Controller>
+                                {errors.last_service_date && (
+                                <FormHelperText error>
+                                    {// @ts-ignore 
+                                    } {errors.last_service_date.message}
+                                </FormHelperText>
+                            )}
+                        </FormControl>
                         </Stack>
                     </Grid>
                     <Grid
@@ -238,19 +280,19 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                     fontWeight: "700",
                                     fontSize: "14px",
                                     color: "text.primary",
+                                    marginTop: isSmallScreen ? '24px' : 0,
                                 }}
                             >
-                                {t("equipment.fields.last_service_date")}
+                                {t("equipment.fields.next_service_date")}
                             </FormLabel>
                                 <Controller
                                     control={control}
-                                    name="last_service_date"
+                                    name="next_service_date"
                                     defaultValue={null as any}
                                     render={({field}) => (
                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                                         <DatePicker
-                                            value={field.value && isValid(parseISO(field.value)) ? 
-                                                parseISO(field.value) : null}
+                                            value={field.value ? parseISO(field.value.toString()) : null}
                                             slotProps={{
                                                 textField: { 
                                                     size: 'small',
@@ -266,12 +308,6 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                     )}
                                 >
                                 </Controller>
-                            {errors.last_service_date && (
-                                <FormHelperText error>
-                                    {// @ts-ignore 
-                                    } {errors.last_service_date.message}
-                                </FormHelperText>
-                            )}
                         </FormControl>
                         <FormControl fullWidth>
                             <FormLabel
@@ -289,12 +325,8 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                 size="small"
                                 margin="none"
                                 variant="outlined"
+                                type="number"
                             />
-                            {errors.last_service_working_hours && (
-                                <FormHelperText error>
-                                    {errors.last_service_working_hours.message}
-                                </FormHelperText>
-                            )}
                         </FormControl>
                         <FormControl fullWidth>
                                 <FormLabel
@@ -340,17 +372,17 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                                                     {...params}
                                                     variant="outlined"
                                                     error={
-                                                        !!errors.name
+                                                        !!errors.sawmill
                                                     }
                                                 />
                                             )}
                                         />
                                     )}
                                 />
-                                {errors.name && (
+                                {errors.sawmill && (
                                     <FormHelperText error>
                                         {// @ts-ignore 
-                                        }{errors.name.message}
+                                        }{errors.sawmill.message}
                                     </FormHelperText>
                                 )}
                             </FormControl>
@@ -359,6 +391,7 @@ export const EquipmentCreate: React.FC<IResourceComponentsProps> = () => {
                 </Grid>
             </form>
         </Create>
+        </Box>
 
         {!!imageSrc && (
             <ImageCrop 

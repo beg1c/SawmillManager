@@ -5,9 +5,9 @@ import {
     useTranslate,
     HttpError,
     useModal,
-    useApiUrl,
     useGetIdentity,
     useUpdate,
+    useCan,
 } from "@refinedev/core";
 import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import { useStepsForm } from "@refinedev/react-hook-form";
@@ -36,15 +36,21 @@ import { RotateLoader } from "react-spinners";
 import ImageCrop from "../../components/imageCrop";
 import { LockOutlined } from "@mui/icons-material";
 import { ChangePasswordModal } from "../../components/changePassword";
-import { Typography, useTheme } from "@mui/material";
+import { Typography, useMediaQuery, useTheme } from "@mui/material";
 
 export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
-    const { palette } = useTheme();
+    const { palette, breakpoints } = useTheme();
     const stepTitles = [
         t("employees.steps.content"),
         t("employees.steps.relations"),
     ];
+    const { data: can } = useCan({
+        resource: 'employees',
+        action: 'edit'
+    })
+
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const { mutate: mutateUpdate } = useUpdate();
     
@@ -57,7 +63,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
     const { show: showCropModal } = imageCropModalProps;
     
     const changePasswordModalProps = useModal();
-    const { show: showPasswordModal } = changePasswordModalProps;
+    const { show: showPasswordModal, close: closePasswordModal } = changePasswordModalProps;
 
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -80,13 +86,19 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
     }
 
     const handlePasswordChange = (currentPassword: string, newPassword: string) => {
-        employee?.id && mutateUpdate({
+        employee?.id && mutateUpdate(
+        {
             resource: 'change-password',
             values: {
                 current_password: currentPassword,
                 new_password: newPassword
-            },
+            },  
             id: employee.id,
+        },
+        {
+            onSuccess: () => {
+                closePasswordModal();
+            },
         })
     }
     
@@ -142,7 +154,6 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
     const { autocompleteProps: sawmillsAutocompleteProps} = useAutocomplete<ISawmill>({
         resource: "sawmills",
     });
-
 
     if (formLoading) {
         return (
@@ -234,6 +245,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                                     size="small"
                                                     margin="none"
                                                     variant="outlined"
+                                                    defaultValue={employee?.name}
                                                 />
                                                 {errors.name && (
                                                     <FormHelperText error>
@@ -270,6 +282,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                                     size="small"
                                                     margin="none"
                                                     variant="outlined"
+                                                    defaultValue={employee?.email}
                                                 />
                                                 {errors.email && (
                                                     <FormHelperText error>
@@ -283,7 +296,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                                     sx={{
                                                         bgcolor: palette.primary.main,
                                                         color: "white",
-                                                        width: "50%"
+                                                        width: isSmallScreen ? '100%' : '50%',
                                                     }}
                                                     onClick={() => showPasswordModal()}
                                                 >
@@ -320,6 +333,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                                     mask="(999) 999 99 99"
                                                     disabled={false}
                                                     {...register("contact_number")}
+                                                    defaultValue={employee?.contact_number || undefined}
                                                 >
                                                     {/* @ts-expect-error False alarm */}
                                                     {(
@@ -354,7 +368,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                                     <Controller
                                                         control={control}
                                                         name="birthday"
-                                                        defaultValue={null as any}
+                                                        defaultValue={employee?.birthday || undefined}
                                                         render={({field}) => (
                                                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                                                             <DatePicker
@@ -369,6 +383,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                                                     const selectedDate = date ? format(date, 'yyyy-MM-dd') : null; 
                                                                     field.onChange(selectedDate);
                                                                 }}         
+                                                                format="dd.MM.yyyy"
                                                             />
                                                         </LocalizationProvider>
   
@@ -394,7 +409,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                     <>
                         <Grid container spacing={2}>
                             <Grid container item xs={12} md={12} gap={5}>
-                                <Grid item xs={8} md={6}>
+                                <Grid item xs={12} md={6}>
                                     <FormControl fullWidth>
                                         <FormLabel
                                             required
@@ -417,7 +432,9 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                             defaultValue={null as any}
                                             render={({ field }) => (
                                                 <Autocomplete
+                                                    disableClearable
                                                     size="small"
+                                                    disabled={!can?.can}
                                                     {...rolesAutocompleteProps}
                                                     {...field}
                                                     onChange={(_, value) => {
@@ -460,7 +477,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                         )}
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={4} md={5}>
+                                <Grid item xs={12} md={5}>
                                 <FormControl fullWidth>
                                         <FormLabel
                                             sx={{
@@ -479,7 +496,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                                             render={({ field }) => (
                                                 <Autocomplete
                                                     multiple
-                                                    disabled={role?.role_name === 'executive'}
+                                                    disabled={role?.role_name === 'executive' || !can?.can}
                                                     size="small"
                                                     {...sawmillsAutocompleteProps}
                                                     {...field}
@@ -531,6 +548,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
 
     return (
         <>
+        <Box marginBottom={ isSmallScreen ? 7 : 0 }>
         <Edit
             isLoading={formLoading}
             footerButtons={
@@ -584,6 +602,7 @@ export const EmployeeEdit: React.FC<IResourceComponentsProps> = () => {
                 {renderFormByStep(currentStep)}
             </Box>
         </Edit>
+        </Box>
 
         {!!imageSrc && (
             <ImageCrop 

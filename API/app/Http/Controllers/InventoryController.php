@@ -4,129 +4,52 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Inventory;
-use App\Models\Sawmill;
-use App\Models\Product;
-use App\Models\Material;
-use App\Models\Waste;
 use App\Http\Resources\InventoryResource;
-use App\Http\Resources\ProductResource;
-use App\Http\Resources\WasteResource;
-use App\Http\Resources\MaterialResource;
+use App\Http\Requests\InventoryItemStoreRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Services\InventoryService;
 
 class InventoryController extends Controller
 {
-    public function index()
+    protected $inventoryService;
+
+    public function __construct(InventoryService $inventoryService)
     {
-        $pageSize = request()->query('pageSize', 10);
-        $querySawmill = request()->query('sawmill');
-        $requestUri = request()->getRequestUri();
-        $sawmills = Sawmill::pluck('id')->toArray();
+        $this->inventoryService = $inventoryService;
+    }
+
+    public function show($id)
+    {
         $user = Auth::user();
         $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
 
-        if (strpos($requestUri, '/inventory/products') !== false) {
-            $inventoryType = 'products';
-        } elseif (strpos($requestUri, '/inventory/wastes') !== false) {
-            $inventoryType = 'wastes';
-        } elseif (strpos($requestUri, '/inventory/materials') !== false) {
-            $inventoryType = 'materials';
-        } else {
+        if (!in_array($id, $user_sawmill_ids)) {
             return response()->json([
-                'message' => 'Inventory not found'
-            ], 404);
+                "message" => "You are not authorized to view that inventory."
+            ], 403);
         }
 
-        if ($querySawmill === null) {
-            $inventories = Inventory::whereIn('sawmill_id', $user_sawmill_ids)
-                ->with($inventoryType)->get();
-            $items = $this->retrieveInventoriesItems($inventories, $inventoryType, $pageSize);
-        }
-        else {
-            if (!Gate::allows('view-all-inventories') && !in_array($querySawmill, $user_sawmill_ids)) {
-                return response()->json([
-                    "message" => "You are not authorized to view that inventory."
-                ], 403);
-            }
-            $inventory = Inventory::findorfail($querySawmill);
-            $items = $inventory->{$inventoryType}()->paginate($pageSize);
-        }
+        $inventory = Inventory::where('sawmill_id', $id)->first();
 
-        switch ($inventoryType) {
-            case 'products':
-                return ProductResource::collection($items);
-            case 'materials':
-                return MaterialResource::collection($items);
-            case 'wastes':
-                return WasteResource::collection($items);
-        }
+        return new InventoryResource($inventory);
     }
 
-    /* For simplicity sake we will handle available quantities (adding, subtracting) on front-end
-    for now and only send calculated values to API. */
-    public function updateItem(InventoryItemRequest $request)
+    public function update(InventoryItemStoreRequest $request, $sawmill_id)
     {
-        switch ($request['type']) {
-            case 'material':
-                $model = Material::find($request['item_id']);
-                $relation = 'materials';
-                break;
-            case 'product':
-                $model = Product::find($request['item_id']);
-                $relation = 'products';
-                break;
-            case 'waste':
-                $model = Waste::find($request['item_id']);
-                $relation = 'wastes';
-                break;
-            default:
-                return response()->json(['message' => 'Invalid item type'], 400);
+        $user = Auth::user();
+        $user_sawmill_ids = $user->sawmills()->pluck('sawmill_id')->toArray();
+
+        if (!in_array($sawmill_id, $user_sawmill_ids)) {
+            return response()->json([
+                "message" => "You are not authorized to modify that inventory."
+            ], 403);
         }
 
-        $inventory = Inventory::findOrFail($request['inventory_id']);
-        $quantity = $request['quantity'];
-
-        if ($quantity < 1) {
-            $inventory->$relation()->detach($model->id);
-            return response()->json(['message' => ucfirst($request['type']) . ' deleted from inventory'], 200);
-        } else {
-            if ($inventory->$relation()->where('id', $model->id)->exists()) {
-                $inventory->$relation()->updateExistingPivot($model->id, ['quantity' => $quantity]);
-                return response()->json(['message' => ucfirst($request['type']) . ' quantity updated in inventory'], 200);
-            } else {
-                $inventory->$relation()->attach($model->id, ['quantity' => $quantity]);
-                return response()->json(['message' => ucfirst($request['type']) . ' added to inventory'], 200);
-            }
-        }
-    }
-
-    private function retrieveInventoriesItems($inventories, $inventoryType, $pageSize)
-    {
-        $allItems = [];
-
-        foreach ($inventories as $inventory) {
-            foreach ($inventory[$inventoryType] as $item) {
-                $itemId = $item['id'];
-                $quantity = $item['pivot']['quantity'];
-
-                if (array_key_exists($itemId, $allItems)) {
-                    $allItems[$itemId]['quantity'] += $quantity;
-                } else {
-                    $allItems[$itemId] = $item;
-                    $allItems[$itemId]['pivot']['quantity'] = $quantity;
-                }
-            }
+        if (!$request->input('quantity')) {
+            return $this->inventoryService->deleteInventoryItem($request->input('type'), $request->input('item_id'), $sawmill_id, "user");
         }
 
-        $allItems = array_values($allItems);
-
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $pagedData = array_slice($allItems, ($currentPage - 1) * $pageSize, $pageSize);
-        $paginator = new LengthAwarePaginator($pagedData, count($allItems), $pageSize);
-        $paginator->setPath(request()->url());
-
-        return $paginator;
+        return $this->inventoryService->updateInventoryItem($request->input('type'), $request->input('item_id'), $request->input('quantity'), $sawmill_id, "user");
     }
 }

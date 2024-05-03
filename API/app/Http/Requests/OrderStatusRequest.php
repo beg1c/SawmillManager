@@ -22,9 +22,10 @@ class OrderStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => "required|in:Dispatched,Ready",
+            'status' => "required|in:Dispatched,Ready,Canceled",
             'ready_at' => 'date',
-            'dispatched_at' => 'date'
+            'dispatched_at' => 'date',
+            'canceled_at' => 'date',
         ];
     }
 }

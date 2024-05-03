@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('sawmill_id')->references('id')
-                ->on('sawmills')->onDelete('set null');
+                ->on('sawmills')->onDelete('cascade');
         });
     }
 

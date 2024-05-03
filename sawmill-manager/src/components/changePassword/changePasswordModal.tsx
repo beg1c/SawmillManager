@@ -8,6 +8,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 
 interface ChangePasswordProps extends useModalReturnType {
@@ -25,7 +26,8 @@ export const ChangePasswordModal: React.FC<ChangePasswordProps> = ({
     close,
     onPasswordComplete
 }) => {
-
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
     const t = useTranslate();
     const [buttonDisabled, setButtonDisabled] = useState(true);
     const [form, setForm] = useState<PasswordForm>({
@@ -55,7 +57,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordProps> = ({
         <Dialog
             open={visible}
             onClose={close}
-            PaperProps={{ sx: { minWidth: 500 } }}
+            PaperProps={{ sx: { minWidth: isSmallScreen ? 300 : 500 } }}
         >
             <DialogTitle>{t("employees.password_change")}</DialogTitle>
             <DialogContent>
@@ -73,6 +75,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordProps> = ({
                         }}
                         margin="normal"
                         fullWidth
+                        placeholder="Current password"
                         label="Current password"
                         name="name"
                     />
@@ -85,6 +88,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordProps> = ({
                         }}
                         margin="normal"
                         fullWidth
+                        placeholder="New password"
                         label="New password"
                         name="newPassword"
                     />
@@ -97,6 +101,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordProps> = ({
                         }}
                         margin="normal"
                         fullWidth
+                        placeholder="New password"
                         label="Repeat new password"
                         name="repeatNewPassword"
                     />

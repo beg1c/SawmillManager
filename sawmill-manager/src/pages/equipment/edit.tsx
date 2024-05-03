@@ -15,20 +15,21 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { IEquipment, ISawmill } from "../../interfaces/interfaces";
-import { green } from "@mui/material/colors";
 import { Controller, FieldValues, SubmitHandler } from "react-hook-form";
-import { Autocomplete, Input, Typography, useTheme } from "@mui/material";
+import { Autocomplete, Box, Input, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { format, isValid, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { RotateLoader } from "react-spinners";
 import { useState } from "react";
 import ImageCrop from "../../components/imageCrop";
+import { HandymanRounded } from "@mui/icons-material";
 
 
 export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
-    const { palette } = useTheme();
+    const { palette, breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
     const {
         register,
         refineCore: { formLoading, onFinish, queryResult },
@@ -98,6 +99,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
 
     return (
         <>
+        <Box marginBottom={ isSmallScreen ? 7 : 0 }>
         <Edit 
             isLoading={formLoading} 
             saveButtonProps={{
@@ -119,7 +121,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                             justifyContent="center"
                             alignItems="center"
                         >
-                            <label htmlFor="avatar-input">
+                            <label htmlFor="avatar-input" style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
                                 <Input
                                     id="avatar-input"
                                     type="file"
@@ -134,7 +136,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                 />
                                 <Avatar
                                     sx={{
-                                        bgcolor: green[500],
+                                        bgcolor: palette.primary.main,
                                         cursor: "pointer",
                                         width: {
                                             xs: 180,
@@ -147,7 +149,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     }}
                                     alt="Equipment photo"
                                     src={croppedBase64 || equipment?.photo}
-                                >{t("images.add")}</Avatar>
+                                ><HandymanRounded sx={{ fontSize: 64 }}/></Avatar>
                             </label>
                             <Typography variant="h6">{t("equipment.images.change_image")}</Typography>
                         </Stack>
@@ -175,6 +177,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     size="small"
                                     margin="none"
                                     variant="outlined"
+                                    defaultValue={equipment?.type}
                                 />
                                 {errors.type && (
                                     <FormHelperText error>
@@ -203,6 +206,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     size="small"
                                     margin="none"
                                     variant="outlined"
+                                    defaultValue={equipment?.name}
                                 />
                                 {errors.name && (
                                     <FormHelperText error>
@@ -230,6 +234,8 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     size="small"
                                     margin="none"
                                     variant="outlined"
+                                    type="number"
+                                    defaultValue={equipment?.production_year}
                                 />
                                 {errors.production_year && (
                                     <FormHelperText error>
@@ -246,17 +252,16 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                         color: "text.primary",
                                     }}
                                 >
-                                    {t("equipment.fields.next_service_date")}
+                                    {t("equipment.fields.last_service_date")}
                                 </FormLabel>
                                 <Controller
                                     control={control}
-                                    name="next_service_date"
-                                    defaultValue={null as any}
+                                    name="last_service_date"
+                                    defaultValue={equipment?.last_service_date || undefined}
                                     render={({field}) => (
                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                                         <DatePicker
-                                            value={field.value && isValid(parseISO(field.value)) ? 
-                                                parseISO(field.value) : null}
+                                            value={field.value ? parseISO(field.value.toString()) : null}
                                             slotProps={{
                                                 textField: { 
                                                     size: 'small',
@@ -272,7 +277,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     )}
                                 >
                                 </Controller>
-                            {errors.last_service_date && (
+                                {errors.last_service_date && (
                                 <FormHelperText error>
                                     {// @ts-ignore 
                                     } {errors.last_service_date.message}
@@ -302,19 +307,19 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     fontWeight: "700",
                                     fontSize: "14px",
                                     color: "text.primary",
+                                    marginTop: isSmallScreen ? '24px' : 0,
                                 }}
                             >
-                                {t("equipment.fields.last_service_date")}
+                                {t("equipment.fields.next_service_date")}
                             </FormLabel>
                                 <Controller
                                     control={control}
-                                    name="last_service_date"
-                                    defaultValue={null as any}
+                                    name="next_service_date"
+                                    defaultValue={equipment?.next_service_date || undefined}
                                     render={({field}) => (
                                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                                         <DatePicker
-                                            value={field.value && isValid(parseISO(field.value)) ? 
-                                                parseISO(field.value) : null}
+                                            value={field.value ? parseISO(field.value.toString()) : null}
                                             slotProps={{
                                                 textField: { 
                                                     size: 'small',
@@ -330,10 +335,10 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                     )}
                                 >
                                 </Controller>
-                            {errors.last_service_date && (
+                            {errors.next_service_date && (
                                 <FormHelperText error>
                                     {// @ts-ignore 
-                                    } {errors.last_service_date.message}
+                                    } {errors.next_service_date.message}
                                 </FormHelperText>
                             )}
                         </FormControl>
@@ -357,6 +362,8 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                 size="small"
                                 margin="none"
                                 variant="outlined"
+                                type="number"
+                                defaultValue={equipment?.last_service_working_hours}
                             />
                             {errors.last_service_working_hours && (
                                 <FormHelperText error>
@@ -378,7 +385,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                                 <Controller
                                     control={control}
                                     name="sawmill"  
-                                    defaultValue={null as any}
+                                    defaultValue={equipment?.sawmill}
                                     render={({ field }) => (
                                         <Autocomplete
                                             size="small"
@@ -427,6 +434,7 @@ export const EquipmentEdit: React.FC<IResourceComponentsProps> = () => {
                 </Grid>
             </form>
         </Edit>
+        </Box>
 
         {!!imageSrc && (
             <ImageCrop 

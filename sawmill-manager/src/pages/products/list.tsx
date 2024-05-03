@@ -20,12 +20,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import { IProduct } from "../../interfaces/interfaces";
 import { CreateProduct, EditProduct, ProductItem } from "../../components/product";
 import { RotateLoader } from "react-spinners";
-import { useTheme } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 
 
 export const ProductList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
-    const { palette } = useTheme();
+    const { palette, breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const { tableQueryResult, setFilters, setCurrent, filters, pageCount } =
         useTable<IProduct>({
@@ -39,7 +40,8 @@ export const ProductList: React.FC<IResourceComponentsProps> = () => {
     >({
         refineCoreProps: { 
             resource: "products",
-            action: "create" 
+            action: "create", 
+            redirect: false,
         },
     });
 
@@ -87,11 +89,11 @@ export const ProductList: React.FC<IResourceComponentsProps> = () => {
                     my: 0.5,
                 }}
             >
-                <Grid container columns={12}>
+                <Grid container columns={12} marginBottom={ isSmallScreen ? 4 : 0 }>
                     <Grid item xs={12}>
                         <Stack
                             display="flex"
-                            justifyContent="space-between"
+                            justifyContent={isSmallScreen ? 'center' : 'space-between'}
                             alignItems="center"
                             flexWrap="wrap"
                             padding={1}

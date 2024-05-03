@@ -3,7 +3,6 @@ import { useTranslate, HttpError } from "@refinedev/core";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import Drawer from "@mui/material/Drawer";
-import FormLabel from "@mui/material/FormLabel";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -12,7 +11,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import { IDailyLog, IProduct, IProductWQuantity } from "../../interfaces/interfaces";
 import { FieldValues, SubmitHandler } from "react-hook-form";
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, InputAdornment, TextField, Typography } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
 
 const createEmptyProduct = () : IProductWQuantity => ({
@@ -21,6 +20,7 @@ const createEmptyProduct = () : IProductWQuantity => ({
     unit_of_measure: '',
     price: 0,
     quantity: 0,
+    vat: 0,
 });
 
 export const AddProducts: React.FC<
@@ -38,13 +38,14 @@ export const AddProducts: React.FC<
 
         //Remove empty product if exists
         const orderProducts = selectedProducts.filter(product => product.id !== 0);
+        setSelectedProducts(orderProducts);
     
         const extendedValues: IDailyLog = {
             ...values,
             products: orderProducts
         };
 
-        onFinish(extendedValues);
+        onFinish(extendedValues).then(close);
     };
 
     const [selectedProducts, setSelectedProducts] = useState<IProductWQuantity[]>([createEmptyProduct()]);
@@ -65,12 +66,10 @@ export const AddProducts: React.FC<
     };
 
     useEffect(() => {
-        if (queryResult && queryResult.data?.data.products) {
+        if (queryResult && queryResult.data?.data.products?.length) {
             setSelectedProducts(queryResult.data.data.products);
         }
-    }, [queryResult]);
-
-
+    }, []);
 
     const handleAddSelect = () => {
         const newSelects = [...selectedProducts, createEmptyProduct()];
@@ -78,8 +77,17 @@ export const AddProducts: React.FC<
       };
 
     const handleDeleteSelect = (id: number) => {
-      const updatedSelects = selectedProducts?.filter(product => product.id !== id);
-      setSelectedProducts(updatedSelects);
+        if (selectedProducts?.length === 1) {
+            setSelectedProducts([createEmptyProduct()]);
+        } else {
+            const updatedSelects = selectedProducts?.filter(product => product.id !== id);
+            if (updatedSelects?.length === 0) {
+                const lastProduct = selectedProducts[selectedProducts.length - 1];
+                setSelectedProducts([lastProduct]);
+            } else {
+                setSelectedProducts(updatedSelects);
+            }
+        }
     };
 
     const { autocompleteProps: productsAutocompleteProps} = useAutocomplete<IProduct>({
@@ -99,16 +107,21 @@ export const AddProducts: React.FC<
                     <Typography
                         variant="h5"
                     >
-                        Add products
+                        {t("logs.fields.addProducts")}
                     </Typography>
                 }
                 footerButtons={
+                    <Stack display="flex" direction="row" width="100%" justifyContent="space-between" paddingX={{ xs: 1, md: 6, }}>
+                    <Button onClick={handleAddSelect} variant="contained" color="primary" sx={{ width:"90px" }}>
+                        <Add />
+                    </Button>
                     <SaveButton 
                         {...saveButtonProps}
                         onClick={
                             handleSubmit(extendedOnFinish)
                         }
                     />
+                    </Stack>
                 }
                 headerProps={{
                     avatar: (
@@ -120,7 +133,7 @@ export const AddProducts: React.FC<
                                 mb: "5px",
                             }}
                         >
-                        <CloseOutlined />
+                            <CloseOutlined />
                         </IconButton>
                     ),
                     action: null,
@@ -141,18 +154,6 @@ export const AddProducts: React.FC<
                     >
                         <form onSubmit={handleSubmit(extendedOnFinish)}>
                             <Stack gap="10px" marginTop="10px">
-                                <FormLabel
-                                    required
-                                    sx={{
-                                        marginBottom: "8px",
-                                        fontWeight: "700",
-                                        fontSize: "14px",
-                                        color: "text.primary",
-                                    }}
-                                >
-                                    {t("products.products")}
-                                </FormLabel>
-                                
                                 {selectedProducts?.map((product, index) => (
                                     <FormControl 
                                         key={index} 
@@ -163,12 +164,14 @@ export const AddProducts: React.FC<
                                             fullWidth
                                             {...productsAutocompleteProps}
                                             size="small"
-                                            value={product}
+                                            value={product?.id > 0 ? product : null}
                                             getOptionLabel={(item) => { 
                                                 return item.name;
                                             }}
-                                            isOptionEqualToValue={(option, value) => option.id === value.id}
-                                            onChange={(_,value) => value ? handleProductChange(value, 1, index) : null}
+                                            isOptionEqualToValue={(option, value) => {
+                                                return option.id === value.id;
+                                            }}
+                                            onChange={(_,value) => value ? handleProductChange(value, 1, index) : ""}
                                             getOptionDisabled={(option) =>
                                                 selectedProducts.some(product => product.id === option.id)    
                                             }
@@ -176,35 +179,33 @@ export const AddProducts: React.FC<
                                                 <TextField 
                                                     {...params}
                                                     variant="outlined"
+                                                    label={"Product " + (index + 1)}
                                                 />              
                                             }
                                         />
                                         <TextField
-                                            InputProps={
-                                                { inputProps: { min: 1, max: 999 } }
-                                            }
-                                            InputLabelProps={{ shrink: true }}
+                                            InputProps={{ 
+                                                endAdornment: <InputAdornment position="end">m3</InputAdornment>,
+                                            }}
                                             id="quantity"
                                             label="Quantity"
                                             size="small"
                                             type="number"
-                                            value={product?.quantity}
-                                            onChange={(event) => handleProductChange(product, parseInt(event.target.value), index)}
-                                            defaultValue={1}
+                                            value={product?.quantity ? Number(product.quantity) : ""}
+                                            onChange={(event) => handleProductChange(product, parseFloat(event.target.value), index)}
                                             style={{
-                                                width: "120px",
+                                                width: "220px",
+                                                marginLeft: "3px",  
                                             }}
                                         />
-                                        <IconButton onClick={() => handleDeleteSelect(product.id)} aria-label="delete">
+                                        <IconButton 
+                                            onClick={() => handleDeleteSelect(product.id)} 
+                                            aria-label="delete"
+                                        >
                                             <Close />
                                         </IconButton>
                                     </FormControl>
                                 ))}
-                                <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
-                                    <Button onClick={handleAddSelect} variant="contained" color="primary" sx={{width:"100px"}}>
-                                        <Add />
-                                    </Button>
-                                </Box>
                             </Stack>
                         </form>
                     </Box>

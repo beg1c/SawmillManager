@@ -26,7 +26,7 @@ class UserStoreRequest extends FormRequest
             'name' => 'required|string|max:30',
             'email' => 'required|string|email',
             'contact_number' => 'nullable|string',
-            'role.id' => 'required|numeric|in:1,2,3,4',
+            'role.id' => 'required|numeric|in:1,2,3',
             'birthday' => 'nullable|date',
             'avatar' => ['nullable', new Base64Image]
         ];

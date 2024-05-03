@@ -2,14 +2,15 @@ import { useDataGrid } from "@refinedev/mui"
 import { IEquipment } from "../../../interfaces/interfaces"
 import { useNavigation } from "@refinedev/core"
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Avatar, Stack, Typography } from "@mui/material";
+import { Avatar, Stack, Typography, useTheme } from "@mui/material";
 import { useMemo } from "react";
 import { HandymanRounded } from "@mui/icons-material";
-import { green } from "@mui/material/colors";
-
+import FullLoader from "../../fullLoader";
+import { format } from "date-fns";
 
 export const ClosestServices = () => {
     const { edit } = useNavigation();
+    const { palette } = useTheme();
 
     const { dataGridProps } = useDataGrid<IEquipment>({
         resource: "dashboard/get-closest-services",
@@ -26,7 +27,7 @@ export const ClosestServices = () => {
                     return (
                         <Avatar 
                             sx={{ 
-                                bgcolor: green[500], 
+                                bgcolor: palette.primary.main, 
                                 width: 70, 
                                 height: 70 
                             }}
@@ -50,25 +51,27 @@ export const ClosestServices = () => {
             },
             {
             field: "next_service_date",
+            minWidth: 110,
             flex: 1,
             align: "right",
             renderCell: function render({ row }) {
-                return (
-                    <Stack>
-                        <Typography
-                            variant="caption"
-                            color="text.secondary"
-                        >
-                            Next service
-                        </Typography>
-                        <Typography>{row.next_service_date.toString()}</Typography>
-                    </Stack>
-                );
+                    return (
+                        <Stack>
+                            <Typography variant="caption" color="text.secondary">
+                                Next service
+                            </Typography>
+                            <Typography>{format(new Date(row.next_service_date), 'dd.MM.yyyy')}</Typography>
+                        </Stack>
+                    );
                 },
             },
         ],
         [],
     );
+
+    if (dataGridProps.loading) {
+        return <FullLoader />
+    }
 
     return (
         <DataGrid

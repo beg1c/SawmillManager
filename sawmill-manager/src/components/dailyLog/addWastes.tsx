@@ -3,7 +3,6 @@ import { useTranslate, HttpError } from "@refinedev/core";
 import { UseModalFormReturnType } from "@refinedev/react-hook-form";
 import { Edit, SaveButton, useAutocomplete } from "@refinedev/mui";
 import Drawer from "@mui/material/Drawer";
-import FormLabel from "@mui/material/FormLabel";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -12,7 +11,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import { IDailyLog, IWaste, IWasteWQuantity } from "../../interfaces/interfaces";
 import { FieldValues, SubmitHandler } from "react-hook-form";
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, InputAdornment, TextField, Typography } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
 
 const createEmptyWaste = () : IWasteWQuantity => ({
@@ -21,6 +20,7 @@ const createEmptyWaste = () : IWasteWQuantity => ({
     unit_of_measure: '',
     price: 0,
     quantity: 0,
+    vat: 0,
 });
 
 export const AddWastes: React.FC<
@@ -38,13 +38,14 @@ export const AddWastes: React.FC<
 
         //Remove empty waste if exists
         const orderWastes = selectedWastes.filter(waste => waste.id !== 0);
+        setSelectedWastes(orderWastes);
     
         const extendedValues: IDailyLog = {
             ...values,
             wastes: orderWastes
         };
 
-        onFinish(extendedValues);
+        onFinish(extendedValues).then(close);
     };
 
     const [selectedWastes, setSelectedWastes] = useState<IWasteWQuantity[]>([createEmptyWaste()]);
@@ -65,12 +66,10 @@ export const AddWastes: React.FC<
     };
 
     useEffect(() => {
-        if (queryResult && queryResult.data?.data.wastes) {
+        if (queryResult && queryResult.data?.data.wastes?.length) {
             setSelectedWastes(queryResult.data.data.wastes);
         }
-    }, [queryResult]);
-
-
+    }, []);
 
     const handleAddSelect = () => {
         const newSelects = [...selectedWastes, createEmptyWaste()];
@@ -78,8 +77,17 @@ export const AddWastes: React.FC<
       };
 
     const handleDeleteSelect = (id: number) => {
-      const updatedSelects = selectedWastes?.filter(waste => waste.id !== id);
-      setSelectedWastes(updatedSelects);
+        if (selectedWastes?.length === 1) {
+            setSelectedWastes([createEmptyWaste()]);
+        } else {
+            const updatedSelects = selectedWastes?.filter(waste => waste.id !== id);
+            if (updatedSelects?.length === 0) {
+                const lastWaste = selectedWastes[selectedWastes.length - 1];
+                setSelectedWastes([lastWaste]);
+            } else {
+                setSelectedWastes(updatedSelects);
+            }
+        }
     };
 
     const { autocompleteProps: wastesAutocompleteProps} = useAutocomplete<IWaste>({
@@ -99,16 +107,21 @@ export const AddWastes: React.FC<
                     <Typography
                         variant="h5"
                     >
-                        Add wastes
+                        {t("logs.fields.addWastes")}
                     </Typography>
                 }
                 footerButtons={
+                    <Stack display="flex" direction="row" width="100%" justifyContent="space-between" paddingX={{ xs: 1, md: 6, }}>
+                    <Button onClick={handleAddSelect} variant="contained" color="primary" sx={{ width:"90px" }}>
+                        <Add />
+                    </Button>
                     <SaveButton 
                         {...saveButtonProps}
                         onClick={
                             handleSubmit(extendedOnFinish)
                         }
                     />
+                    </Stack>
                 }
                 headerProps={{
                     avatar: (
@@ -120,7 +133,7 @@ export const AddWastes: React.FC<
                                 mb: "5px",
                             }}
                         >
-                        <CloseOutlined />
+                            <CloseOutlined />
                         </IconButton>
                     ),
                     action: null,
@@ -141,18 +154,6 @@ export const AddWastes: React.FC<
                     >
                         <form onSubmit={handleSubmit(extendedOnFinish)}>
                             <Stack gap="10px" marginTop="10px">
-                                <FormLabel
-                                    required
-                                    sx={{
-                                        marginBottom: "8px",
-                                        fontWeight: "700",
-                                        fontSize: "14px",
-                                        color: "text.primary",
-                                    }}
-                                >
-                                    {t("wastes.wastes")}
-                                </FormLabel>
-                                
                                 {selectedWastes?.map((waste, index) => (
                                     <FormControl 
                                         key={index} 
@@ -163,12 +164,14 @@ export const AddWastes: React.FC<
                                             fullWidth
                                             {...wastesAutocompleteProps}
                                             size="small"
-                                            value={waste}
+                                            value={waste?.id > 0 ? waste : null}
                                             getOptionLabel={(item) => { 
                                                 return item.name;
                                             }}
-                                            isOptionEqualToValue={(option, value) => option.id === value.id}
-                                            onChange={(_,value) => value ? handleWasteChange(value, 1, index) : null}
+                                            isOptionEqualToValue={(option, value) => {
+                                                return option.id === value.id;
+                                            }}
+                                            onChange={(_,value) => value ? handleWasteChange(value, 1, index) : ""}
                                             getOptionDisabled={(option) =>
                                                 selectedWastes.some(waste => waste.id === option.id)    
                                             }
@@ -176,35 +179,33 @@ export const AddWastes: React.FC<
                                                 <TextField 
                                                     {...params}
                                                     variant="outlined"
+                                                    label={"Waste " + (index + 1)}
                                                 />              
                                             }
                                         />
                                         <TextField
-                                            InputProps={
-                                                { inputProps: { min: 1, max: 999 } }
-                                            }
-                                            InputLabelProps={{ shrink: true }}
+                                            InputProps={{ 
+                                                endAdornment: <InputAdornment position="end">m3</InputAdornment>,
+                                            }}
                                             id="quantity"
                                             label="Quantity"
                                             size="small"
                                             type="number"
-                                            value={waste?.quantity}
-                                            onChange={(event) => handleWasteChange(waste, parseInt(event.target.value), index)}
-                                            defaultValue={1}
+                                            value={waste?.quantity ? Number(waste.quantity) : ""}
+                                            onChange={(event) => handleWasteChange(waste, parseFloat(event.target.value), index)}
                                             style={{
-                                                width: "120px",
+                                                width: "220px",
+                                                marginLeft: "3px",  
                                             }}
                                         />
-                                        <IconButton onClick={() => handleDeleteSelect(waste.id)} aria-label="delete">
+                                        <IconButton 
+                                            onClick={() => handleDeleteSelect(waste.id)} 
+                                            aria-label="delete"
+                                        >
                                             <Close />
                                         </IconButton>
                                     </FormControl>
                                 ))}
-                                <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
-                                    <Button onClick={handleAddSelect} variant="contained" color="primary" sx={{width:"100px"}}>
-                                        <Add />
-                                    </Button>
-                                </Box>
                             </Stack>
                         </form>
                     </Box>

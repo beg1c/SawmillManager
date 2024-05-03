@@ -28,48 +28,38 @@ use App\Http\Controllers\DashboardController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('login', [AuthController::class,'login']);
-Route::post('logout', [AuthController::class,'logout'])
-    ->middleware('auth:sanctum');
-Route::patch('orders/update-status/{id}', [OrderController::class,'updateStatus'])
-    ->middleware('auth:sanctum');
-Route::get('users/me', [UserController::class, 'me'])
-    ->middleware('auth:sanctum');
 Route::post('forgot-password', [AuthController::class,'forgotPassword']);
-Route::patch('change-password/{id}', [AuthController::class,'changePassword'])
-    ->middleware('auth:sanctum');
-Route::get('inventory/{type}', [InventoryController::class, 'index'])
-    ->middleware('auth:sanctum');
-Route::get('dashboard/recent-daily-logs', [DashboardController::class, 'getRecentDailyLogs'])
-    ->middleware('auth:sanctum');
-Route::get('dashboard/get-pending-orders', [DashboardController::class, 'getPendingOrders'])
-    ->middleware('auth:sanctum');
-Route::get('dashboard/get-biggest-customers', [DashboardController::class, 'getBiggestCustomers'])
-    ->middleware('auth:sanctum');
-Route::get('dashboard/get-recent-daily-logs', [DashboardController::class, 'getRecentDailyLogs'])
-    ->middleware('auth:sanctum');
-Route::get('dashboard/get-most-sold-products', [DashboardController::class, 'getMostSoldProducts'])
-    ->middleware('auth:sanctum');
-Route::get('dashboard/get-daily-productivity', [DashboardController::class, 'getDailyProductivity'])
-    ->middleware('auth:sanctum');
-Route::get('dashboard/get-closest-services', [DashboardController::class, 'getClosestServices'])
-    ->middleware('auth:sanctum');
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::apiResource('sawmills', SawmillController::class);
-    Route::apiResource('customers', CustomerController::class);
-    Route::apiResource('products', ProductController::class);
-    Route::apiResource('equipment', EquipmentController::class);
-    Route::apiResource('orders', OrderController::class);
-    Route::apiResource('employees', UserController::class);
-    Route::apiResource('roles', RoleController::class);
-    Route::apiResource('materials', MaterialController::class);
-    Route::apiResource('wastes', WasteController::class);
-    Route::apiResource('dailylogs', DailyLogController::class);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('logout', [AuthController::class,'logout']);
+    Route::patch('change-password/{id}', [AuthController::class,'changePassword']);
+    Route::get('users/me', [UserController::class, 'me']);
+
+    Route::patch('orders/update-status/{id}', [OrderController::class,'updateStatus']);
+
+    Route::prefix('dashboard')->group(function () {
+        Route::get('get-recent-daily-logs', [DashboardController::class, 'getRecentDailyLogs']);
+        Route::get('get-pending-orders', [DashboardController::class, 'getPendingOrders']);
+        Route::get('get-biggest-customers', [DashboardController::class, 'getBiggestCustomers']);
+        Route::get('get-most-sold-products', [DashboardController::class, 'getMostSoldProducts']);
+        Route::get('get-daily-productivity', [DashboardController::class, 'getDailyProductivity']);
+        Route::get('get-closest-services', [DashboardController::class, 'getClosestServices']);
+    });
+
+    Route::apiResources([
+        'sawmills' => SawmillController::class,
+        'customers' => CustomerController::class,
+        'products' => ProductController::class,
+        'equipment' => EquipmentController::class,
+        'orders' => OrderController::class,
+        'employees' => UserController::class,
+        'roles' => RoleController::class,
+        'materials' => MaterialController::class,
+        'wastes' => WasteController::class,
+        'dailylogs' => DailyLogController::class,
+        'inventory' => InventoryController::class,
+    ]);
 });
 
 

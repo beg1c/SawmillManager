@@ -144,14 +144,13 @@ export const WasteItem: React.FC<WasteItem> = ({
                     display="flex"
                     justifyContent="space-between"
                 >
-                <Stack>
+                <Stack width='50%'>
                     <Tooltip title={name}>
                         <Typography
                             sx={{
                                 fontWeight: 800,
                                 fontSize: "18px",
                                 overflow: "hidden",
-                                whiteSpace: "nowrap",
                                 textOverflow: "ellipsis",
                             }}
                         >

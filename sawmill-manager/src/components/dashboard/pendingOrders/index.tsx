@@ -2,13 +2,16 @@ import { NumberField, useDataGrid } from "@refinedev/mui"
 import { IOrder } from "../../../interfaces/interfaces"
 import { useNavigation } from "@refinedev/core"
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Alert, Stack, Typography } from "@mui/material";
+import { Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useMemo } from "react";
 import { OrderStatus } from "../../orderStatus";
+import FullLoader from "../../fullLoader";
 
 
 export const PendingOrders = () => {
     const { show } = useNavigation();
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const { dataGridProps } = useDataGrid<IOrder>({
         resource: "dashboard/get-pending-orders",
@@ -32,12 +35,12 @@ export const PendingOrders = () => {
                 renderCell: function render({ row }) {
                     return (
                         <Stack spacing="4px">
-                            <Typography>{row.customer.name}</Typography>
+                            <Typography>{row.customer?.name}</Typography>
                             <Typography
                                 variant="caption"
                                 color="text.secondary"
                             >
-                                {row.customer.contact_number}
+                                {row.customer?.contact_number}
                             </Typography>
                         </Stack>
                     );
@@ -45,7 +48,8 @@ export const PendingOrders = () => {
             },
             {
                 field: "amount",
-                align: "right",
+                align: isSmallScreen ? "left" : "right",
+                minWidth: 70,
                 flex: 1,
                 renderCell: function render({ row }) {
                     return (
@@ -55,7 +59,7 @@ export const PendingOrders = () => {
                             style: "currency",
                             notation: "standard",
                             }}
-                            value={row.amount}
+                            value={row.amount ? row.amount : 0}
                         />
                     );
                 },
@@ -63,6 +67,10 @@ export const PendingOrders = () => {
         ],
         [],
     );
+
+    if (dataGridProps.loading) {
+        return <FullLoader />
+    }
 
     return (
         <DataGrid

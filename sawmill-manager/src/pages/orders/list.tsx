@@ -20,7 +20,6 @@ import {
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useForm, useModalForm } from "@refinedev/react-hook-form";
 import { Controller } from "react-hook-form";
-
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -35,11 +34,19 @@ import { ICustomer, IOrder, IOrderFilterVariables, ISawmill } from "../../interf
 import { OrderStatus } from "../../components/orderStatus";
 import { CustomTooltip } from "../../components/customTooltip";
 import { CreateOrder } from "../../components/order";
+import { useMediaQuery, useTheme } from "@mui/material";
+import { format } from "date-fns";
 
 export const OrderList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
+    const { data: can } = useCan({
+        resource: "orders",
+        action: "create",
+    });
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
-    const { dataGridProps, search, filters, sorter } = useDataGrid<
+    const { dataGridProps, search, filters } = useDataGrid<
         IOrder,
         HttpError,
         IOrderFilterVariables
@@ -76,13 +83,41 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
         HttpError
     >({
         refineCoreProps: { action: "create" },
-        syncWithLocation: true,
+        warnWhenUnsavedChanges: false,
     });
 
     const {
         modal: { show: showCreateDrawer },
     } = createDrawerFormProps;
 
+    const { show } = useNavigation();
+
+    const { handleSubmit, control } = useForm<
+        BaseRecord,
+        HttpError,
+        IOrderFilterVariables
+    >({
+        defaultValues: {
+            customer: getDefaultFilter("customer", filters, "eq"),
+            sawmill: getDefaultFilter("sawmill", filters, "eq"),
+        },
+    });
+
+    const { autocompleteProps: sawmillAutocompleteProps } = useAutocomplete<ISawmill>({
+        resource: "sawmills",
+        defaultValue: getDefaultFilter("sawmill", filters, "eq"),
+    });
+
+    const { autocompleteProps: customerAutocompleteProps } = useAutocomplete<ICustomer>({
+        resource: "customers",
+    });
+
+    const statuses = [
+        { id: 1, name: 'Pending' },
+        { id: 2, name: 'Ready' },
+        { id: 3, name: 'Dispatched' },
+        { id: 3, name: 'Canceled' },
+    ];
 
     const columns = React.useMemo<GridColDef<IOrder>[]>(
         () => [
@@ -109,7 +144,7 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
                                 currency: "EUR",
                                 style: "currency",
                             }}
-                            value={row.amount}
+                            value={row.amount ? row.amount : ""}
                             sx={{ fontSize: "14px" }}
                         />
                     );
@@ -118,19 +153,19 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
                 minWidth: 150,
             },
             {
-                field: "sawmill",
-                headerName: t("orders.fields.sawmill"),
-                valueGetter: ({ row }) => row.sawmill.name,
-                flex: 1,
-                minWidth: 150,
-                sortable: false,
-            },
-            {
                 field: "customer",
                 headerName: t("orders.fields.customer"),
                 valueGetter: ({ row }) => (row.customer?.name ?? ""),
                 flex: 1,
-                minWidth: 150,
+                minWidth: 170,
+                sortable: false,
+            },  
+            {
+                field: "sawmill",
+                headerName: t("orders.fields.sawmill"),
+                valueGetter: ({ row }) => row.sawmill.name,
+                flex: 1,
+                minWidth: 170,
                 sortable: false,
             },
             {
@@ -161,19 +196,16 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
                     );
                 },
                 flex: 1,
-                minWidth: 100,
+                minWidth: 130,
             },
             {
                 field: "ordered_at",
                 headerName: t("orders.fields.ordered_at"),
                 flex: 1,
-                minWidth: 170,
+                minWidth: 150,
                 renderCell: function render({ row }) {
                     return (
-                        <DateField
-                            value={row.ordered_at}
-                            sx={{ fontSize: "14px" }}
-                        />
+                        format(new Date(row.ordered_at), "dd.MM.yyyy")
                     );
                 },
             },
@@ -195,37 +227,9 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
         [t],
     );
 
-    const { show } = useNavigation();
-
-    const { handleSubmit, control } = useForm<
-        BaseRecord,
-        HttpError,
-        IOrderFilterVariables
-    >({
-        defaultValues: {
-            customer: getDefaultFilter("customer", filters, "eq"),
-            sawmill: getDefaultFilter("sawmill", filters, "eq"),
-        },
-    });
-
-    const { autocompleteProps: sawmillAutocompleteProps } = useAutocomplete<ISawmill>({
-        resource: "sawmills",
-        defaultValue: getDefaultFilter("sawmill", filters, "eq"),
-    });
-
-    const { autocompleteProps: customerAutocompleteProps } = useAutocomplete<ICustomer>({
-        resource: "customers",
-    });
-
-    const statuses = [
-        { id: 1, name: 'Pending' },
-        { id: 2, name: 'Ready' },
-        { id: 3, name: 'Dispatched' },
-      ];
-
     return (
         <>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} marginBottom={ isSmallScreen ? 4 : 0 }>
                 <Grid item xs={12} lg={3}>
                     <Card sx={{ paddingX: { xs: 2, md: 0 } }}>
                         <CardHeader title={t("orders.filter.title")} />
@@ -249,6 +253,9 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
                                                 const statuses = value.map(option => option.name);
                                                 field.onChange(statuses);
                                             }}
+                                            isOptionEqualToValue={(option, value) => {        
+                                                return value === undefined || option?.id?.toString() === (value?.id ?? value)?.toString()
+                                            }}  
                                             renderInput={(params) => (
                                                 <TextField
                                                 {...params}
@@ -356,7 +363,7 @@ export const OrderList: React.FC<IResourceComponentsProps> = () => {
                 <Grid item xs={12} lg={9}>
                     <List
                         wrapperProps={{ sx: { paddingX: { xs: 2, md: 0 } } }}
-                        canCreate={true}
+                        canCreate={can?.can}
                         createButtonProps={{ 
                             onClick: () => showCreateDrawer() 
                         }}

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Order extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     public function sawmill(): BelongsTo
     {
@@ -24,7 +26,7 @@ class Order extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->withPivot(['quantity']);
+        return $this->belongsToMany(Product::class)->withPivot(['quantity', 'historic_price', 'historic_vat']);
     }
 
     protected $fillable = [
@@ -35,6 +37,8 @@ class Order extends Model
         'ready_at',
         'dispatched_at',
         'status',
+        'discount',
+        'canceled_at',
     ];
 
 }

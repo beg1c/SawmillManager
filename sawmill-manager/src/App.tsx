@@ -1,4 +1,4 @@
-import { Authenticated, I18nProvider, Refine } from "@refinedev/core";
+import { Authenticated, I18nProvider, Refine, useGetIdentity, useModal } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import {
@@ -38,24 +38,27 @@ import { SawmillList } from "./pages/sawmills/list";
 import { useTranslation } from "react-i18next";
 import { CustomerList } from "./pages/customers";
 import { OrderShow } from "./pages/orders";
-import { BadgeOutlined, BusinessOutlined, Dashboard, ForestOutlined, HomeRepairServiceOutlined, Inventory2Outlined, InventoryOutlined, ListAltOutlined, LocalGroceryStoreOutlined, PeopleAltOutlined, RecyclingOutlined, TextSnippet } from "@mui/icons-material";
+import { BadgeOutlined, BusinessOutlined, Calculate, Dashboard, HomeRepairServiceOutlined, Inventory2Outlined, ListAltOutlined, PeopleAltOutlined, TextSnippet } from "@mui/icons-material";
 import { MaterialList } from "./pages/materials";
 import { WasteList } from "./pages/waste";
-import { InventoryMaterialList } from "./pages/inventory/materials";
-import { InventoryProductList } from "./pages/inventory/products";
-import { InventoryWasteList } from "./pages/inventory/wastes";
 import { DailyLogList, DailyLogShow } from "./pages/dailyLogs";
 import { DashboardPage } from "./pages/dashboard";
-const apiUrl = "http://127.0.0.1:8000/api";
+import { InventoryList, InventoryShow } from "./pages/inventory";
+import { Fab } from "@mui/material";
+import { CalculatorDrawer } from "./components/calculator";
+const apiUrl = import.meta.env.VITE_APP_API_URL;
 
 function App() {
-    const { t, i18n } = useTranslation();
-    const i18nProvider: I18nProvider = {
-        // @ts-ignore
-        translate: (key: string, options?: any) => t(key, options),     
-        changeLocale: (lang: string) => i18n.changeLanguage(lang),
-        getLocale: () => i18n.language,
-    };
+  const { t, i18n } = useTranslation();
+  const i18nProvider: I18nProvider = {
+      // @ts-ignore
+      translate: (key: string, options?: any) => t(key, options),     
+      changeLocale: (lang: string) => i18n.changeLanguage(lang),
+      getLocale: () => i18n.language,
+  };
+
+  const calculatorDrawerProps = useModal();
+  const { show: showCalculatorDrawer } = calculatorDrawerProps;
 
   return (
     <BrowserRouter>
@@ -139,34 +142,9 @@ function App() {
                   meta: { 
                     icon: <Inventory2Outlined />,
                     label: "Inventory" 
-                  }
-                },
-                {
-                  name: "products",
-                  meta: { 
-                    icon: <LocalGroceryStoreOutlined />,
-                    parent: "inventory", 
-                    label: "Products"
                   },
-                  list: "/inventory/products",
-                },
-                {
-                  name: "materials",
-                  meta: { 
-                    icon: <ForestOutlined />,
-                    parent: "inventory",
-                    label: "Materials"
-                  },
-                  list: "/inventory/materials",
-                },
-                {
-                  name: "wastes",
-                  meta: { 
-                    icon: <RecyclingOutlined />,
-                    parent: "inventory", 
-                    label: "Waste" 
-                  },
-                  list: "/inventory/wastes",
+                  list: "/inventory",
+                  show: "/inventory/show/:id"
                 },
                 {
                   name: "manage-products",
@@ -215,7 +193,25 @@ function App() {
                       <ThemedLayoutV2
                         Header={() => <Header sticky />}
                         Title={Title}
+                        OffLayoutArea={() => (  
+                          <>
+                            <Fab  
+                              size="large"  
+                              color="primary"  
+                              sx={{  
+                              position: "fixed",  
+                              bottom: "16px",  
+                              right: "16px",  
+                              }}  
+                              onClick={showCalculatorDrawer} 
+                              variant="extended"   
+                            >  
+                              <Calculate fontSize="medium" sx={{ marginRight: 0.5 }}/>Calculator
+                            </Fab> 
+                          </>
+                          )}  
                       >
+                      <CalculatorDrawer {...calculatorDrawerProps}/> 
                         <Outlet />
                       </ThemedLayoutV2>
                     </Authenticated>
@@ -250,14 +246,9 @@ function App() {
                     <Route index element={<OrderList />} />
                     <Route path="show/:id" element={<OrderShow />} />
                   </Route>
-                  <Route path="/inventory/products">
-                    <Route index element={<InventoryProductList />} />
-                  </Route>
-                  <Route path="/inventory/materials">
-                    <Route index element={<InventoryMaterialList />} />
-                  </Route>
-                  <Route path="/inventory/wastes">
-                    <Route index element={<InventoryWasteList />} />
+                  <Route path="/inventory">
+                    <Route index element={<InventoryList />} />
+                    <Route path="show/:id" element={<InventoryShow />} />
                   </Route>
                   <Route path="/products">
                     <Route index element={<ProductList />} />
@@ -290,7 +281,6 @@ function App() {
                   />
                 </Route>
               </Routes>
-
               <RefineKbar />
               <UnsavedChangesNotifier />
             </Refine>

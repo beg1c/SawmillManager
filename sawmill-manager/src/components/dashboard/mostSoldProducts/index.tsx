@@ -1,8 +1,8 @@
 import { useTheme } from "@mui/material";
 import { IProductWQuantity } from "../../../interfaces/interfaces";
 import React from "react";
-import { Bar, BarChart, CartesianGrid, LabelList, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { useNavigation } from "@refinedev/core";
+import { Bar, BarChart, LabelList, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import FullLoader from "../../fullLoader";
 
 
 interface MostSoldProductsProps {
@@ -13,8 +13,8 @@ interface MostSoldProductsProps {
 export const MostSoldProducts: React.FC<MostSoldProductsProps> = ({products}) => {
     const { palette } = useTheme();
 
-    if (products.length === 0) {
-        return <div>Loading...</div>;
+    if (!products.length) {
+        return <FullLoader />
     }
 
     return (    
@@ -35,7 +35,7 @@ export const MostSoldProducts: React.FC<MostSoldProductsProps> = ({products}) =>
                     separator=": "
                     cursor={{fill: palette.background.paper}}
                     formatter={(value: number) => {
-                        return value + ' cubic meters';
+                        return Number(value).toFixed(2) + ' cubic meters';
                     }}
                 />
                 <Bar 
@@ -50,7 +50,7 @@ export const MostSoldProducts: React.FC<MostSoldProductsProps> = ({products}) =>
                         position="right"
                         fill={palette.text.primary}
                         formatter={(value: number) => {
-                            return value + 'm3';
+                            return Number(value).toFixed(0) + 'm3';
                         }}
                     />
                     <LabelList

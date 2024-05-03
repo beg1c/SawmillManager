@@ -20,12 +20,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import { IMaterial } from "../../interfaces/interfaces";
 import { CreateMaterial, EditMaterial, MaterialItem } from "../../components/material";
 import { RotateLoader } from "react-spinners";
-import { useTheme } from "@mui/material";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 
 export const MaterialList: React.FC<IResourceComponentsProps> = () => {
     const t = useTranslate();
-    const { palette } = useTheme();
+    const { palette, breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const { tableQueryResult, setFilters, setCurrent, filters, pageCount } =
         useTable<IMaterial>({
@@ -87,11 +88,11 @@ export const MaterialList: React.FC<IResourceComponentsProps> = () => {
                     my: 0.5,
                 }}
             >
-                <Grid container columns={12}>
+                <Grid container columns={12} marginBottom={ isSmallScreen ? 4 : 0 }>
                     <Grid item xs={12}>
                         <Stack
                             display="flex"
-                            justifyContent="space-between"
+                            justifyContent={isSmallScreen ? 'center' : 'space-between'}
                             alignItems="center"
                             flexWrap="wrap"
                             padding={1}
@@ -145,7 +146,6 @@ export const MaterialList: React.FC<IResourceComponentsProps> = () => {
                             </Paper>
                             <CreateButton
                                 onClick={() => showCreateDrawer()}
-                                variant="outlined"
                                 sx={{ marginBottom: "5px" }}
                             >
                                 {t("materials.titles.create")}

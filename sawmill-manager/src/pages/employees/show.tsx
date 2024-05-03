@@ -1,12 +1,12 @@
-import { Avatar, Box, Grid, Paper, Stack, Typography, useTheme } from "@mui/material";
+import { Avatar, Box, Grid, IconButton, Paper, Stack, Typography, useTheme } from "@mui/material";
 import { green } from "@mui/material/colors";
-import { IResourceComponentsProps, useGo, useShow } from "@refinedev/core";
+import { IResourceComponentsProps, useGetIdentity, useGo, useLogout, useNavigation, useShow } from "@refinedev/core";
 import {
   DeleteButton,
   EditButton,
 } from "@refinedev/mui";
 import { IEmployee } from "../../interfaces/interfaces";
-import { CalendarMonth, LocalPhoneOutlined, MailOutlined, PersonOutlined, WorkOutline } from "@mui/icons-material";
+import { ArrowBackOutlined, CalendarMonth, LocalPhoneOutlined, MailOutlined, PersonOutlined, WorkOutline } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { RotateLoader } from "react-spinners";
 
@@ -37,6 +37,9 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
   const { palette } = useTheme();
   const employee = data?.data;
   const go = useGo();
+  const { data: user } = useGetIdentity<IEmployee>();
+  const { mutate: logout } = useLogout();
+  const { push } = useNavigation();
 
   if (isLoading) {
     return (
@@ -49,21 +52,24 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
           </Grid>
         </Grid>
       )
-}
+  }
 
   return (
     <Grid container spacing={2}>
         <Grid item xs={12} lg={4} xl={3}>
             <Paper sx={{ p: 2 }}>
+                <IconButton onClick={() => push("/employees")} >
+                    <ArrowBackOutlined />
+                </IconButton>
                 <Stack alignItems="center" spacing={1}> 
-                <Avatar src={employee?.avatar} sx={{ bgcolor: green[500], width: 200, height: 200 }} />
+                <Avatar src={employee?.avatar} sx={{ bgcolor: palette.primary.main, width: 200, height: 200 }} />
                     <Typography variant="h6">
                         {employee?.name}
                     </Typography>
                 </Stack>
                 <br />
                 <Grid container spacing={2} alignItems="flex-end">
-                  <Grid item xs={6}>
+                  <Grid item sm={6} xs={12}>
                     <Stack spacing={1}>
                         <EmployeeInfoText
                             icon={<MailOutlined />}
@@ -91,7 +97,7 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
                         />
                     </Stack>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item sm={6} xs={12}>
                   <Box display="flex" alignItems="flex-end" justifyContent="flex-end">
                     <EditButton 
                       accessControl={{ enabled: true, hideIfUnauthorized: true }}
@@ -99,12 +105,15 @@ export const EmployeeShow: React.FC<IResourceComponentsProps> = () => {
                     <DeleteButton 
                       confirmTitle="Are you sure you want to delete employee?"
                       accessControl={{ enabled: true, hideIfUnauthorized: true }}
-                      onSuccess = {() => go({
-                        to: {
-                          resource: "employees",
-                          action: "list",
-                        },
-                      })}
+                      onSuccess = {() => {
+                        if (user?.id === employee?.id) {
+                          logout();
+                        } else {
+                          go({to: {
+                            resource: "employees",
+                            action: "list",
+                          }});
+                      }}}
                     />
                   </Box> 
                   </Grid>

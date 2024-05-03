@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('daily_log_id');
             $table->unsignedBigInteger('waste_id');
-            $table->integer('quantity')->default(0);
+            $table->decimal('quantity', 10, 5)->default(0);
             $table->timestamps();
 
             $table->foreign('daily_log_id')->references('id')->on('daily_logs')->onDelete('cascade');

@@ -14,7 +14,7 @@ class WasteController extends Controller
     {
         $sortField = request()->query('sort', 'id');
         $sortDirection = request()->query('order', 'asc');
-        $pageSize = request()->query('pageSize', 10);
+        $pageSize = request()->query('pageSize');
         $searchQuery = request()->query('q');
 
         $wastes = Waste::orderBy($sortField, $sortDirection);
@@ -26,25 +26,29 @@ class WasteController extends Controller
                     ->orWhere('unit_of_measure', 'like', '%' . $searchQuery . '%');
         }
 
-        $wastes = $wastes->paginate($pageSize, ['*'], 'current');
+        if ($pageSize) {
+            $wastes = $wastes->paginate($pageSize, ['*'], 'current');
+        } else {
+            $wastes = $wastes->get();
+        }
 
         return WasteResource::collection($wastes);
     }
 
     public function store(WasteStoreRequest $request)
     {
+        if (Gate::denies('manage-wastes')) {
+            return response()->json([
+                "message" => "You are not authorized to create wastes."
+            ], 403);
+        }
+
         $photoName = null;
         if ($request->has('photo')) {
             $photoname = $this->savePhoto($request->photo);
         }
 
-        if (Gate::allows('manage-wastes')) {
-            return $this->createWaste($request, $photoName);
-        }
-
-        return response()->json([
-            "message" => "You are not authorized to create wastes."
-        ], 403);
+        return $this->createWaste($request, $photoName);
     }
 
     public function show($id)
@@ -55,17 +59,31 @@ class WasteController extends Controller
 
     public function update(WasteStoreRequest $request, $id)
     {
+        if (Gate::denies('manage-wastes')) {
+            return response()->json([
+                "message" => "You are not authorized to update wastes."
+            ], 403);
+        }
+
         $photoName = null;
         if ($request->has('photo')) {
             $photoName = $this->savePhoto($request->photo);
         }
 
+        return $this->updateWaste($request, $photoName, $id);
+    }
+
+    public function destroy($id) {
         if (Gate::allows('manage-wastes')) {
-            return $this->updateWaste($request, $photoName, $id);
+            $waste = Waste::findOrFail($id);
+            $waste->delete();
+            return response()->json([
+                "message" => "Waste deleted."
+            ]);
         }
 
         return response()->json([
-            "message" => "You are not authorized to update wastes."
+            "message" => "You are not authorized to delete wastes."
         ], 403);
     }
 
@@ -86,6 +104,7 @@ class WasteController extends Controller
             'price' => $request['price'],
             'unit_of_measure' => $request['unit_of_measure'],
             'photo' => $photoName,
+            'vat' => $request['vat'],
         ]);
 
         return new WasteResource($waste);
@@ -99,6 +118,7 @@ class WasteController extends Controller
             'description' => $request['description'],
             'price' => $request['price'],
             'unit_of_measure' => $request['unit_of_measure'],
+            'vat' => $request['vat'],
         ]);
 
         if ($photoName !== null) {
