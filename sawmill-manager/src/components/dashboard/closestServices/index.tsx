@@ -51,6 +51,7 @@ export const ClosestServices = () => {
             },
             {
             field: "next_service_date",
+            minWidth: 110,
             flex: 1,
             align: "right",
             renderCell: function render({ row }) {

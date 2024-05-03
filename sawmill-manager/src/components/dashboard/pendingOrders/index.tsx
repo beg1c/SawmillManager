@@ -2,7 +2,7 @@ import { NumberField, useDataGrid } from "@refinedev/mui"
 import { IOrder } from "../../../interfaces/interfaces"
 import { useNavigation } from "@refinedev/core"
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useMemo } from "react";
 import { OrderStatus } from "../../orderStatus";
 import FullLoader from "../../fullLoader";
@@ -10,6 +10,8 @@ import FullLoader from "../../fullLoader";
 
 export const PendingOrders = () => {
     const { show } = useNavigation();
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const { dataGridProps } = useDataGrid<IOrder>({
         resource: "dashboard/get-pending-orders",
@@ -46,7 +48,8 @@ export const PendingOrders = () => {
             },
             {
                 field: "amount",
-                align: "right",
+                align: isSmallScreen ? "left" : "right",
+                minWidth: 70,
                 flex: 1,
                 renderCell: function render({ row }) {
                     return (

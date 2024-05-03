@@ -99,7 +99,7 @@ export const CalculatorDrawer: React.FC<useModalReturnType> = ({
             anchor="right"
         >
             <Button 
-                style={{ position: "absolute", top: "50%", marginLeft: -10 }}
+                style={{ position: "absolute", top: "50%", marginLeft: -10, zIndex: 2000 }}
                 onClick={() => close()}
             >
                 <ArrowForwardIos sx={{ fontSize: 40 }}/>
@@ -169,9 +169,9 @@ export const CalculatorDrawer: React.FC<useModalReturnType> = ({
                     <Button variant="contained" sx={{ margin: 1 }} onClick={() => handleCalculate()}>CALCULATE</Button>
                     {calculatedLumber.length>0 &&
                     <TableContainer>
-                        <Table style={{ width: "100%", tableLayout: 'fixed' }} size="small">
+                        <Table style={{ width: "100%" }} size="small">
                             <TableHead>
-                            <TableRow>
+                            <TableRow>  
                                 <TableCell align="center">Width</TableCell>
                                 <TableCell align="center">Thickness</TableCell>
                                 <TableCell align="center">Length</TableCell>
@@ -260,7 +260,7 @@ export const CalculatorDrawer: React.FC<useModalReturnType> = ({
                     <Button variant="contained" sx={{ margin: 1 }} onClick={() => handleCalculate()}>CALCULATE</Button>
                     {calculatedLogs.length>0 &&
                     <TableContainer>
-                        <Table style={{ width: "100%", tableLayout: 'fixed' }} size="small">
+                        <Table style={{ width: "100%" }} size="small">
                             <TableHead>
                             <TableRow>
                                 <TableCell align="center">Diameter</TableCell>

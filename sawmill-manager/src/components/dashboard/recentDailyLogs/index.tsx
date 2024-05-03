@@ -2,7 +2,7 @@ import { useDataGrid } from "@refinedev/mui"
 import { IDailyLog } from "../../../interfaces/interfaces"
 import { useNavigation } from "@refinedev/core"
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useMemo } from "react";
 import FullLoader from "../../fullLoader";
 import { LockOpenOutlined, LockOutlined } from "@mui/icons-material";
@@ -11,6 +11,8 @@ import { format } from "date-fns";
 
 export const RecentDailyLogs = () => {
     const { show } = useNavigation();
+    const { breakpoints } = useTheme();
+    const isSmallScreen = useMediaQuery(breakpoints.down("sm"));
 
     const { dataGridProps } = useDataGrid<IDailyLog>({
         resource: "dashboard/get-recent-daily-logs",
@@ -33,9 +35,10 @@ export const RecentDailyLogs = () => {
             },
             {
                 field: "sawmill",
+                minWidth: 200,
                 flex: 1,
                 headerAlign: "right",
-                align: "right",
+                align: isSmallScreen ? "left" : "right",
                 renderCell: function render({ row }) {
                     return (
                         <Stack spacing="4px">
