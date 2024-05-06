@@ -96,7 +96,7 @@ import { Box, useMediaQuery, useTheme } from "@mui/material";
                     flex: 1,
                     minWidth: 190,
                     valueGetter: (params) => {
-                        return params.row?.production_year ? params.row.production_year : t("equipment.fields.no_last_service_working_hours")
+                        return params.row?.last_service_working_hours ? params.row.last_service_working_hours : t("equipment.fields.no_last_service_working_hours")
                     }
                 },
                 {

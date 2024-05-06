@@ -16,8 +16,13 @@ class RoleFactory extends Factory
      */
     public function definition(): array
     {
+        $roles = ['executive', 'manager', 'worker'];
+        $roleName = fake()->unique()->randomElement($roles);
+        $roleId = array_search($roleName, $roles) + 1;
+
         return [
-            'role_name' => fake()->unique()->randomElement(['executive', 'manager', 'worker'])
+            'role_name' => $roleName,
+            'id' => $roleId,
         ];
     }
 }

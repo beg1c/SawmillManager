@@ -28,17 +28,18 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'contact_number' => fake()->phoneNumber(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => static::$password ??= Hash::make('sawmill-manager'),
             'password_set_token' => Hash::make(Str::random(32)),
             'remember_token' => Str::random(10),
             'birthday' => fake()->date(),
-            'avatar' => fake()->randomElement(['avatar1.jpg',
-                                                'avatar2.jpg',
-                                                'avatar3.jpg',
-                                                'avatar4.jpg',
-                                                'avatar5.jpg',
-                                                'avatar6.jpg',
-                                                'avatar7.jpg'])
+            'role_id' => 3,
+            'avatar' => fake()->randomElement(['DEMO-avatar1.jpg',
+                                                'DEMO-avatar2.jpg',
+                                                'DEMO-avatar3.jpg',
+                                                'DEMO-avatar4.jpg',
+                                                'DEMO-avatar5.jpg',
+                                                'DEMO-avatar6.jpg',
+                                                'DEMO-avatar7.jpg'])
         ];
     }
 

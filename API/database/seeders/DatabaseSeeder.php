@@ -29,20 +29,47 @@ class DatabaseSeeder extends Seeder
 
         Sawmill::factory()->count(3)->create();
 
+        $specialUsers = [
+            [
+                'name' => 'Elliot Alderson',
+                'email' => 'executive@beg1c.dev',
+                'role_id' => 1,
+            ],
+            [
+                'name' => 'Gustavo Fring',
+                'email' => 'manager@beg1c.dev',
+                'role_id' => 2,
+            ],
+            [
+                'name' => 'Jesse Pinkman',
+                'email' => 'worker@beg1c.dev',
+                'role_id' => 3,
+            ],
+        ];
+
+        foreach ($specialUsers as $userData) {
+            $user = User::factory()->create($userData);
+
+            if ($user->role_id === 1) {
+                $user->sawmills()->attach(Sawmill::all());
+            } else {
+                $user->sawmills()->attach(Sawmill::all()->random());
+            }
+        }
+
         User::factory()->count(10)->create()->each(function ($user) {
             $user->sawmills()->attach(Sawmill::all()->random());
-            $user->role()->associate(Role::all()->random())->save();
         });
 
         Customer::factory()->count(30)->create();
 
         Product::factory()->count(15)->create();
 
-        Material::factory()->count(15)->create();
+        Material::factory()->count(9)->create();
 
-        Waste::factory()->count(15)->create();
+        Waste::factory()->count(5)->create();
 
-        Equipment::factory()->count(15)->create()->each(function ($equipment) {
+        Equipment::factory()->count(19)->create()->each(function ($equipment) {
             $equipment->sawmill()->associate(Sawmill::all()->random())->save();
         });
 
@@ -91,6 +118,7 @@ class DatabaseSeeder extends Seeder
 
                 $dailyLog = DailyLog::create([
                     'date' => $date,
+                    'locked_at' => fake()->boolean(50) ? $date : null,
                 ]);
 
                 $dailyLog->sawmill()->associate($sawmill)->save();
@@ -105,11 +133,11 @@ class DatabaseSeeder extends Seeder
             for ($i = 0; $i < 20; $i++) {
                 $context = ['user', 'order', 'daily_log'][rand(0, 2)];
 
-                $inventory = $sawmill->inventory;
-
                 $logData = InventoryLog::factory()->make([
                     'context' => $context,
                 ]);
+
+                $inventory = Inventory::find($sawmill->id);
 
                 $logData->inventory()->associate($inventory);
 

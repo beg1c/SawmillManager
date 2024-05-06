@@ -86,10 +86,11 @@ function App() {
                   },
                 },
                 {
-                  name: "customers",
-                  list: "/customers",
+                  name: "orders",
+                  list: "/orders",
+                  show: "/orders/show/:id",
                   meta: {
-                    icon: <PeopleAltOutlined />,
+                    icon: <ListAltOutlined />,
                     canDelete: true,
                   },
                 },
@@ -104,19 +105,25 @@ function App() {
                   },
                 },
                 {
-                  name: "roles",
-                  list: "/roles",
+                  name: "inventory",
+                  meta: { 
+                    icon: <Inventory2Outlined />,
+                    label: "Inventory" 
+                  },
+                  list: "/inventory",
+                  show: "/inventory/show/:id"
                 },
                 {
-                  name: "employees",
-                  list: "/employees",
-                  create: "/employees/create",
-                  edit: "/employees/edit/:id",
-                  show: "/employees/show/:id",
+                  name: "customers",
+                  list: "/customers",
                   meta: {
-                    icon: <BadgeOutlined />,
+                    icon: <PeopleAltOutlined />,
                     canDelete: true,
                   },
+                },
+                {
+                  name: "roles",
+                  list: "/roles",
                 },
                 {
                   name: "equipment",
@@ -129,22 +136,15 @@ function App() {
                   },
                 },
                 {
-                  name: "orders",
-                  list: "/orders",
-                  show: "/orders/show/:id",
+                  name: "employees",
+                  list: "/employees",
+                  create: "/employees/create",
+                  edit: "/employees/edit/:id",
+                  show: "/employees/show/:id",
                   meta: {
-                    icon: <ListAltOutlined />,
+                    icon: <BadgeOutlined />,
                     canDelete: true,
                   },
-                },
-                {
-                  name: "inventory",
-                  meta: { 
-                    icon: <Inventory2Outlined />,
-                    label: "Inventory" 
-                  },
-                  list: "/inventory",
-                  show: "/inventory/show/:id"
                 },
                 {
                   name: "manage-products",
