@@ -118,7 +118,7 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
         let actionSource = "";
 
         if (row.user) {
-            actionSource = "User " + row.user;
+            actionSource = "User '" + row.user + "'"; 
         } else if (row.dailylog) {
             actionSource = "Daily log from " + format(new Date(row.dailylog), 'dd.MM.yyyy');
         } else if (row.order) {
@@ -127,13 +127,13 @@ export const InventoryShow: React.FC<IResourceComponentsProps> = () => {
     
         switch (row.action) {
             case "add":
-                message = `${actionSource} added ${row.quantity}m3 ${inventoryItem} to inventory.`;
+                message = `${actionSource} added ${row.quantity}m3 '${inventoryItem}' to inventory.`;
                 break;
             case "reduce":
-                message = `${actionSource} reduced ${row.quantity}m3 ${inventoryItem} from inventory.`;
+                message = `${actionSource} reduced ${row.quantity}m3 '${inventoryItem}' from inventory.`;
                 break;
             case "delete":
-                message = `${actionSource} removed ${inventoryItem} from inventory.`;
+                message = `${actionSource} removed '${inventoryItem}' from inventory.`;
                 break;
             default:
                 break;

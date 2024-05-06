@@ -16,19 +16,44 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $productDescriptions = [
+            'Beam 16x16x400cm' => 'Spruce/fir beam. Fresh sawn.',
+            'Beam 16x16x500cm' => 'Spruce/fir beam. Fresh sawn.',
+            'Beam 16x16x600cm' => 'Spruce/fir beam. Fresh sawn.',
+            'Rafter 10x14x400cm' => 'Spruce/fir rafter. Fresh sawn.',
+            'Rafter 10x14x500cm' => 'Spruce/fir rafter. Fresh sawn.',
+            'Rafter 10x14x600cm' => 'Spruce/fir rafter. Fresh sawn.',
+            'Rafter 10x12x400cm' => 'Spruce/fir rafter. Fresh sawn.',
+            'Rafter 10x12x500cm' => 'Spruce/fir rafter. Fresh sawn.',
+            'Rafter 10x12x600cm' => 'Spruce/fir rafter. Fresh sawn.',
+            'Board length 200cm' => 'Spruce/fir boards. Fresh sawn.',
+            'Board length 400cm' => 'Spruce/fir boards. Fresh sawn.',
+            'Plank length 200cm' => 'Spruce/fir planks. Fresh sawn.',
+            'Plank length 400cm' => 'Spruce/fir planks. Fresh sawn.',
+            'Board (Oak) length 200cm+' => 'Oak boards. Fresh sawn.',
+            'Plank (Oak) length 200cm+' => 'Oak planks. Fresh sawn.',
+        ];
+
+        $name = fake()->unique()->randomElement(array_keys($productDescriptions));
+        $description = $productDescriptions[$name];
+
+        $photo = '';
+
+        if (strpos($name, 'Beam') !== false || strpos($name, 'Rafter') !== false) {
+            $photo = 'DEMO-beam.jpg';
+        } elseif (strpos($name, 'Board') !== false) {
+            $photo = 'DEMO-boards.jpg';
+        } elseif (strpos($name, 'Plank') !== false) {
+            $photo = 'DEMO-planks.jpg';
+        }
+
         return [
-            'name' => fake()->words(3, true),
-            'description' => fake()->sentence(),
+            'name' => $name,
+            'description' => $description,
             'unit_of_measure'=> 'm3',
             'price' => fake()->randomFloat(2, 0, 400),
             'vat' => fake()->numberBetween(10, 30),
-            'photo' => fake()->randomElement(['product1.jpg',
-                                                'product2.jpg',
-                                                'product3.jpg',
-                                                'product4.jpg',
-                                                'product5.jpg',
-                                                'product6.jpg',
-                                                'product7.jpg'])
+            'photo' => $photo,
         ];
     }
 }

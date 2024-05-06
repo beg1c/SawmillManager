@@ -3,10 +3,6 @@
 /public/build
 /public/hot
 /public/storage
-/public/photos/*
-!public/photos/.gitkeep
-/public/avatars/*
-!public/avatars/.gitkeep
 /storage/*.key
 /vendor
 .env

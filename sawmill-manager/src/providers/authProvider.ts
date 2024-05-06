@@ -125,7 +125,11 @@ export const authProvider: AuthBindings = {
       );
 
       if (response.status < 200 || response.status > 299) {
-        return null;
+        localStorage.removeItem(TOKEN_KEY);
+        return {
+          success: false,
+          redirectTo: "/login",
+        };
       }
 
       const data = await response.json();

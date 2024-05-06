@@ -16,11 +16,17 @@ class SawmillFactory extends Factory
      */
     public function definition(): array
     {
+        $openFromHours = ['07', '08', '09'];
+        $from = fake()->randomElement($openFromHours);
+
+        $openFrom = '0' . $from . ':00:00';
+        $openUntil = $from + 8 . ':00:00';
+
         return [
-            'name' => fake()->name(),
+            'name' => fake()->unique()->randomElement(['SideWood Lumber', 'EcoWood Works', 'ForestFusion Sawmill', 'LumberMax Sawmill']),
             'address' => fake()->address(),
-            'open_from' => '07:00:00',
-            'open_until' => '15:00:00',
+            'open_from' => $openFrom,
+            'open_until' => $openUntil,
         ];
     }
 }

@@ -16,8 +16,12 @@ class DailyLogFactory extends Factory
      */
     public function definition(): array
     {
+        $date = fake()->dateTime()->format('Y-m-d H:i:s');
+        $lockedAt = fake()->boolean(50) ? $date : null;
+
         return [
             'date' => fake()->date(),
+            'locked_at' => fake()->dateTime(),
         ];
     }
 }
